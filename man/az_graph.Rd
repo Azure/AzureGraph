@@ -21,6 +21,7 @@ Base class for interacting with Azure AD Graph API.
 \item \code{create_service_principal(app_id, ...)}: Creates a service principal for a registered app.
 \item \code{get_service_principal()}: Retrieves an existing service principal.
 \item \code{delete_service_principal()}: Deletes an existing service principal.
+\item \code{call_graph_endpoint(op="", ...)}: Calls the AD Graph API with this object's token and tenant as arguments. See \link{call_graph_endpoint}.
 }
 }
 

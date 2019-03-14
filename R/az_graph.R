@@ -11,6 +11,7 @@
 #' - `create_service_principal(app_id, ...)`: Creates a service principal for a registered app.
 #' - `get_service_principal()`: Retrieves an existing service principal.
 #' - `delete_service_principal()`: Deletes an existing service principal.
+#' - `call_graph_endpoint(op="", ...)`: Calls the AD Graph API with this object's token and tenant as arguments. See [call_graph_endpoint].
 #'
 #' @section Authentication:
 #' The recommended way to authenticate with Azure AD Graph is via the [create_graph_login] function, which creates a new instance of this class.
@@ -112,7 +113,7 @@ public=list(
 
     create_app=function(name, ..., password=NULL, password_duration=1, create_service_principal=TRUE)
     {
-        properties <- list(...)
+        properties <- list(displayName=name, ...)
         if(is.null(password) || password != FALSE)
         {
             key <- "awBlAHkAMQA=" # base64/UTF-16LE encoded "key1"
@@ -131,7 +132,6 @@ public=list(
             else "2299-12-30T12:00:00Z"
 
             properties <- modifyList(properties, list(
-                displayName=name,
                 passwordCredentials=list(list(
                     customKeyIdentifier=key,
                     endDate=end_date,
@@ -143,7 +143,7 @@ public=list(
         res <- az_app$new(
             self$token,
             self$tenant,
-            private$graph_op("applications", body=properties, encode="json", http_verb="POST"),
+            self$call_graph_endpoint("applications", body=properties, encode="json", http_verb="POST"),
             password
         )
 
@@ -158,7 +158,7 @@ public=list(
             file.path("applicationsByAppId", app_id)
         else file.path("applications", object_id)
 
-        az_app$new(self$token, self$tenant, private$graph_op(op))
+        az_app$new(self$token, self$tenant, self$call_graph_endpoint(op))
     },
 
     delete_app=function(app_id=NULL, object_id=NULL, confirm=TRUE)
@@ -181,7 +181,7 @@ public=list(
             az_service_principal$new(
                 self$token,
                 self$tenant,
-                private$graph_op(op)
+                self$call_graph_endpoint(op)
             )
         }
     },
@@ -189,6 +189,11 @@ public=list(
     delete_service_principal=function(app_id=NULL, object_id=NULL, confirm=TRUE)
     {
         self$get_service_principal(app_id, object_id)$delete(confirm=confirm)
+    },
+
+    call_graph_endpoint=function(op="", ...)
+    {
+        call_graph_endpoint(self$token, self$tenant, op, ...)
     },
 
     print=function(...)
@@ -200,14 +205,6 @@ public=list(
         cat("---\n")
         cat(format_public_methods(self))
         invisible(self)
-    }
-),
-
-private=list(
-
-    graph_op=function(op="", ...)
-    {
-        call_graph_endpoint(self$token, self$tenant, op, ...)
     }
 ))
 

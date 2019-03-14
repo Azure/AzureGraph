@@ -14,17 +14,20 @@ Base class representing an AAD service principal.
 \section{Methods}{
 
 \itemize{
-\item \code{new(...)}: Initialize a new service principal object. See 'Initialization' below.
+\item \code{new(...)}: Initialize a new service principal object. Do not call this directly; see 'Initialization' below.
 \item \code{delete(confirm=TRUE)}: Delete a service principal. By default, ask for confirmation first.
 }
 }
 
 \section{Initialization}{
 
-The recommended way to create a new service principal object is via the \code{create_service_principal} and \code{get_service_principal} methods of the \link{az_graph} and \link{az_app} classes, which will handle the details automatically.
+Creating new objects of this class should be done via the \code{create_service_principal} and \code{get_service_principal} methods of the \link{az_graph} and \link{az_app} classes. Calling the \code{new()} method for this class only constructs the R object; it does not call the AD Graph API to create the actual service principal.
 }
 
 \seealso{
 \link{az_graph}, \link{az_app}
+
+\href{https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-graph-api}{Azure AD Graph overview},
+\href{https://docs.microsoft.com/en-au/previous-versions/azure/ad/graph/api/api-catalog}{REST API reference}
 }
 \keyword{datasets}

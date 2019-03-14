@@ -4,7 +4,7 @@
 #'
 #' @docType class
 #' @section Methods:
-#' - `new(...)`: Initialize a new app object. See 'Initialization' below.
+#' - `new(...)`: Initialize a new app object. Do not call this directly; see 'Initialization' below.
 #' - `delete(confirm=TRUE)`: Delete an app. By default, ask for confirmation first.
 #' - `update(...)`: Update the app data in Azure Active Directory.
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
@@ -13,7 +13,7 @@
 #' - `delete_service_principal(confirm=TRUE)`: Delete the service principal for this app. By default, ask for confirmation first.
 #'
 #' @section Initialization:
-#' The recommended way to create a new app object is via the `create_app` and `get_app` methods of the [az_graph] class, which will handle the details automatically.
+#' Creating new objects of this class should be done via the `create_app` and `get_app` methods of the [az_graph] class. Calling the `new()` method for this class only constructs the R object; it does not call the AD Graph API to create the actual app.
 #'
 #' [Azure AD Graph overview](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-graph-api),
 #' [REST API reference](https://docs.microsoft.com/en-au/previous-versions/azure/ad/graph/api/api-catalog)

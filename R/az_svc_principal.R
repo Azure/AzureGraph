@@ -4,11 +4,11 @@
 #'
 #' @docType class
 #' @section Methods:
-#' - `new(...)`: Initialize a new service principal object. See 'Initialization' below.
+#' - `new(...)`: Initialize a new service principal object. Do not call this directly; see 'Initialization' below.
 #' - `delete(confirm=TRUE)`: Delete a service principal. By default, ask for confirmation first.
 #'
 #' @section Initialization:
-#' The recommended way to create a new service principal object is via the `create_service_principal` and `get_service_principal` methods of the [az_graph] and [az_app] classes, which will handle the details automatically.
+#' Creating new objects of this class should be done via the `create_service_principal` and `get_service_principal` methods of the [az_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the AD Graph API to create the actual service principal.
 #'
 #' @seealso
 #' [az_graph], [az_app]

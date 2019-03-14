@@ -1,15 +1,5 @@
-#' Format an Azure object
-#'
-#' Miscellaneous functions for printing Azure R6 objects
-#'
-#' @param env An R6 object's environment for printing.
-#' @param exclude Objects in `env` to exclude from the printout.
-#'
-#' @details
-#' These functions are utilities to aid in printing Azure R6 objects. They are not meant to be called by the user.
-#'
-#' @rdname format
-#' @export
+# copied from AzureRMR:: do not export
+
 format_public_fields <- function(env, exclude=character(0))
 {
     objnames <- ls(env)
@@ -49,8 +39,6 @@ format_public_fields <- function(env, exclude=character(0))
 }
 
 
-#' @rdname format
-#' @export
 format_public_methods <- function(env)
 {
     objnames <- ls(env)

@@ -10,20 +10,19 @@ if(tenant == "" || appnative == "" || subscription == "")
 if(!interactive())
     skip("App method tests skipped: must be in interactive session")
 
-az <- get_graph_login(tenant=tenant, app=appnative)
-sub <- az$get_subscription(subscription)
+gr <- get_graph_login(tenant=tenant)
 
 test_that("App creation works",
 {
     newapp_name <- paste0("AzureRtest_", paste0(sample(letters, 5, TRUE), collapse=""))
-    newapp <- az$create_app(name=newapp_name, create_service_principal=FALSE)
+    newapp <- gr$create_app(name=newapp_name, create_service_principal=FALSE)
     newsvc <- newapp$create_service_principal()
     expect_true(is_app(newapp))
     expect_true(is_service_principal(newsvc))
 
     newapp_id <- newapp$properties$appId
-    expect_true(is_app(az$get_app(app_id=newapp_id)))
-    expect_true(is_service_principal(az$get_service_principal(app_id=newapp_id)))
+    expect_true(is_app(gr$get_app(app_id=newapp_id)))
+    expect_true(is_service_principal(gr$get_service_principal(app_id=newapp_id)))
     expect_true(is_service_principal(newapp$get_service_principal()))
 
     Sys.setenv(AZ_TEST_NEWAPP_ID=newapp_id)
@@ -33,13 +32,10 @@ test_that("App deletion works",
 {
     newapp_id <- Sys.getenv("AZ_TEST_NEWAPP_ID")
 
-    expect_silent(az$delete_service_principal(app_id=newapp_id, confirm=FALSE))
-    expect_silent(az$delete_app(app_id=newapp_id, confirm=FALSE))
+    expect_silent(gr$delete_service_principal(app_id=newapp_id, confirm=FALSE))
+    expect_silent(gr$delete_app(app_id=newapp_id, confirm=FALSE))
 
     Sys.sleep(2)
-    expect_error(az$get_app(app_id=newapp_id))
+    expect_error(gr$get_app(app_id=newapp_id))
 })
 
-sub$get_resource_group(Sys.getenv("AZ_TEST_NEWRG"))$delete(confirm=FALSE)
-Sys.unsetenv("AZ_TEST_NEWAPP_ID")
-Sys.unsetenv("AZ_TEST_NEWRG")
