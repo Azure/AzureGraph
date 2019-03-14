@@ -1,0 +1,27 @@
+Package: AzureGraph
+Title: Interface to 'Azure Active Directory Graph'
+Version: 0.0.1
+Authors@R: c(
+    person("Hong", "Ooi", , "hongooi@microsoft.com", role = c("aut", "cre")),
+    person("Microsoft", role="cph")
+    )
+Description: A lightweight R interface to the 'Azure Active Directory Graph' REST API.
+URL: https://github.com/cloudyr/AzureGraph
+BugReports: https://github.com/cloudyr/AzureGraph/issues
+License: MIT + file LICENSE
+VignetteBuilder: knitr
+Depends: 
+    R (>= 3.3)
+Imports: 
+    AzureAuth,
+    utils,
+    httr (>= 1.3),
+    jsonlite,
+    R6,
+    xml2
+Suggests:
+    knitr,
+    testthat,
+    httpuv
+Roxygen: list(markdown=TRUE)
+RoxygenNote: 6.1.1
