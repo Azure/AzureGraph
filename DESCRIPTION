@@ -5,7 +5,7 @@ Authors@R: c(
     person("Hong", "Ooi", , "hongooi@microsoft.com", role = c("aut", "cre")),
     person("Microsoft", role="cph")
     )
-Description: A lightweight R interface to the 'Azure Active Directory Graph' REST API.
+Description: A simple R interface to the 'Azure Active Directory Graph' REST API.
 URL: https://github.com/cloudyr/AzureGraph
 BugReports: https://github.com/cloudyr/AzureGraph/issues
 License: MIT + file LICENSE
