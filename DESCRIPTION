@@ -9,7 +9,6 @@ Description: A lightweight R interface to the 'Azure Active Directory Graph' RES
 URL: https://github.com/cloudyr/AzureGraph
 BugReports: https://github.com/cloudyr/AzureGraph/issues
 License: MIT + file LICENSE
-VignetteBuilder: knitr
 Depends: 
     R (>= 3.3)
 Imports: 
@@ -20,7 +19,7 @@ Imports:
     R6,
     xml2
 Suggests:
-    knitr,
+    AzureRMR,
     testthat,
     httpuv
 Roxygen: list(markdown=TRUE)
