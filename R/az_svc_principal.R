@@ -1,3 +1,22 @@
+#' Service principal in Azure Active Directory
+#'
+#' Base class representing an AAD service principal.
+#'
+#' @docType class
+#' @section Methods:
+#' - `new(...)`: Initialize a new service principal object. See 'Initialization' below.
+#' - `delete(confirm=TRUE)`: Delete a service principal. By default, ask for confirmation first.
+#'
+#' @section Initialization:
+#' The recommended way to create a new service principal object is via the `create_service_principal` and `get_service_principal` methods of the [az_graph] and [az_app] classes, which will handle the details automatically.
+#'
+#' @seealso
+#' [az_graph], [az_app]
+#'
+#' [Azure AD Graph overview](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-graph-api),
+#' [REST API reference](https://docs.microsoft.com/en-au/previous-versions/azure/ad/graph/api/api-catalog)
+#'
+#' @format An R6 object of class `az_service_principal`.
 #' @export
 az_service_principal <- R6::R6Class("az_service_principal",
 

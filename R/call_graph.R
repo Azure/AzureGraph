@@ -113,6 +113,13 @@ error_message <- function(cont)
 }
 
 
+# handle different behaviour of file_path on Windows/Linux wrt trailing /
+construct_path <- function(...)
+{
+    sub("/$", "", file.path(..., fsep="/"))
+}
+
+
 # same as AzureRMR::named_list, do not export to avoid conflicts
 named_list <- function(lst=NULL, name_fields="name")
 {
@@ -136,8 +143,9 @@ named_list <- function(lst=NULL, name_fields="name")
 }
 
 
-# handle different behaviour of file_path on Windows/Linux wrt trailing /
-construct_path <- function(...)
+# same as AzureRMR::is_empty, do not export to avoid conflicts
+is_empty <- function(x)
 {
-    sub("/$", "", file.path(..., fsep="/"))
+    length(x) == 0
 }
+

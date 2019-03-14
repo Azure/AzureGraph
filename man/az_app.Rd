@@ -14,9 +14,9 @@ Base class representing an AAD app.
 \section{Methods}{
 
 \itemize{
-\item \code{new(token, tenant, ...)}: Initialize a new app object. See 'Initialization' below.
+\item \code{new(...)}: Initialize a new app object. See 'Initialization' below.
 \item \code{delete(confirm=TRUE)}: Delete an app. By default, ask for confirmation first.
-\item \code{update(...)}: Update the details for an app.
+\item \code{update(...)}: Update the app data in Azure Active Directory.
 \item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
 \item \code{create_service_principal(...)}: Create a service principal for this app, by default in the current tenant.
 \item \code{get_service_principal()}: Get the service principal for this app.
@@ -24,4 +24,15 @@ Base class representing an AAD app.
 }
 }
 
+\section{Initialization}{
+
+The recommended way to create a new app object is via the \code{create_app} and \code{get_app} methods of the \link{az_graph} class, which will handle the details automatically.
+
+\href{https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-graph-api}{Azure AD Graph overview},
+\href{https://docs.microsoft.com/en-au/previous-versions/azure/ad/graph/api/api-catalog}{REST API reference}
+}
+
+\seealso{
+\link{az_graph}, \link{az_service_principal}
+}
 \keyword{datasets}
