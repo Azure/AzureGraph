@@ -12,7 +12,7 @@
 #' @param ... Other arguments passed to lower-level code, ultimately to the appropriate functions in httr.
 #'
 #' @details
-#' These functions form the low-level interface between R and Azure. `call_azure_graph` builds a URL from its arguments and passes it to `call_azure_url`. Authentication is handled automatically.
+#' These functions form the low-level interface between R and Azure AD Graph. `call_graph_endpoint` forms a URL from its arguments and passes it to `call_graph_url`.
 #'
 #' @return
 #' If `http_status_handler` is one of `"stop"`, `"warn"` or `"message"`, the status code of the response is checked. If an error is not thrown, the parsed content of the response is returned with the status code attached as the "status" attribute.
@@ -21,9 +21,9 @@
 #'
 #' @seealso
 #' [httr::GET], [httr::PUT], [httr::POST], [httr::DELETE], [httr::stop_for_status], [httr::content]
-#' @rdname call_azure
+#' @rdname call_graph
 #' @export
-call_azure_graph <- function(token, tenant="myorganization", operation, ...,
+call_graph_endpoint <- function(token, tenant="myorganization", operation, ...,
                              options=list(),
                              api_version=getOption("azure_graph_api_version"))
 {
@@ -31,13 +31,12 @@ call_azure_graph <- function(token, tenant="myorganization", operation, ...,
     url$path <- construct_path(tenant, operation)
     url$query <- modifyList(list(`api-version`=api_version), options)
 
-    call_azure_url(token, httr::build_url(url), ...)
+    call_graph_url(token, httr::build_url(url), ...)
 }
 
-
-#' @rdname call_azure
+#' @rdname call_graph
 #' @export
-call_azure_url <- function(token, url, ...,
+call_graph_url <- function(token, url, ...,
                            http_verb=c("GET", "DELETE", "PUT", "POST", "HEAD", "PATCH"),
                            http_status_handler=c("stop", "warn", "message", "pass"),
                            auto_refresh=TRUE)

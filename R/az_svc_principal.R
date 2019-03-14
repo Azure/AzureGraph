@@ -34,7 +34,7 @@ public=list(
         }
 
         op <- file.path("servicePrincipals", self$properties$objectId)
-        call_azure_graph(self$token, self$tenant, op, http_verb="DELETE")
+        call_graph_endpoint(self$token, self$tenant, op, http_verb="DELETE")
         invisible(NULL)
     }
 ),
@@ -45,7 +45,7 @@ private=list(
     {
         properties <- list(...)
 
-        call_azure_graph(self$token, self$tenant, "servicePrincipals", body=properties, encode="json", http_verb="POST")
+        call_graph_endpoint(self$token, self$tenant, "servicePrincipals", body=properties, encode="json", http_verb="POST")
     },
 
     init_from_parms=function(parms)
@@ -59,6 +59,6 @@ private=list(
             file.path("servicePrincipalsByAppId", app_id)
         else file.path("servicePrincipals", object_id)
 
-        call_azure_graph(self$token, self$tenant, op)
+        call_graph_endpoint(self$token, self$tenant, op)
     }
 ))
