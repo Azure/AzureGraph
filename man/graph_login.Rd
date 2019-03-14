@@ -73,7 +73,7 @@ az <- create_graph_login()
 # retrieve the login in subsequent sessions
 az <- get_graph_login()
 
-# this will create a Resource Manager client for the AAD tenant 'microsoft.onmicrosoft.com',
+# this will create an Azure AD Graph client for the tenant 'microsoft.onmicrosoft.com',
 # using the client_credentials method
 az <- create_graph_login("microsoft", app="{app_id}", password="{password}")
 

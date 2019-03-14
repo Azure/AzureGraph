@@ -43,7 +43,7 @@
 #' # retrieve the login in subsequent sessions
 #' az <- get_graph_login()
 #'
-#' # this will create a Resource Manager client for the AAD tenant 'microsoft.onmicrosoft.com',
+#' # this will create an Azure AD Graph client for the tenant 'microsoft.onmicrosoft.com',
 #' # using the client_credentials method
 #' az <- create_graph_login("microsoft", app="{app_id}", password="{password}")
 #'
@@ -112,7 +112,7 @@ get_graph_login <- function(tenant="common", selection=NULL, refresh=TRUE)
     this_login <- graph_logins[[tenant]]
     if(is_empty(this_login))
     {
-        msg <- paste0("No Azure Resource Manager logins found for ", format_tenant(tenant),
+        msg <- paste0("No Azure AD Graph logins found for ", format_tenant(tenant),
                       ";\nuse create_graph_login() to create one")
         stop(msg, call.=FALSE)
     }
@@ -130,7 +130,7 @@ get_graph_login <- function(tenant="common", selection=NULL, refresh=TRUE)
             paste0("App ID: ", app, "\n   Authentication method: ", token$auth_type)
         })
 
-        msg <- paste0("Choose an Azure Resource Manager login for ", format_tenant(tenant))
+        msg <- paste0("Choose an Azure AD Graph login for ", format_tenant(tenant))
         selection <- utils::menu(choices, title=msg)
     }
 
@@ -146,7 +146,7 @@ get_graph_login <- function(tenant="common", selection=NULL, refresh=TRUE)
     if(is_empty(file) || !file.exists(file))
         stop("Azure Active Directory token not found for this login", call.=FALSE)
 
-    message("Loading Azure Resource Manager login for ", format_tenant(tenant))
+    message("Loading Azure AD Graph login for ", format_tenant(tenant))
 
     token <- readRDS(file)
     client <- az_graph$new(token=token)
@@ -172,7 +172,7 @@ delete_graph_login <- function(tenant="common", confirm=TRUE)
 
     if(confirm && interactive())
     {
-        msg <- paste0("Do you really want to delete the Azure Resource Manager login(s) for ",
+        msg <- paste0("Do you really want to delete the Azure AD Graph login(s) for ",
                       format_tenant(tenant), "? (y/N) ")
 
         yn <- readline(msg)
