@@ -1,16 +1,15 @@
 context("App creation/deletion")
 
 tenant <- Sys.getenv("AZ_TEST_TENANT_ID")
-appnative <- Sys.getenv("AZ_TEST_NATIVE_APP_ID")
-subscription <- Sys.getenv("AZ_TEST_SUBSCRIPTION")
 
-if(tenant == "" || appnative == "" || subscription == "")
-    skip("App method tests skipped: ARM credentials not set")
+if(tenant == "")
+    skip("App method tests skipped: login credentials not set")
 
 if(!interactive())
     skip("App method tests skipped: must be in interactive session")
 
 gr <- get_graph_login(tenant=tenant)
+
 
 test_that("App creation works",
 {
@@ -34,8 +33,4 @@ test_that("App deletion works",
 
     expect_silent(gr$delete_service_principal(app_id=newapp_id, confirm=FALSE))
     expect_silent(gr$delete_app(app_id=newapp_id, confirm=FALSE))
-
-    Sys.sleep(2)
-    expect_error(gr$get_app(app_id=newapp_id))
 })
-
