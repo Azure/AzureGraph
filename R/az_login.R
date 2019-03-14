@@ -10,7 +10,7 @@
 #' @param config_file Optionally, a JSON file containing any of the arguments listed above. Arguments supplied in this file take priority over those supplied on the command line. You can also use the output from the Azure CLI `az ad sp create-for-rbac` command.
 #' @param refresh For `get_graph_login`, whether to refresh the authentication token on loading the client.
 #' @param selection For `get_graph_login`, if you have multiple logins for a given tenant, which one to use. This can be a number, or the input MD5 hash of the token used for the login. If not supplied, `get_graph_login` will print a menu and ask you to choose a login.
-#' @param confirm For `delete_azure_login`, whether to ask for confirmation before deleting.
+#' @param confirm For `delete_graph_login`, whether to ask for confirmation before deleting.
 #' @param ... Other arguments passed to `az_graph$new()`.
 #'
 #' @details
@@ -51,7 +51,7 @@
 #' az <- create_graph_login(config_file="~/creds.json")
 #'
 #' }
-#' @rdname azure_login
+#' @rdname graph_login
 #' @export
 create_graph_login <- function(tenant="common", app=.az_cli_app_id, password=NULL, username=NULL, auth_type=NULL,
                                host="https://graph.windows.net/", aad_host="https://login.microsoftonline.com/",
@@ -99,7 +99,7 @@ create_graph_login <- function(tenant="common", app=.az_cli_app_id, password=NUL
 }
 
 
-#' @rdname azure_login
+#' @rdname graph_login
 #' @export
 get_graph_login <- function(tenant="common", selection=NULL, refresh=TRUE)
 {
@@ -158,9 +158,9 @@ get_graph_login <- function(tenant="common", selection=NULL, refresh=TRUE)
 }
 
 
-#' @rdname azure_login
+#' @rdname graph_login
 #' @export
-delete_azure_login <- function(tenant="common", confirm=TRUE)
+delete_graph_login <- function(tenant="common", confirm=TRUE)
 {
     if(!dir.exists(AzureR_dir()))
     {
@@ -187,7 +187,7 @@ delete_azure_login <- function(tenant="common", confirm=TRUE)
 }
 
 
-#' @rdname azure_login
+#' @rdname graph_login
 #' @export
 list_graph_logins <- function()
 {

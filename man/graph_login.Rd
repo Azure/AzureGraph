@@ -3,7 +3,7 @@
 \name{create_graph_login}
 \alias{create_graph_login}
 \alias{get_graph_login}
-\alias{delete_azure_login}
+\alias{delete_graph_login}
 \alias{list_graph_logins}
 \title{Login to Azure Active Directory Graph}
 \usage{
@@ -15,7 +15,7 @@ create_graph_login(tenant = "common", app = .az_cli_app_id,
 
 get_graph_login(tenant = "common", selection = NULL, refresh = TRUE)
 
-delete_azure_login(tenant = "common", confirm = TRUE)
+delete_graph_login(tenant = "common", confirm = TRUE)
 
 list_graph_logins()
 }
@@ -42,7 +42,7 @@ list_graph_logins()
 
 \item{refresh}{For \code{get_graph_login}, whether to refresh the authentication token on loading the client.}
 
-\item{confirm}{For \code{delete_azure_login}, whether to ask for confirmation before deleting.}
+\item{confirm}{For \code{delete_graph_login}, whether to ask for confirmation before deleting.}
 }
 \value{
 For \code{get_graph_login} and \code{create_graph_login}, an object of class \code{az_graph}, representing the login client. For \code{list_graph_logins}, a (possibly nested) list of such objects.
