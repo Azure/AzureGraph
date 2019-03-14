@@ -130,12 +130,14 @@ public=list(
             }
             else "2299-12-30T12:00:00Z"
 
-            private$password <- password
-            properties <- modifyList(properties, list(passwordCredentials=list(list(
-                customKeyIdentifier=key,
-                endDate=end_date,
-                value=password
-            ))))
+            properties <- modifyList(properties, list(
+                displayName=name,
+                passwordCredentials=list(list(
+                    customKeyIdentifier=key,
+                    endDate=end_date,
+                    value=password
+                ))
+            ))
         }
 
         res <- az_app$new(
