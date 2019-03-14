@@ -14,7 +14,7 @@ Base class for interacting with Azure AD Graph API.
 \section{Methods}{
 
 \itemize{
-\item \code{new(tenant, app, ...)}: Initialize a new ARM connection with the given credentials. See 'Authentication` for more details.
+\item \code{new(tenant, app, ...)}: Initialize a new Azure AD Graph connection with the given credentials. See 'Authentication` for more details.
 \item \code{create_app(name, ..., password=NULL, create_service_principal=TRUE)}: Creates a new registered app in Azure Active Directory. By default the app will have a randomly generated strong password with a duration of 1 year, and an associated service principal will also be created.
 \item \code{get_app(app_id, object_id)}: Retrieves an existing registered app, via either its app ID or object ID.
 \item \code{delete_app(app_id, object_id, confirm=TRUE)}: Deletes an existing registered app. Any associated service principal will also be deleted.

@@ -9,7 +9,7 @@
 \usage{
 create_graph_login(tenant = "common", app = .az_cli_app_id,
   password = NULL, username = NULL, auth_type = NULL,
-  host = "https://management.azure.com/",
+  host = "https://graph.windows.net/",
   aad_host = "https://login.microsoftonline.com/", config_file = NULL,
   ...)
 
@@ -36,7 +36,7 @@ list_graph_logins()
 
 \item{config_file}{Optionally, a JSON file containing any of the arguments listed above. Arguments supplied in this file take priority over those supplied on the command line. You can also use the output from the Azure CLI \code{az ad sp create-for-rbac} command.}
 
-\item{...}{Other arguments passed to \code{az_rm$new()}.}
+\item{...}{Other arguments passed to \code{az_graph$new()}.}
 
 \item{selection}{For \code{get_graph_login}, if you have multiple logins for a given tenant, which one to use. This can be a number, or the input MD5 hash of the token used for the login. If not supplied, \code{get_graph_login} will print a menu and ask you to choose a login.}
 
