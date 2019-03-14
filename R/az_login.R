@@ -11,7 +11,7 @@
 #' @param refresh For `get_graph_login`, whether to refresh the authentication token on loading the client.
 #' @param selection For `get_graph_login`, if you have multiple logins for a given tenant, which one to use. This can be a number, or the input MD5 hash of the token used for the login. If not supplied, `get_graph_login` will print a menu and ask you to choose a login.
 #' @param confirm For `delete_azure_login`, whether to ask for confirmation before deleting.
-#' @param ... Other arguments passed to `az_rm$new()`.
+#' @param ... Other arguments passed to `az_graph$new()`.
 #'
 #' @details
 #' `create_graph_login` creates a login client to authenticate with Azure AD Graph, using the supplied arguments. The authentication token is obtained using [get_azure_token], which automatically caches and reuses tokens for subsequent sessions. Note that credentials are only cached if you allowed AzureGraph to create a data directory at package startup.
@@ -54,7 +54,7 @@
 #' @rdname azure_login
 #' @export
 create_graph_login <- function(tenant="common", app=.az_cli_app_id, password=NULL, username=NULL, auth_type=NULL,
-                               host="https://management.azure.com/", aad_host="https://login.microsoftonline.com/",
+                               host="https://graph.windows.net/", aad_host="https://login.microsoftonline.com/",
                                config_file=NULL, ...)
 {
     if(!is.null(config_file))
@@ -87,8 +87,8 @@ create_graph_login <- function(tenant="common", app=.az_cli_app_id, password=NUL
     tenant <- normalize_tenant(tenant)
     app <- normalize_guid(app)
 
-    message("Creating Azure Resource Manager login for ", format_tenant(tenant))
-    client <- az_rm$new(tenant, app, password, username, auth_type, host, aad_host, config_file, ...)
+    message("Creating Azure AD Graph login for ", format_tenant(tenant))
+    client <- az_graph$new(tenant, app, password, username, auth_type, host, aad_host, config_file, ...)
 
     # save login info for future sessions
     graph_logins <- load_graph_logins()
@@ -149,7 +149,7 @@ get_graph_login <- function(tenant="common", selection=NULL, refresh=TRUE)
     message("Loading Azure Resource Manager login for ", format_tenant(tenant))
 
     token <- readRDS(file)
-    client <- az_rm$new(token=token)
+    client <- az_graph$new(token=token)
 
     if(refresh)
         client$token$refresh()
@@ -197,7 +197,7 @@ list_graph_logins <- function()
         sapply(tenant, function(hash)
         {
             file <- file.path(AzureR_dir(), hash)
-            az_rm$new(token=readRDS(file))
+            az_graph$new(token=readRDS(file))
         }, simplify=FALSE)
     }, simplify=FALSE)
 

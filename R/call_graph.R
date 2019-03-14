@@ -112,3 +112,32 @@ error_message <- function(cont)
     paste0(strwrap(msg), collapse="\n")
 }
 
+
+# same as AzureRMR::named_list, do not export to avoid conflicts
+named_list <- function(lst=NULL, name_fields="name")
+{
+    if(is_empty(lst))
+        return(structure(list(), names=character(0)))
+
+    lst_names <- sapply(name_fields, function(n) sapply(lst, `[[`, n))
+    if(length(name_fields) > 1)
+    {
+        dim(lst_names) <- c(length(lst_names) / length(name_fields), length(name_fields))
+        lst_names <- apply(lst_names, 1, function(nn) paste(nn, collapse="/"))
+    }
+    names(lst) <- lst_names
+    dups <- duplicated(tolower(names(lst)))
+    if(any(dups))
+    {
+        duped_names <- names(lst)[dups]
+        warning("Some names are duplicated: ", paste(unique(duped_names), collapse=" "), call.=FALSE)
+    }
+    lst
+}
+
+
+# handle different behaviour of file_path on Windows/Linux wrt trailing /
+construct_path <- function(...)
+{
+    sub("/$", "", file.path(..., fsep="/"))
+}

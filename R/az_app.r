@@ -1,3 +1,18 @@
+#' Registered app in Azure Active Directory
+#'
+#' Base class representing an AAD app.
+#'
+#' @docType class
+#' @section Methods:
+#' - `new(token, tenant, ...)`: Initialize a new app object. See 'Initialization' below.
+#' - `delete(confirm=TRUE)`: Delete an app. By default, ask for confirmation first.
+#' - `update(...)`: Update the details for an app.
+#' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
+#' - `create_service_principal(...)`: Create a service principal for this app, by default in the current tenant.
+#' - `get_service_principal()`: Get the service principal for this app.
+#' - `delete_service_principal(confirm=TRUE)`: Delete the service principal for this app. By default, ask for confirmation first.
+#'
+#' @format An R6 object of class `az_app`.
 #' @export
 az_app <- R6::R6Class("az_app",
 
