@@ -24,6 +24,9 @@ test_that("App creation works",
     expect_true(is_service_principal(gr$get_service_principal(app_id=newapp_id)))
     expect_true(is_service_principal(newapp$get_service_principal()))
 
+    expect_type(newapp$update_password(), "character")
+    expect_true(is_app(newapp$update(displayName=paste0(newapp_name, "_update"))))
+
     Sys.setenv(AZ_TEST_NEWAPP_ID=newapp_id)
 })
 

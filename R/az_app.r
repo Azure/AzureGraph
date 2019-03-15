@@ -11,6 +11,8 @@
 #' - `create_service_principal(...)`: Create a service principal for this app, by default in the current tenant.
 #' - `get_service_principal()`: Get the service principal for this app.
 #' - `delete_service_principal(confirm=TRUE)`: Delete the service principal for this app. By default, ask for confirmation first.
+#' - `update_password(password=NULL, name="key1", password_duration=1)`: Updates the app password. Note that this will invalidate any existing password.
+#' - `update(...)`: Updates the details of the app. For what properties can be updated, consult the REST API documentation link below.
 #'
 #' @section Initialization:
 #' Creating new objects of this class should be done via the `create_app` and `get_app` methods of the [az_graph] class. Calling the `new()` method for this class only constructs the R object; it does not call the AD Graph API to create the actual app.
@@ -21,6 +23,22 @@
 #' @seealso
 #' [az_graph], [az_service_principal]
 #'
+#' @examples
+#' \dontrun{
+#'
+#' gr <- get_graph_login()
+#' app <- gr$create_app("MyNewApp")
+#'
+#' # password reset
+#' app$update_password()
+#'
+#' # set a redirect URI
+#' app$update(replyUrls=I("http://localhost:1410"))
+#'
+#' # change the app name
+#' app$update(displayName="MyRenamedApp")
+#'
+#' }
 #' @format An R6 object of class `az_app`.
 #' @export
 az_app <- R6::R6Class("az_app",
@@ -59,16 +77,50 @@ public=list(
         invisible(NULL)
     },
 
-    update_password=function(...)
-    {},
+    update_password=function(password=NULL, name="key1", password_duration=1)
+    {
+        key <- openssl::base64_encode(iconv(name, to="UTF-16LE", toRaw=TRUE)[[1]])
+        if(is.null(password))
+        {
+            chars <- c(letters, LETTERS, 0:9, "~", "!", "@", "#", "$", "%", "&", "*", "(", ")", "-", "+")
+            password <- paste0(sample(chars, 50, replace=TRUE), collapse="")
+        }
+
+        end_date <- if(is.finite(password_duration))
+        {
+            now <- as.POSIXlt(Sys.time())
+            now$year <- now$year + password_duration
+            format(as.POSIXct(now), "%Y-%m-%dT%H:%M:%SZ", tz="GMT")
+        }
+        else "2299-12-30T12:00:00Z"
+
+        properties <- list(
+            passwordCredentials=list(list(
+                customKeyIdentifier=key,
+                endDate=end_date,
+                value=password
+            ))
+        )
+
+        op <- file.path("applications", self$properties$objectId)
+        private$graph_op(op, body=properties, encode="json", http_verb="PATCH")
+        private$graph_op(op)
+        private$password <- password
+        password
+    },
 
     update=function(...)
-    {},
+    {
+        op <- file.path("applications", self$properties$objectId)
+        private$graph_op(op, body=list(...), encode="json", http_verb="PATCH")
+        self$properties <- private$graph_op(op)
+        self
+    },
 
     sync_fields=function()
     {
         op <- file.path("applications", self$properties$objectId)
-        self$properties <- call_graph_endpoint(self$token, self$tenant, op)
+        self$properties <- private$graph_op(op)
         invisible(self)
     },
 
