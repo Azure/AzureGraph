@@ -6,13 +6,12 @@
 #' @section Methods:
 #' - `new(...)`: Initialize a new app object. Do not call this directly; see 'Initialization' below.
 #' - `delete(confirm=TRUE)`: Delete an app. By default, ask for confirmation first.
-#' - `update(...)`: Update the app data in Azure Active Directory.
+#' - `update(...)`: Update the app data in Azure Active Directory. For what properties can be updated, consult the REST API documentation link below.
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
 #' - `create_service_principal(...)`: Create a service principal for this app, by default in the current tenant.
 #' - `get_service_principal()`: Get the service principal for this app.
 #' - `delete_service_principal(confirm=TRUE)`: Delete the service principal for this app. By default, ask for confirmation first.
 #' - `update_password(password=NULL, name="key1", password_duration=1)`: Updates the app password. Note that this will invalidate any existing password.
-#' - `update(...)`: Updates the details of the app. For what properties can be updated, consult the REST API documentation link below.
 #'
 #' @section Initialization:
 #' Creating new objects of this class should be done via the `create_app` and `get_app` methods of the [az_graph] class. Calling the `new()` method for this class only constructs the R object; it does not call the AD Graph API to create the actual app.
@@ -21,7 +20,7 @@
 #' [REST API reference](https://docs.microsoft.com/en-au/previous-versions/azure/ad/graph/api/api-catalog)
 #'
 #' @seealso
-#' [az_graph], [az_service_principal]
+#' [az_graph], [az_service_principal], [az_user], [az_group]
 #'
 #' @examples
 #' \dontrun{

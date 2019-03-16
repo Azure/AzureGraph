@@ -2,7 +2,9 @@
 
 export(az_app)
 export(az_graph)
+export(az_group)
 export(az_service_principal)
+export(az_user)
 export(call_graph_endpoint)
 export(call_graph_url)
 export(create_graph_login)

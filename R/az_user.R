@@ -1,3 +1,26 @@
+#' User in Azure Active Directory
+#'
+#' Base class representing an AAD user account.
+#'
+#' @docType class
+#' @section Methods:
+#' - `new(...)`: Initialize a new user object. Do not call this directly; see 'Initialization' below.
+#' - `delete(confirm=TRUE)`: Delete a user account. By default, ask for confirmation first.
+#' - `update(...)`: Update the user information in Azure Active Directory.
+#' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
+#' - `reset_password(password=NULL, force_password_change=TRUE): Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
+#'
+#' @section Initialization:
+#' Creating new objects of this class should be done via the `create_user` and `get_user` methods of the [az_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the AD Graph API to create the actual user account.
+#'
+#' @seealso
+#' [az_graph], [az_app], [az_group]
+#'
+#' [Azure AD Graph overview](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-graph-api),
+#' [REST API reference](https://docs.microsoft.com/en-au/previous-versions/azure/ad/graph/api/api-catalog)
+#'
+#' @format An R6 object of class `az_user`.
+#' @export
 az_user <- R6::R6Class("az_user",
 
 public=list(
@@ -16,7 +39,7 @@ public=list(
         private$password <- password
     },
 
-    reset_password=function(password=NULL, temporary=TRUE)
+    reset_password=function(password=NULL, force_password_change=TRUE)
     {
         if(is.null(password))
         {
@@ -27,7 +50,7 @@ public=list(
         properties <- list(
             passwordProfile=list(
                 password=password,
-                forceChangeAtNextLogin=temporary
+                forceChangeAtNextLogin=force_password_change
             )
         )
 
@@ -44,6 +67,13 @@ public=list(
         private$graph_op(op, body=list(...), encode="json", http_verb="PATCH")
         self$properties <- private$graph_op(op)
         self
+    },
+
+    sync_fields=function()
+    {
+        op <- file.path("users", self$properties$objectId)
+        self$properties <- private$graph_op(op)
+        invisible(self)
     },
 
     delete=function(confirm=TRUE)

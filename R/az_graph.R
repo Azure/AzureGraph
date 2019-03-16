@@ -5,13 +5,19 @@
 #' @docType class
 #' @section Methods:
 #' - `new(tenant, app, ...)`: Initialize a new Azure AD Graph connection with the given credentials. See 'Authentication` for more details.
-#' - `create_app(name, ..., password=NULL, create_service_principal=TRUE)`: Creates a new registered app in Azure Active Directory. By default the app will have a randomly generated strong password with a duration of 1 year, and an associated service principal will also be created.
+#' - `create_app(name, ..., password=NULL, password_duration=1, create_service_principal=TRUE)`: Creates a new registered app in Azure Active Directory. By default the app will have a randomly generated strong password with a duration of 1 year, and an associated service principal will also be created. To skip assigning a password, set `password=FALSE`.
 #' - `get_app(app_id, object_id)`: Retrieves an existing registered app, via either its app ID or object ID.
 #' - `delete_app(app_id, object_id, confirm=TRUE)`: Deletes an existing registered app. Any associated service principal will also be deleted.
 #' - `create_service_principal(app_id, ...)`: Creates a service principal for a registered app.
 #' - `get_service_principal()`: Retrieves an existing service principal.
 #' - `delete_service_principal()`: Deletes an existing service principal.
-#' - `call_graph_endpoint(op="", ...)`: Calls the AD Graph API with this object's token and tenant as arguments. See [call_graph_endpoint].
+#' - `create_user(name, email, enabled=TRUE, ..., password=NULL, force_password_change=TRUE)`: Creates a new user account. By default this will be a work account (not social or local) in the current tenant, and will have a randomly generated password that must be changed at next login.
+#' - `get_user(user_id)`: Retrieves an existing user account.
+#' - `delete_user(user_id, confirm=TRUE)`: Deletes a user account.
+#' - `create_group(name, email, ...)`: Creates a new group. Note that only security groups can be created via the AD Graph API.
+#' - `get_group(group_id)`: Retrieves an existing group.
+#' - `delete_group(group_id, confirm=TRUE)`: Deletes a group.
+#' - `call_graph_endpoint(op="", ...)`: Calls the AD Graph API using this object's token and tenant as authentication arguments. See [call_graph_endpoint].
 #'
 #' @section Authentication:
 #' The recommended way to authenticate with Azure AD Graph is via the [create_graph_login] function, which creates a new instance of this class.
@@ -186,28 +192,82 @@ public=list(
         }
     },
 
-    create_user=function(user_id, ...)
-    {},
-
-    get_user=function(user_id)
-    {},
-
-    delete_user=function(user_id, confirm=TRUE)
-    {},
-
-    create_group=function(group_id, ...)
-    {},
-
-    get_group=function(group_id)
-    {},
-
-    delete_group=function(group_id, confirm=TRUE)
-    {},
-
     delete_service_principal=function(app_id=NULL, object_id=NULL, confirm=TRUE)
     {
         self$get_service_principal(app_id, object_id)$delete(confirm=confirm)
     },
+
+    create_user=function(name, email, enabled=TRUE, ..., password=NULL, force_password_change=TRUE)
+    {
+        properties <- list(
+            displayName=name,
+            mail=email,
+            userPrincipalName=email,
+            mailNickname=email,
+            accountEnabled=enabled
+        )
+
+        properties <- modifyList(properties, list(...))
+
+        if(is.null(password))
+        {
+            chars <- c(letters, LETTERS, 0:9, "~", "!", "@", "#", "$", "%", "&", "*", "(", ")", "-", "+")
+            password <- paste0(sample(chars, 50, replace=TRUE), collapse="")
+        }
+
+        properties <- modifyList(properties, list(
+            passwordProfile=list(
+                password=password,
+                forceChangeAtNextLogin=force_password_change
+            )
+        ))
+
+        az_user$new(
+            self$token,
+            self$tenant,
+            self$call_graph_endpoint("users", body=properties, encode="json", http_verb="POST"),
+            password
+        )
+    },
+
+    get_user=function(user_id="me")
+    {
+        op <- if(user_id == "me")
+            "me"
+        else file.path("users", user_id)
+
+        az_user$new(self$token, self$tenant, self$call_graph_endpoint(op))
+    },
+
+    delete_user=function(user_id, confirm=TRUE)
+    {
+        self$get_user(user_id)$delete(confirm=confirm)
+    },
+
+    create_group=function(name, email, ...)
+    {
+        properties <- list(
+            displayName=name,
+            mailEnabled=FALSE,
+            mailNickname=email,
+            securityEnabled=TRUE
+        )
+
+        az_group$new(
+            self$token,
+            self$tenant,
+            self$call_graph_endpoint("groups", body=properties, encode="json", http_verb="POST")
+        )
+    },
+
+    get_group=function(group_id)
+    {
+        op <- file.path("groups", group_id)
+        az_group$new(self$token, self$tenant, self$call_graph_endpoint(op))
+    },
+
+    delete_group=function(group_id, confirm=TRUE)
+    {},
 
     call_graph_endpoint=function(op="", ...)
     {

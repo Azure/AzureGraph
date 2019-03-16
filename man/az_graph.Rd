@@ -15,13 +15,19 @@ Base class for interacting with Azure AD Graph API.
 
 \itemize{
 \item \code{new(tenant, app, ...)}: Initialize a new Azure AD Graph connection with the given credentials. See 'Authentication` for more details.
-\item \code{create_app(name, ..., password=NULL, create_service_principal=TRUE)}: Creates a new registered app in Azure Active Directory. By default the app will have a randomly generated strong password with a duration of 1 year, and an associated service principal will also be created.
+\item \code{create_app(name, ..., password=NULL, password_duration=1, create_service_principal=TRUE)}: Creates a new registered app in Azure Active Directory. By default the app will have a randomly generated strong password with a duration of 1 year, and an associated service principal will also be created. To skip assigning a password, set \code{password=FALSE}.
 \item \code{get_app(app_id, object_id)}: Retrieves an existing registered app, via either its app ID or object ID.
 \item \code{delete_app(app_id, object_id, confirm=TRUE)}: Deletes an existing registered app. Any associated service principal will also be deleted.
 \item \code{create_service_principal(app_id, ...)}: Creates a service principal for a registered app.
 \item \code{get_service_principal()}: Retrieves an existing service principal.
 \item \code{delete_service_principal()}: Deletes an existing service principal.
-\item \code{call_graph_endpoint(op="", ...)}: Calls the AD Graph API with this object's token and tenant as arguments. See \link{call_graph_endpoint}.
+\item \code{create_user(name, email, enabled=TRUE, ..., password=NULL, force_password_change=TRUE)}: Creates a new user account. By default this will be a work account (not social or local) in the current tenant, and will have a randomly generated password that must be changed at next login.
+\item \code{get_user(user_id)}: Retrieves an existing user account.
+\item \code{delete_user(user_id, confirm=TRUE)}: Deletes a user account.
+\item \code{create_group(name, email, ...)}: Creates a new group. Note that only security groups can be created via the AD Graph API.
+\item \code{get_group(group_id)}: Retrieves an existing group.
+\item \code{delete_group(group_id, confirm=TRUE)}: Deletes a group.
+\item \code{call_graph_endpoint(op="", ...)}: Calls the AD Graph API using this object's token and tenant as authentication arguments. See \link{call_graph_endpoint}.
 }
 }
 

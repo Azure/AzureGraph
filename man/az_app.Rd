@@ -16,11 +16,12 @@ Base class representing an AAD app.
 \itemize{
 \item \code{new(...)}: Initialize a new app object. Do not call this directly; see 'Initialization' below.
 \item \code{delete(confirm=TRUE)}: Delete an app. By default, ask for confirmation first.
-\item \code{update(...)}: Update the app data in Azure Active Directory.
+\item \code{update(...)}: Update the app data in Azure Active Directory. For what properties can be updated, consult the REST API documentation link below.
 \item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
 \item \code{create_service_principal(...)}: Create a service principal for this app, by default in the current tenant.
 \item \code{get_service_principal()}: Get the service principal for this app.
 \item \code{delete_service_principal(confirm=TRUE)}: Delete the service principal for this app. By default, ask for confirmation first.
+\item \code{update_password(password=NULL, name="key1", password_duration=1)}: Updates the app password. Note that this will invalidate any existing password.
 }
 }
 
@@ -32,7 +33,24 @@ Creating new objects of this class should be done via the \code{create_app} and 
 \href{https://docs.microsoft.com/en-au/previous-versions/azure/ad/graph/api/api-catalog}{REST API reference}
 }
 
+\examples{
+\dontrun{
+
+gr <- get_graph_login()
+app <- gr$create_app("MyNewApp")
+
+# password reset
+app$update_password()
+
+# set a redirect URI
+app$update(replyUrls=I("http://localhost:1410"))
+
+# change the app name
+app$update(displayName="MyRenamedApp")
+
+}
+}
 \seealso{
-\link{az_graph}, \link{az_service_principal}
+\link{az_graph}, \link{az_service_principal}, \link{az_user}, \link{az_group}
 }
 \keyword{datasets}
