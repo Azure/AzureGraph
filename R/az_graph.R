@@ -124,10 +124,7 @@ public=list(
         {
             key <- "awBlAHkAMQA=" # base64/UTF-16LE encoded "key1"
             if(is.null(password))
-            {
-                chars <- c(letters, LETTERS, 0:9, "~", "!", "@", "#", "$", "%", "&", "*", "(", ")", "-", "+")
-                password <- paste0(sample(chars, 50, replace=TRUE), collapse="")
-            }
+                password <- openssl::base64_encode(openssl::rand_bytes(40))
 
             end_date <- if(is.finite(password_duration))
             {
@@ -210,10 +207,7 @@ public=list(
         properties <- modifyList(properties, list(...))
 
         if(is.null(password))
-        {
-            chars <- c(letters, LETTERS, 0:9, "~", "!", "@", "#", "$", "%", "&", "*", "(", ")", "-", "+")
-            password <- paste0(sample(chars, 50, replace=TRUE), collapse="")
-        }
+            password <- openssl::base64_encode(openssl::rand_bytes(40))
 
         properties <- modifyList(properties, list(
             passwordProfile=list(
