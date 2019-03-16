@@ -12,7 +12,7 @@ AzureGraph uses the same authentication procedure as AzureRMR and the [Azure CLI
 
 ## Sample workflow
 
-AzureGraph currently includes methods for creating and deleting registered apps and service principals. A `call_graph_endpoint()` method is also supplied for making arbitrary REST calls.
+AzureGraph currently includes methods for working with registered apps, service principals, users and groups. A `call_graph_endpoint()` method is also supplied for making arbitrary REST calls.
 
 ```r
 library(AzureGraph)
@@ -27,10 +27,10 @@ gr <- create_graph_login()
 app <- gr$create_app("AzureR_newapp")
 
 # get the associated service principal
-svc <- gr$get_service_principal()
+app$get_service_principal()
 
 # my user information
-gr$call_graph_endpoint("me")
+gr$get_user("me")
 ```
 
 ---
