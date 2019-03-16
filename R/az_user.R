@@ -40,10 +40,10 @@ public=list(
 
     update=function(...)
     {
-        properties=list(...)
         op <- file.path("users", self$properties$objectId)
         private$graph_op(op, body=list(...), encode="json", http_verb="PATCH")
-        private$graph_op(op)
+        self$properties <- private$graph_op(op)
+        self
     },
 
     delete=function(confirm=TRUE)
