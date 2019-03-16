@@ -42,10 +42,7 @@ public=list(
     reset_password=function(password=NULL, force_password_change=TRUE)
     {
         if(is.null(password))
-        {
-            chars <- c(letters, LETTERS, 0:9, "~", "!", "@", "#", "$", "%", "&", "*", "(", ")", "-", "+")
-            password <- paste0(sample(chars, 50, replace=TRUE), collapse="")
-        }
+            password <- openssl::base64_encode(openssl::rand_bytes(40))
 
         properties <- list(
             passwordProfile=list(

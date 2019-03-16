@@ -80,10 +80,7 @@ public=list(
     {
         key <- openssl::base64_encode(iconv(name, to="UTF-16LE", toRaw=TRUE)[[1]])
         if(is.null(password))
-        {
-            chars <- c(letters, LETTERS, 0:9, "~", "!", "@", "#", "$", "%", "&", "*", "(", ")", "-", "+")
-            password <- paste0(sample(chars, 50, replace=TRUE), collapse="")
-        }
+            password <- openssl::base64_encode(openssl::rand_bytes(40))
 
         end_date <- if(is.finite(password_duration))
         {
