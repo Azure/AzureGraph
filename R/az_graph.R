@@ -186,6 +186,24 @@ public=list(
         }
     },
 
+    create_user=function(user_id, ...)
+    {},
+
+    get_user=function(user_id)
+    {},
+
+    delete_user=function(user_id, confirm=TRUE)
+    {},
+
+    create_group=function(group_id, ...)
+    {},
+
+    get_group=function(group_id)
+    {},
+
+    delete_group=function(group_id, confirm=TRUE)
+    {},
+
     delete_service_principal=function(app_id=NULL, object_id=NULL, confirm=TRUE)
     {
         self$get_service_principal(app_id, object_id)$delete(confirm=confirm)
