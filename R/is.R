@@ -6,7 +6,7 @@
 #'
 #' @return
 #' A boolean.
-#' @rdname is
+#' @rdname info
 #' @export
 is_app <- function(object)
 {
@@ -14,7 +14,7 @@ is_app <- function(object)
 }
 
 
-#' @rdname is
+#' @rdname info
 #' @export
 is_service_principal <- function(object)
 {
