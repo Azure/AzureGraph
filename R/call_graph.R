@@ -81,8 +81,12 @@ process_response <- function(response, handler)
         handler <- get(paste0(handler, "_for_status"), getNamespace("httr"))
         handler(response, paste0("complete operation. Message:\n",
                                  sub("\\.$", "", error_message(cont))))
-        if(is.null(cont))
+
+        if(inherits(cont, "xml_document"))
+            cont <- as_list(cont)
+        else if(is.null(cont))
             cont <- list()
+
         attr(cont, "status") <- httr::status_code(response)
         cont
     }
