@@ -83,7 +83,7 @@ process_response <- function(response, handler)
                                  sub("\\.$", "", error_message(cont))))
 
         if(inherits(cont, "xml_document"))
-            cont <- as_list(cont)
+            cont <- xml2::as_list(cont)
         else if(is.null(cont))
             cont <- list()
 
