@@ -1,6 +1,6 @@
 Package: AzureGraph
 Title: Interface to 'Azure Active Directory Graph'
-Version: 0.0.1
+Version: 0.1.0
 Authors@R: c(
     person("Hong", "Ooi", , "hongooi@microsoft.com", role = c("aut", "cre")),
     person("Microsoft", role="cph")
