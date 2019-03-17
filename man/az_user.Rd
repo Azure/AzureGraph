@@ -19,6 +19,7 @@ Base class representing an AAD user account.
 \item \code{update(...)}: Update the user information in Azure Active Directory.
 \item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
 \item `reset_password(password=NULL, force_password_change=TRUE): Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
+\item \code{list_group_memberships()}: List the groups this user is a member of.
 }
 }
 

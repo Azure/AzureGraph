@@ -9,6 +9,7 @@
 #' - `update(...)`: Update the user information in Azure Active Directory.
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
 #' - `reset_password(password=NULL, force_password_change=TRUE): Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
+#' - `list_group_memberships()`: List the groups this user is a member of.
 #'
 #' @section Initialization:
 #' Creating new objects of this class should be done via the `create_user` and `get_user` methods of the [az_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the AD Graph API to create the actual user account.
