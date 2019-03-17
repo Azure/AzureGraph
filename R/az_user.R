@@ -73,6 +73,25 @@ public=list(
         invisible(self)
     },
 
+    list_group_memberships=function()
+    {
+        op <- file.path("users", self$properties$objectId, "memberOf")
+        lst <- private$graph_op(op)
+
+        res <- lapply(lst$value, function(obj) az_group$new(self$token, self$tenant, obj))
+        while(!is_empty(lst$odata.nextLink))
+        {
+            # need to manually paste api version on to link
+            link <- paste0(lst$odata.nextLink, "&api-version=", getOption("azure_graph_api_version"))
+            lst <- private$graph_op(link, api_version=NULL)
+            res <- c(res,
+                lapply(lst$value, function(obj) az_group$new(self$token, self$tenant, obj)))
+        }
+
+        names(res) <- sapply(res, function(grp) grp$properties$displayName)
+        res
+    },
+
     delete=function(confirm=TRUE)
     {
         if(confirm && interactive())
