@@ -149,6 +149,6 @@ private=list(
 
     graph_op=function(op="", ...)
     {
-        call_graph_endpoint(self$token, self$tenant, op, ...)
+        call_graph_endpoint(self$token, op, ...)
     }
 ))

@@ -5,8 +5,8 @@
 \alias{call_graph_url}
 \title{Call the Microsoft Graph REST API}
 \usage{
-call_graph_endpoint(token, tenant = "myorganization", operation, ...,
-  options = list(), api_version = getOption("azure_graph_api_version"))
+call_graph_endpoint(token, operation, ..., options = list(),
+  api_version = getOption("azure_graph_api_version"))
 
 call_graph_url(token, url, ..., http_verb = c("GET", "DELETE", "PUT",
   "POST", "HEAD", "PATCH"), http_status_handler = c("stop", "warn",
@@ -14,8 +14,6 @@ call_graph_url(token, url, ..., http_verb = c("GET", "DELETE", "PUT",
 }
 \arguments{
 \item{token}{An Azure OAuth token, of class \link{AzureToken}.}
-
-\item{tenant}{An Azure Active Directory tenant. Can be a GUID, a domain name, or "myorganization" to use the tenant of the logged-in user.}
 
 \item{operation}{The operation to perform, which will form part of the URL path.}
 

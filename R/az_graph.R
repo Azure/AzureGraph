@@ -271,7 +271,7 @@ public=list(
 
     call_graph_endpoint=function(op="", ...)
     {
-        call_graph_endpoint(self$token, self$tenant, op, ...)
+        call_graph_endpoint(self$token, op, ...)
     },
 
     print=function(...)

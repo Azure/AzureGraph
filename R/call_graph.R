@@ -1,7 +1,6 @@
 #' Call the Microsoft Graph REST API
 #'
 #' @param token An Azure OAuth token, of class [AzureToken].
-#' @param tenant An Azure Active Directory tenant. Can be a GUID, a domain name, or "myorganization" to use the tenant of the logged-in user.
 #' @param operation The operation to perform, which will form part of the URL path.
 #' @param options A named list giving the URL query parameters.
 #' @param api_version The API version to use, which will form part of the URL sent to the host.
@@ -23,8 +22,7 @@
 #' [httr::GET], [httr::PUT], [httr::POST], [httr::DELETE], [httr::stop_for_status], [httr::content]
 #' @rdname call_graph
 #' @export
-call_graph_endpoint <- function(token, tenant="myorganization", operation, ...,
-                                options=list(),
+call_graph_endpoint <- function(token, operation, ..., options=list(),
                                 api_version=getOption("azure_graph_api_version"))
 {
     url <- httr::parse_url(token$credentials$resource)
