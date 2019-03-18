@@ -1,10 +1,10 @@
 #' Azure Active Directory Graph
 #'
-#' Base class for interacting with Azure AD Graph API.
+#' Base class for interacting with Microsoft Graph API.
 #'
 #' @docType class
 #' @section Methods:
-#' - `new(tenant, app, ...)`: Initialize a new Azure AD Graph connection with the given credentials. See 'Authentication` for more details.
+#' - `new(tenant, app, ...)`: Initialize a new Microsoft Graph connection with the given credentials. See 'Authentication` for more details.
 #' - `create_app(name, ..., password=NULL, password_duration=1, create_service_principal=TRUE)`: Creates a new registered app in Azure Active Directory. By default the app will have a randomly generated strong password with a duration of 1 year, and an associated service principal will also be created. To skip assigning a password, set `password=FALSE`.
 #' - `get_app(app_id, object_id)`: Retrieves an existing registered app, via either its app ID or object ID.
 #' - `delete_app(app_id, object_id, confirm=TRUE)`: Deletes an existing registered app. Any associated service principal will also be deleted.
@@ -14,13 +14,13 @@
 #' - `create_user(name, email, enabled=TRUE, ..., password=NULL, force_password_change=TRUE)`: Creates a new user account. By default this will be a work account (not social or local) in the current tenant, and will have a randomly generated password that must be changed at next login.
 #' - `get_user(user_id)`: Retrieves an existing user account.
 #' - `delete_user(user_id, confirm=TRUE)`: Deletes a user account.
-#' - `create_group(name, email, ...)`: Creates a new group. Note that only security groups can be created via the AD Graph API.
+#' - `create_group(name, email, ...)`: Creates a new group. Note that only security groups can be created via the Microsoft Graph API.
 #' - `get_group(group_id)`: Retrieves an existing group.
 #' - `delete_group(group_id, confirm=TRUE)`: Deletes a group.
-#' - `call_graph_endpoint(op="", ...)`: Calls the AD Graph API using this object's token and tenant as authentication arguments. See [call_graph_endpoint].
+#' - `call_graph_endpoint(op="", ...)`: Calls the Microsoft Graph API using this object's token and tenant as authentication arguments. See [call_graph_endpoint].
 #'
 #' @section Authentication:
-#' The recommended way to authenticate with Azure AD Graph is via the [create_graph_login] function, which creates a new instance of this class.
+#' The recommended way to authenticate with Microsoft Graph is via the [create_graph_login] function, which creates a new instance of this class.
 #'
 #' To authenticate with the `az_graph` class directly, provide the following arguments to the `new` method:
 #' - `tenant`: Your tenant ID. This can be a name ("myaadtenant"), a fully qualified domain name ("myaadtenant.onmicrosoft.com" or "mycompanyname.com"), or a GUID.
@@ -28,21 +28,21 @@
 #' - `password`: if `auth_type == "client_credentials"`, the app secret; if `auth_type == "resource_owner"`, your account password.
 #' - `username`: if `auth_type == "resource_owner"`, your username.
 #' - `auth_type`: The OAuth authentication method to use, one of "client_credentials", "authorization_code", "device_code" or "resource_owner". See [get_azure_token] for how the default method is chosen, along with some caveats.
-#' - `host`: your Azure AD Graph host. Defaults to `https://graph.windows.net/`. Change this if you are using a government or private cloud.
+#' - `host`: your Microsoft Graph host. Defaults to `https://graph.microsoft.com/`.
 #' - `aad_host`: Azure Active Directory host for authentication. Defaults to `https://login.microsoftonline.com/`. Change this if you are using a government or private cloud.
 #' - `config_file`: Optionally, a JSON file containing any of the arguments listed above. Arguments supplied in this file take priority over those supplied on the command line. You can also use the output from the Azure CLI `az ad sp create-for-rbac` command.
-#' - `token`: Optionally, an OAuth 2.0 token, of class [AzureToken]. This allows you to reuse the authentication details for an existing session. If supplied, all other arguments will be ignored.
+#' - `token`: Optionally, an OAuth 2.0 token, of class [AzureAuth::AzureToken]. This allows you to reuse the authentication details for an existing session. If supplied, all other arguments will be ignored.
 #'
 #' @seealso
 #' [create_graph_login], [get_graph_login]
 #'
-#' [Azure AD Graph overview](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-graph-api),
-#' [REST API reference](https://docs.microsoft.com/en-au/previous-versions/azure/ad/graph/api/api-catalog)
+#' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
+#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
 #'
 #' @examples
 #' \dontrun{
 #'
-#' # start a new Resource Manager session
+#' # start a new Graph session
 #' gr <- az_graph$new(tenant="myaadtenant.onmicrosoft.com", app="app_id", password="password")
 #'
 #' # authenticate with credentials in a file
@@ -76,7 +76,7 @@ public=list(
 
     # authenticate and get subscriptions
     initialize=function(tenant, app=.az_cli_app_id, password=NULL, username=NULL, auth_type=NULL,
-                        host="https://graph.windows.net/", aad_host="https://login.microsoftonline.com/",
+                        host="https://graph.microsoft.com/", aad_host="https://login.microsoftonline.com/",
                         config_file=NULL, token=NULL)
     {
         if(is_azure_token(token))
@@ -84,9 +84,7 @@ public=list(
             self$host <- if(token$version == 1)
                 token$resource
             else token$scope
-            self$tenant <- if(token$tenant == "common")
-                "myorganization"
-            else token$tenant
+            self$tenant <- token$tenant
             self$token <- token
             return(NULL)
         }
@@ -102,10 +100,11 @@ public=list(
             if(!is.null(conf$aad_host)) aad_host <- conf$aad_host
         }
 
-        self$host <- host
-        self$tenant <- normalize_graph_tenant(tenant)
         tenant <- normalize_tenant(tenant)
         app <- normalize_guid(app)
+
+        self$host <- host
+        self$tenant <- tenant
 
         self$token <- get_azure_token(self$host, 
             tenant=tenant,
@@ -138,7 +137,7 @@ public=list(
                 passwordCredentials=list(list(
                     customKeyIdentifier=key,
                     endDate=end_date,
-                    value=password
+                    secretText=password
                 ))
             ))
         }
@@ -157,11 +156,17 @@ public=list(
 
     get_app=function(app_id=NULL, object_id=NULL)
     {
-        op <- if(is.null(object_id))
-            file.path("applicationsByAppId", app_id)
-        else file.path("applications", object_id)
-
-        az_app$new(self$token, self$tenant, self$call_graph_endpoint(op))
+        if(!is.null(app_id))
+        {
+            op <- sprintf("applications?$filter=appId+eq+'%s'", app_id)
+            az_app$new(self$token, self$tenant, self$call_graph_endpoint(op)$value[[1]])
+        }
+        else if(!is.null(object_id))
+        {
+            op <- file.path("applications", object_id)
+            az_app$new(self$token, self$tenant, self$call_graph_endpoint(op))
+        }
+        else stop("Must supply either app ID or object (directory) ID")
     },
 
     delete_app=function(app_id=NULL, object_id=NULL, confirm=TRUE)
@@ -176,17 +181,17 @@ public=list(
 
     get_service_principal=function(app_id=NULL, object_id=NULL)
     {
-        if(!is.null(app_id))
-            self$get_app(app_id=app_id)$get_service_principal()
-        else
+        if(!is.null(app_id) && is_guid(app_id))
+        {
+            op <- sprintf("servicePrincipals?$filter=appId+eq+'%s'", app_id)
+            az_service_principal$new(self$token, self$tenant, self$call_graph_endpoint(op)$value[[1]])
+        }
+        else if(!is.null(object_id) && is_guid(object_id))
         {
             op <- file.path("servicePrincipals", object_id)
-            az_service_principal$new(
-                self$token,
-                self$tenant,
-                self$call_graph_endpoint(op)
-            )
+            az_service_principal$new(self$token, self$tenant, self$call_graph_endpoint(op))
         }
+        else stop("Must supply either app ID or object (directory) ID")
     },
 
     delete_service_principal=function(app_id=NULL, object_id=NULL, confirm=TRUE)
@@ -212,7 +217,8 @@ public=list(
         properties <- modifyList(properties, list(
             passwordProfile=list(
                 password=password,
-                forceChangeAtNextLogin=force_password_change
+                forceChangePasswordNextSignIn=force_password_change,
+                forceChangePasswordNextSignInWithMfa=FALSE
             )
         ))
 
@@ -280,11 +286,3 @@ public=list(
     }
 ))
 
-
-normalize_graph_tenant <- function(tenant)
-{
-    tenant <- tolower(tenant)
-    if(tenant == "common")
-        "myorganization"
-    else normalize_tenant(tenant)
-}

@@ -6,7 +6,7 @@ utils::globalVariables(c("self", "private"))
 
 .onLoad <- function(libname, pkgname)
 {
-    options(azure_graph_api_version="1.6")
+    options(azure_graph_api_version="beta")
     make_AzureR_dir()
     invisible(NULL)
 }
@@ -23,7 +23,7 @@ make_AzureR_dir <- function()
     if(!dir.exists(AzureR_dir) && interactive())
     {
         yn <- readline(paste0(
-                "AzureGraph can cache Azure AD Graph logins in the directory:\n\n",
+                "AzureGraph can cache Microsoft Graph logins in the directory:\n\n",
                 AzureR_dir, "\n\n",
                 "This saves you having to re-authenticate with Azure in future sessions. Create this directory? (Y/n) "))
         if(tolower(substr(yn, 1, 1)) == "n")

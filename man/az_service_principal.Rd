@@ -21,13 +21,13 @@ Base class representing an AAD service principal.
 
 \section{Initialization}{
 
-Creating new objects of this class should be done via the \code{create_service_principal} and \code{get_service_principal} methods of the \link{az_graph} and \link{az_app} classes. Calling the \code{new()} method for this class only constructs the R object; it does not call the AD Graph API to create the actual service principal.
+Creating new objects of this class should be done via the \code{create_service_principal} and \code{get_service_principal} methods of the \link{az_graph} and \link{az_app} classes. Calling the \code{new()} method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual service principal.
 }
 
 \seealso{
 \link{az_graph}, \link{az_app}
 
-\href{https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-graph-api}{Azure AD Graph overview},
-\href{https://docs.microsoft.com/en-au/previous-versions/azure/ad/graph/api/api-catalog}{REST API reference}
+\href{https://docs.microsoft.com/en-us/graph/overview}{Azure Microsoft Graph overview},
+\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta}{REST API reference}
 }
 \keyword{datasets}

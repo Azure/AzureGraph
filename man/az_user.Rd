@@ -25,13 +25,13 @@ Base class representing an AAD user account.
 
 \section{Initialization}{
 
-Creating new objects of this class should be done via the \code{create_user} and \code{get_user} methods of the \link{az_graph} and \link{az_app} classes. Calling the \code{new()} method for this class only constructs the R object; it does not call the AD Graph API to create the actual user account.
+Creating new objects of this class should be done via the \code{create_user} and \code{get_user} methods of the \link{az_graph} and \link{az_app} classes. Calling the \code{new()} method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual user account.
 }
 
 \seealso{
 \link{az_graph}, \link{az_app}, \link{az_group}
 
-\href{https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-graph-api}{Azure AD Graph overview},
-\href{https://docs.microsoft.com/en-au/previous-versions/azure/ad/graph/api/api-catalog}{REST API reference}
+\href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
+\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta}{REST API reference}
 }
 \keyword{datasets}

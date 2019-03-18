@@ -10,13 +10,13 @@
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
 #'
 #' @section Initialization:
-#' Creating new objects of this class should be done via the `create_group` and `get_group` methods of the [az_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the AD Graph API to create the actual group.
+#' Creating new objects of this class should be done via the `create_group` and `get_group` methods of the [az_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual group.
 #'
 #' @seealso
 #' [az_graph], [az_app], [az_user]
 #'
-#' [Azure AD Graph overview](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-graph-api),
-#' [REST API reference](https://docs.microsoft.com/en-au/previous-versions/azure/ad/graph/api/api-catalog)
+#' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
+#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
 #'
 #' @format An R6 object of class `az_group`.
 #' @export
@@ -39,7 +39,7 @@ public=list(
 
     update=function(...)
     {
-        op <- file.path("groups", self$properties$objectId)
+        op <- file.path("groups", self$properties$id)
         private$graph_op(op, body=list(...), encode="json", http_verb="PATCH")
         self$properties <- private$graph_op(op)
         self
@@ -47,7 +47,7 @@ public=list(
 
     sync_fields=function()
     {
-        op <- file.path("groups", self$properties$objectId)
+        op <- file.path("groups", self$properties$id)
         self$properties <- private$graph_op(op)
         invisible(self)
     },
@@ -63,7 +63,7 @@ public=list(
                 return(invisible(NULL))
         }
 
-        op <- file.path("groups", self$properties$objectId)
+        op <- file.path("groups", self$properties$id)
         private$graph_op(op, http_verb="DELETE")
         invisible(NULL)
     }

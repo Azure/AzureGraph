@@ -5,7 +5,7 @@
 #' @param password If `auth_type == "client_credentials"`, the app secret; if `auth_type == "resource_owner"`, your account password.
 #' @param username If `auth_type == "resource_owner"`, your username.
 #' @param auth_type The OAuth authentication method to use, one of "client_credentials", "authorization_code", "device_code" or "resource_owner". If `NULL`, this is chosen based on the presence of the `username` and `password` arguments.
-#' @param host Your AD Graph host. Defaults to `https://graph.windows.net/`. Change this if you are using a government or private cloud.
+#' @param host Your Microsoft Graph host. Defaults to `https://graph.microsoft.com/`. Change this if you are using a government or private cloud.
 #' @param aad_host Azure Active Directory host for authentication. Defaults to `https://login.microsoftonline.com/`. Change this if you are using a government or private cloud.
 #' @param config_file Optionally, a JSON file containing any of the arguments listed above. Arguments supplied in this file take priority over those supplied on the command line. You can also use the output from the Azure CLI `az ad sp create-for-rbac` command.
 #' @param refresh For `get_graph_login`, whether to refresh the authentication token on loading the client.
@@ -14,7 +14,7 @@
 #' @param ... Other arguments passed to `az_graph$new()`.
 #'
 #' @details
-#' `create_graph_login` creates a login client to authenticate with Azure AD Graph, using the supplied arguments. The authentication token is obtained using [get_azure_token], which automatically caches and reuses tokens for subsequent sessions. Note that credentials are only cached if you allowed AzureGraph to create a data directory at package startup.
+#' `create_graph_login` creates a login client to authenticate with Microsoft Graph, using the supplied arguments. The authentication token is obtained using [get_azure_token], which automatically caches and reuses tokens for subsequent sessions. Note that credentials are only cached if you allowed AzureGraph to create a data directory at package startup.
 #'
 #' `get_graph_login` returns a login client by retrieving previously saved credentials. It searches for saved credentials according to the supplied tenant; if multiple logins are found, it will prompt for you to choose one.
 #'
@@ -31,8 +31,8 @@
 #' @seealso
 #' [az_graph], [AzureAuth::get_azure_token] for more details on authentication methods
 #'
-#' [Azure AD Graph overview](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-graph-api),
-#' [REST API reference](https://docs.microsoft.com/en-au/previous-versions/azure/ad/graph/api/api-catalog)
+#' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
+#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
 #'
 #' @examples
 #' \dontrun{
@@ -43,7 +43,7 @@
 #' # retrieve the login in subsequent sessions
 #' az <- get_graph_login()
 #'
-#' # this will create an Azure AD Graph client for the tenant 'microsoft.onmicrosoft.com',
+#' # this will create an Microsoft Graph client for the tenant 'microsoft.onmicrosoft.com',
 #' # using the client_credentials method
 #' az <- create_graph_login("microsoft", app="{app_id}", password="{password}")
 #'
@@ -54,7 +54,7 @@
 #' @rdname graph_login
 #' @export
 create_graph_login <- function(tenant="common", app=.az_cli_app_id, password=NULL, username=NULL, auth_type=NULL,
-                               host="https://graph.windows.net/", aad_host="https://login.microsoftonline.com/",
+                               host="https://graph.microsoft.com/", aad_host="https://login.microsoftonline.com/",
                                config_file=NULL, ...)
 {
     if(!is.null(config_file))
@@ -87,7 +87,7 @@ create_graph_login <- function(tenant="common", app=.az_cli_app_id, password=NUL
     tenant <- normalize_tenant(tenant)
     app <- normalize_guid(app)
 
-    message("Creating Azure AD Graph login for ", format_tenant(tenant))
+    message("Creating Microsoft Graph login for ", format_tenant(tenant))
     client <- az_graph$new(tenant, app, password, username, auth_type, host, aad_host, config_file, ...)
 
     # save login info for future sessions
@@ -112,7 +112,7 @@ get_graph_login <- function(tenant="common", selection=NULL, refresh=TRUE)
     this_login <- graph_logins[[tenant]]
     if(is_empty(this_login))
     {
-        msg <- paste0("No Azure AD Graph logins found for ", format_tenant(tenant),
+        msg <- paste0("No Microsoft Graph logins found for ", format_tenant(tenant),
                       ";\nuse create_graph_login() to create one")
         stop(msg, call.=FALSE)
     }
@@ -130,7 +130,7 @@ get_graph_login <- function(tenant="common", selection=NULL, refresh=TRUE)
             paste0("App ID: ", app, "\n   Authentication method: ", token$auth_type)
         })
 
-        msg <- paste0("Choose an Azure AD Graph login for ", format_tenant(tenant))
+        msg <- paste0("Choose a Microsoft Graph login for ", format_tenant(tenant))
         selection <- utils::menu(choices, title=msg)
     }
 
@@ -146,7 +146,7 @@ get_graph_login <- function(tenant="common", selection=NULL, refresh=TRUE)
     if(is_empty(file) || !file.exists(file))
         stop("Azure Active Directory token not found for this login", call.=FALSE)
 
-    message("Loading Azure AD Graph login for ", format_tenant(tenant))
+    message("Loading Microsoft Graph login for ", format_tenant(tenant))
 
     token <- readRDS(file)
     client <- az_graph$new(token=token)
@@ -172,7 +172,7 @@ delete_graph_login <- function(tenant="common", confirm=TRUE)
 
     if(confirm && interactive())
     {
-        msg <- paste0("Do you really want to delete the Azure AD Graph login(s) for ",
+        msg <- paste0("Do you really want to delete the Microsoft Graph login(s) for ",
                       format_tenant(tenant), "? (y/N) ")
 
         yn <- readline(msg)

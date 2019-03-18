@@ -3,7 +3,7 @@
 \name{call_graph_endpoint}
 \alias{call_graph_endpoint}
 \alias{call_graph_url}
-\title{Call the Azure AD Graph REST API}
+\title{Call the Microsoft Graph REST API}
 \usage{
 call_graph_endpoint(token, tenant = "myorganization", operation, ...,
   options = list(), api_version = getOption("azure_graph_api_version"))
@@ -39,10 +39,10 @@ If \code{http_status_handler} is one of \code{"stop"}, \code{"warn"} or \code{"m
 If \code{http_status_handler} is \code{"pass"}, the entire response is returned without modification.
 }
 \description{
-Call the Azure AD Graph REST API
+Call the Microsoft Graph REST API
 }
 \details{
-These functions form the low-level interface between R and Azure AD Graph. \code{call_graph_endpoint} forms a URL from its arguments and passes it to \code{call_graph_url}.
+These functions form the low-level interface between R and Microsoft Graph. \code{call_graph_endpoint} forms a URL from its arguments and passes it to \code{call_graph_url}.
 }
 \seealso{
 \link[httr:GET]{httr::GET}, \link[httr:PUT]{httr::PUT}, \link[httr:POST]{httr::POST}, \link[httr:DELETE]{httr::DELETE}, \link[httr:stop_for_status]{httr::stop_for_status}, \link[httr:content]{httr::content}

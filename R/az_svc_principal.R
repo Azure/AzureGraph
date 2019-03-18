@@ -8,13 +8,13 @@
 #' - `delete(confirm=TRUE)`: Delete a service principal. By default, ask for confirmation first.
 #'
 #' @section Initialization:
-#' Creating new objects of this class should be done via the `create_service_principal` and `get_service_principal` methods of the [az_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the AD Graph API to create the actual service principal.
+#' Creating new objects of this class should be done via the `create_service_principal` and `get_service_principal` methods of the [az_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual service principal.
 #'
 #' @seealso
 #' [az_graph], [az_app]
 #'
-#' [Azure AD Graph overview](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-graph-api),
-#' [REST API reference](https://docs.microsoft.com/en-au/previous-versions/azure/ad/graph/api/api-catalog)
+#' [Azure Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
+#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
 #'
 #' @format An R6 object of class `az_service_principal`.
 #' @export
@@ -39,17 +39,14 @@ public=list(
     {
         if(confirm && interactive())
         {
-            msg <- paste0("Do you really want to delete the '", self$properties$displayName,
-                          "' service principal? (y/N) ")
+            msg <- paste0("Do you really want to delete the service principal '", self$properties$displayName,
+                          "'? (y/N) ")
             yn <- readline(msg)
             if(tolower(substr(yn, 1, 1)) != "y")
                 return(invisible(NULL))
         }
 
-        op <- if(!is_empty(self$properties$objectId))
-            file.path("servicePrincipals", self$properties$objectId)
-        else file.path("servicePrincipalsByAppId", self$properties$appId)
-
+        op <- file.path("servicePrincipals", self$properties$id)
         private$graph_op(op, http_verb="DELETE")
         invisible(NULL)
     }

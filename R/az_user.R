@@ -12,13 +12,13 @@
 #' - `list_group_memberships()`: List the groups this user is a member of.
 #'
 #' @section Initialization:
-#' Creating new objects of this class should be done via the `create_user` and `get_user` methods of the [az_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the AD Graph API to create the actual user account.
+#' Creating new objects of this class should be done via the `create_user` and `get_user` methods of the [az_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual user account.
 #'
 #' @seealso
 #' [az_graph], [az_app], [az_group]
 #'
-#' [Azure AD Graph overview](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-graph-api),
-#' [REST API reference](https://docs.microsoft.com/en-au/previous-versions/azure/ad/graph/api/api-catalog)
+#' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
+#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
 #'
 #' @format An R6 object of class `az_user`.
 #' @export
@@ -47,14 +47,15 @@ public=list(
         if(is.null(password))
             password <- openssl::base64_encode(openssl::rand_bytes(40))
 
-        properties <- list(
+        properties <- modifyList(properties, list(
             passwordProfile=list(
                 password=password,
-                forceChangeAtNextLogin=force_password_change
+                forceChangePasswordNextSignIn=force_password_change,
+                forceChangePasswordNextSignInWithMfa=FALSE
             )
-        )
+        ))
 
-        op <- file.path("users", self$properties$objectId)
+        op <- file.path("users", self$properties$id)
         private$graph_op(op, body=properties, encode="json", http_verb="PATCH")
         self$properties <- private$graph_op(op)
         self$password <- password
@@ -63,7 +64,7 @@ public=list(
 
     update=function(...)
     {
-        op <- file.path("users", self$properties$objectId)
+        op <- file.path("users", self$properties$id)
         private$graph_op(op, body=list(...), encode="json", http_verb="PATCH")
         self$properties <- private$graph_op(op)
         self
@@ -71,22 +72,21 @@ public=list(
 
     sync_fields=function()
     {
-        op <- file.path("users", self$properties$objectId)
+        op <- file.path("users", self$properties$id)
         self$properties <- private$graph_op(op)
         invisible(self)
     },
 
-    list_group_memberships=function()
+    list_group_memberships=function(transitive=FALSE)
     {
-        op <- file.path("users", self$properties$objectId, "memberOf")
+        op <- file.path("users", self$properties$id,
+            if(transitive) "getMemberGroups" else "memberOf")
         lst <- private$graph_op(op)
 
         res <- lapply(lst$value, function(obj) az_group$new(self$token, self$tenant, obj))
-        while(!is_empty(lst$odata.nextLink))
+        while(!is_empty(lst$`@odata.nextLink`))
         {
-            # need to manually paste api version on to link
-            link <- paste0(lst$odata.nextLink, "&api-version=", getOption("azure_graph_api_version"))
-            lst <- private$graph_op(link, api_version=NULL)
+            lst <- call_graph_url(self$token, lst$`@odata.nextLink`)
             res <- c(res,
                 lapply(lst$value, function(obj) az_group$new(self$token, self$tenant, obj)))
         }
@@ -106,7 +106,7 @@ public=list(
                 return(invisible(NULL))
         }
 
-        op <- file.path("users", self$properties$objectId)
+        op <- file.path("users", self$properties$id)
         private$graph_op(op, http_verb="DELETE")
         invisible(NULL)
     }

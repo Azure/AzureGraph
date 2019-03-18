@@ -4,7 +4,7 @@ tenant <- Sys.getenv("AZ_TEST_TENANT_ID")
 app <- Sys.getenv("AZ_TEST_NATIVE_APP_ID")
 
 if(tenant == "" || app == "")
-    skip("Authentication tests skipped: AD Graph credentials not set")
+    skip("Authentication tests skipped: Microsoft Graph credentials not set")
 
 if(!interactive())
     skip("Authentication tests skipped: must be in interactive session")

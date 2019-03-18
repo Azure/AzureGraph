@@ -9,12 +9,12 @@
 az_graph
 }
 \description{
-Base class for interacting with Azure AD Graph API.
+Base class for interacting with Microsoft Graph API.
 }
 \section{Methods}{
 
 \itemize{
-\item \code{new(tenant, app, ...)}: Initialize a new Azure AD Graph connection with the given credentials. See 'Authentication` for more details.
+\item \code{new(tenant, app, ...)}: Initialize a new Microsoft Graph connection with the given credentials. See 'Authentication` for more details.
 \item \code{create_app(name, ..., password=NULL, password_duration=1, create_service_principal=TRUE)}: Creates a new registered app in Azure Active Directory. By default the app will have a randomly generated strong password with a duration of 1 year, and an associated service principal will also be created. To skip assigning a password, set \code{password=FALSE}.
 \item \code{get_app(app_id, object_id)}: Retrieves an existing registered app, via either its app ID or object ID.
 \item \code{delete_app(app_id, object_id, confirm=TRUE)}: Deletes an existing registered app. Any associated service principal will also be deleted.
@@ -24,16 +24,16 @@ Base class for interacting with Azure AD Graph API.
 \item \code{create_user(name, email, enabled=TRUE, ..., password=NULL, force_password_change=TRUE)}: Creates a new user account. By default this will be a work account (not social or local) in the current tenant, and will have a randomly generated password that must be changed at next login.
 \item \code{get_user(user_id)}: Retrieves an existing user account.
 \item \code{delete_user(user_id, confirm=TRUE)}: Deletes a user account.
-\item \code{create_group(name, email, ...)}: Creates a new group. Note that only security groups can be created via the AD Graph API.
+\item \code{create_group(name, email, ...)}: Creates a new group. Note that only security groups can be created via the Microsoft Graph API.
 \item \code{get_group(group_id)}: Retrieves an existing group.
 \item \code{delete_group(group_id, confirm=TRUE)}: Deletes a group.
-\item \code{call_graph_endpoint(op="", ...)}: Calls the AD Graph API using this object's token and tenant as authentication arguments. See \link{call_graph_endpoint}.
+\item \code{call_graph_endpoint(op="", ...)}: Calls the Microsoft Graph API using this object's token and tenant as authentication arguments. See \link{call_graph_endpoint}.
 }
 }
 
 \section{Authentication}{
 
-The recommended way to authenticate with Azure AD Graph is via the \link{create_graph_login} function, which creates a new instance of this class.
+The recommended way to authenticate with Microsoft Graph is via the \link{create_graph_login} function, which creates a new instance of this class.
 
 To authenticate with the \code{az_graph} class directly, provide the following arguments to the \code{new} method:
 \itemize{
@@ -42,17 +42,17 @@ To authenticate with the \code{az_graph} class directly, provide the following a
 \item \code{password}: if \code{auth_type == "client_credentials"}, the app secret; if \code{auth_type == "resource_owner"}, your account password.
 \item \code{username}: if \code{auth_type == "resource_owner"}, your username.
 \item \code{auth_type}: The OAuth authentication method to use, one of "client_credentials", "authorization_code", "device_code" or "resource_owner". See \link{get_azure_token} for how the default method is chosen, along with some caveats.
-\item \code{host}: your Azure AD Graph host. Defaults to \code{https://graph.windows.net/}. Change this if you are using a government or private cloud.
+\item \code{host}: your Microsoft Graph host. Defaults to \code{https://graph.microsoft.com/}.
 \item \code{aad_host}: Azure Active Directory host for authentication. Defaults to \code{https://login.microsoftonline.com/}. Change this if you are using a government or private cloud.
 \item \code{config_file}: Optionally, a JSON file containing any of the arguments listed above. Arguments supplied in this file take priority over those supplied on the command line. You can also use the output from the Azure CLI \code{az ad sp create-for-rbac} command.
-\item \code{token}: Optionally, an OAuth 2.0 token, of class \link{AzureToken}. This allows you to reuse the authentication details for an existing session. If supplied, all other arguments will be ignored.
+\item \code{token}: Optionally, an OAuth 2.0 token, of class \link[AzureAuth:AzureToken]{AzureAuth::AzureToken}. This allows you to reuse the authentication details for an existing session. If supplied, all other arguments will be ignored.
 }
 }
 
 \examples{
 \dontrun{
 
-# start a new Resource Manager session
+# start a new Graph session
 gr <- az_graph$new(tenant="myaadtenant.onmicrosoft.com", app="app_id", password="password")
 
 # authenticate with credentials in a file
@@ -79,7 +79,7 @@ app$delete()
 \seealso{
 \link{create_graph_login}, \link{get_graph_login}
 
-\href{https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-graph-api}{Azure AD Graph overview},
-\href{https://docs.microsoft.com/en-au/previous-versions/azure/ad/graph/api/api-catalog}{REST API reference}
+\href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
+\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta}{REST API reference}
 }
 \keyword{datasets}

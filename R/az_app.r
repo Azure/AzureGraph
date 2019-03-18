@@ -14,10 +14,10 @@
 #' - `update_password(password=NULL, name="key1", password_duration=1)`: Updates the app password. Note that this will invalidate any existing password.
 #'
 #' @section Initialization:
-#' Creating new objects of this class should be done via the `create_app` and `get_app` methods of the [az_graph] class. Calling the `new()` method for this class only constructs the R object; it does not call the AD Graph API to create the actual app.
+#' Creating new objects of this class should be done via the `create_app` and `get_app` methods of the [az_graph] class. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual app.
 #'
-#' [Azure AD Graph overview](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-graph-api),
-#' [REST API reference](https://docs.microsoft.com/en-au/previous-versions/azure/ad/graph/api/api-catalog)
+#' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
+#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
 #'
 #' @seealso
 #' [az_graph], [az_service_principal], [az_user], [az_group]
@@ -70,10 +70,7 @@ public=list(
                 return(invisible(NULL))
         }
 
-        op <- if(!is.null(self$properties$objectId))
-            file.path("applications", self$properties$objectId)
-        else file.path("applicationsByAppId", self$properties$appId)
-
+        op <- file.path("applications", self$properties$id)
         private$graph_op(op, http_verb="DELETE")
         invisible(NULL)
     },
@@ -96,11 +93,11 @@ public=list(
             passwordCredentials=list(list(
                 customKeyIdentifier=key,
                 endDate=end_date,
-                value=password
+                secretText=password
             ))
         )
 
-        op <- file.path("applications", self$properties$objectId)
+        op <- file.path("applications", self$properties$id)
         private$graph_op(op, body=properties, encode="json", http_verb="PATCH")
         self$properties <- private$graph_op(op)
         self$password <- password
@@ -109,7 +106,7 @@ public=list(
 
     update=function(...)
     {
-        op <- file.path("applications", self$properties$objectId)
+        op <- file.path("applications", self$properties$id)
         private$graph_op(op, body=list(...), encode="json", http_verb="PATCH")
         self$properties <- private$graph_op(op)
         self
@@ -117,7 +114,7 @@ public=list(
 
     sync_fields=function()
     {
-        op <- file.path("applications", self$properties$objectId)
+        op <- file.path("applications", self$properties$id)
         self$properties <- private$graph_op(op)
         invisible(self)
     },
@@ -134,7 +131,7 @@ public=list(
 
     get_service_principal=function()
     {
-        op <- file.path("servicePrincipalsByAppId", self$properties$appId)
+        op <- sprintf("servicePrincipals?$filter=appId+eq+'%s'", self$properties$appId)
         az_service_principal$new(
             self$token,
             self$tenant,

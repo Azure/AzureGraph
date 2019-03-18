@@ -27,10 +27,10 @@ Base class representing an AAD app.
 
 \section{Initialization}{
 
-Creating new objects of this class should be done via the \code{create_app} and \code{get_app} methods of the \link{az_graph} class. Calling the \code{new()} method for this class only constructs the R object; it does not call the AD Graph API to create the actual app.
+Creating new objects of this class should be done via the \code{create_app} and \code{get_app} methods of the \link{az_graph} class. Calling the \code{new()} method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual app.
 
-\href{https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-graph-api}{Azure AD Graph overview},
-\href{https://docs.microsoft.com/en-au/previous-versions/azure/ad/graph/api/api-catalog}{REST API reference}
+\href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
+\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta}{REST API reference}
 }
 
 \examples{

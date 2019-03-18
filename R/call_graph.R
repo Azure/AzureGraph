@@ -1,4 +1,4 @@
-#' Call the Azure AD Graph REST API
+#' Call the Microsoft Graph REST API
 #'
 #' @param token An Azure OAuth token, of class [AzureToken].
 #' @param tenant An Azure Active Directory tenant. Can be a GUID, a domain name, or "myorganization" to use the tenant of the logged-in user.
@@ -12,7 +12,7 @@
 #' @param ... Other arguments passed to lower-level code, ultimately to the appropriate functions in httr.
 #'
 #' @details
-#' These functions form the low-level interface between R and Azure AD Graph. `call_graph_endpoint` forms a URL from its arguments and passes it to `call_graph_url`.
+#' These functions form the low-level interface between R and Microsoft Graph. `call_graph_endpoint` forms a URL from its arguments and passes it to `call_graph_url`.
 #'
 #' @return
 #' If `http_status_handler` is one of `"stop"`, `"warn"` or `"message"`, the status code of the response is checked. If an error is not thrown, the parsed content of the response is returned with the status code attached as the "status" attribute.
@@ -24,12 +24,12 @@
 #' @rdname call_graph
 #' @export
 call_graph_endpoint <- function(token, tenant="myorganization", operation, ...,
-                             options=list(),
-                             api_version=getOption("azure_graph_api_version"))
+                                options=list(),
+                                api_version=getOption("azure_graph_api_version"))
 {
     url <- httr::parse_url(token$credentials$resource)
-    url$path <- construct_path(tenant, operation)
-    url$query <- modifyList(list(`api-version`=api_version), options)
+    url$path <- construct_path(api_version, operation)
+    url$query <- options
 
     call_graph_url(token, httr::build_url(url), ...)
 }
@@ -42,10 +42,9 @@ call_graph_url <- function(token, url, ...,
                            auto_refresh=TRUE)
 {
     headers <- process_headers(token, ..., auto_refresh=auto_refresh)
-    verb <- get(match.arg(http_verb), getNamespace("httr"))
 
     # do actual API call
-    res <- verb(url, headers, ...)
+    res <- httr::VERB(match.arg(http_verb), url, headers, ...)
 
     process_response(res, match.arg(http_status_handler))
 }
@@ -83,7 +82,7 @@ process_response <- function(response, handler)
                                  sub("\\.$", "", error_message(cont))))
 
         if(inherits(cont, "xml_document"))
-            cont <- xml2::as_list(cont)
+            cont <- cont #xml2::as_list(cont)  # do we actually get any xml?
         else if(is.null(cont))
             cont <- list()
 
@@ -94,7 +93,7 @@ process_response <- function(response, handler)
 }
 
 
-# provide complete error messages from Resource Manager/AAD Graph/etc
+# provide complete error messages from Resource Manager/AMicrosoft Graph/etc
 error_message <- function(cont)
 {
     # kiboze through possible message locations
