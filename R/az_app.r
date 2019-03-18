@@ -50,12 +50,14 @@ public=list(
     # app data from server
     properties=NULL,
 
+    password=NULL,
+
     initialize=function(token, tenant=NULL, properties=NULL, password=NULL)
     {
         self$token <- token
         self$tenant <- tenant
         self$properties <- properties
-        private$password <- password
+        self$password <- password
     },
 
     delete=function(confirm=TRUE)
@@ -100,8 +102,8 @@ public=list(
 
         op <- file.path("applications", self$properties$objectId)
         private$graph_op(op, body=properties, encode="json", http_verb="PATCH")
-        private$graph_op(op)
-        private$password <- password
+        self$properties <- private$graph_op(op)
+        self$password <- password
         password
     },
 
@@ -147,8 +149,6 @@ public=list(
 ),
 
 private=list(
-
-    password=NULL,
 
     graph_op=function(op="", ...)
     {
