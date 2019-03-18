@@ -3,11 +3,17 @@
 \name{is_app}
 \alias{is_app}
 \alias{is_service_principal}
+\alias{is_user}
+\alias{is_group}
 \title{Informational functions}
 \usage{
 is_app(object)
 
 is_service_principal(object)
+
+is_user(object)
+
+is_group(object)
 }
 \arguments{
 \item{object}{An R object.}
