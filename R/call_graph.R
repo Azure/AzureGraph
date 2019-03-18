@@ -79,9 +79,7 @@ process_response <- function(response, handler)
         handler(response, paste0("complete operation. Message:\n",
                                  sub("\\.$", "", error_message(cont))))
 
-        if(inherits(cont, "xml_document"))
-            cont <- cont #xml2::as_list(cont)  # do we actually get any xml?
-        else if(is.null(cont))
+        if(is.null(cont))
             cont <- list()
 
         attr(cont, "status") <- httr::status_code(response)
