@@ -95,8 +95,8 @@ error_message <- function(cont)
     # kiboze through possible message locations
     msg <- if(is.character(cont))
         cont
-    else if(inherits(cont, "xml_node")) # Graph
-        paste(xml2::xml_text(xml2::xml_children(cont)), collapse=": ")
+    # else if(inherits(cont, "xml_node")) # Graph
+    #     paste(xml2::xml_text(xml2::xml_children(cont)), collapse=": ")
     else if(is.list(cont))
     {
         if(is.character(cont$message))
