@@ -64,7 +64,7 @@ public=list(
     {
         if(confirm && interactive())
         {
-            msg <- paste0("Do you really want to delete the '", self$properties$displayName, "' app? (y/N) ")
+            msg <- paste0("Do you really want to delete the app '", self$properties$displayName, "'? (y/N) ")
             yn <- readline(msg)
             if(tolower(substr(yn, 1, 1)) != "y")
                 return(invisible(NULL))
@@ -92,7 +92,7 @@ public=list(
         properties <- list(
             passwordCredentials=list(list(
                 customKeyIdentifier=key,
-                endDate=end_date,
+                endDateTime=end_date,
                 secretText=password
             ))
         )

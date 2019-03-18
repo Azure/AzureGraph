@@ -136,7 +136,7 @@ public=list(
             properties <- modifyList(properties, list(
                 passwordCredentials=list(list(
                     customKeyIdentifier=key,
-                    endDate=end_date,
+                    endDateTime=end_date,
                     secretText=password
                 ))
             ))

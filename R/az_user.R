@@ -9,7 +9,7 @@
 #' - `update(...)`: Update the user information in Azure Active Directory.
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
 #' - `reset_password(password=NULL, force_password_change=TRUE): Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
-#' - `list_group_memberships()`: List the groups this user is a member of.
+#' - `list_group_memberships(direct_only=TRUE, id_only=TRUE)`: List the groups this user is a member of. Set `direct_only=FALSE` to get a _transitive_ list of memberships, ie including groups that the user's groups are members of. Set `id_only=TRUE` to return only a vector of group IDs (the default), or `id_only=FALSE` to return a list of group objects (which will be slow for a transitive list).
 #'
 #' @section Initialization:
 #' Creating new objects of this class should be done via the `create_user` and `get_user` methods of the [az_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual user account.
@@ -77,22 +77,18 @@ public=list(
         invisible(self)
     },
 
-    list_group_memberships=function(transitive=FALSE)
+    list_group_memberships=function(direct_only=TRUE, id_only=TRUE)
     {
-        op <- file.path("users", self$properties$id,
-            if(transitive) "getMemberGroups" else "memberOf")
-        lst <- private$graph_op(op)
+        res <- if(direct_only)
+            private$list_direct_memberships(id_only)
+        else private$list_transitive_memberships(id_only)
 
-        res <- lapply(lst$value, function(obj) az_group$new(self$token, self$tenant, obj))
-        while(!is_empty(lst$`@odata.nextLink`))
+        if(!id_only)
         {
-            lst <- call_graph_url(self$token, lst$`@odata.nextLink`)
-            res <- c(res,
-                lapply(lst$value, function(obj) az_group$new(self$token, self$tenant, obj)))
+            names(res) <- sapply(res, function(grp) grp$displayName)
+            lapply(res, function(grp) az_group$new(self$token, self$tenant, grp))
         }
-
-        names(res) <- sapply(res, function(grp) grp$properties$displayName)
-        res
+        else unlist(res)
     },
 
     delete=function(confirm=TRUE)
@@ -113,6 +109,47 @@ public=list(
 ),
 
 private=list(
+
+    list_transitive_memberships=function(id_only)
+    {
+        op <- file.path("users", self$properties$id, "getMemberGroups")
+        lst <- private$graph_op(op, body=list(securityEnabledOnly=TRUE),
+            encode="json", http_verb="POST")
+
+        res <- lst$value
+        while(!is_empty(lst$`@odata.nextLink`))
+        {
+            lst <- call_graph_url(self$token, lst$`@odata.nextLink`)
+            res <- c(res, lst$value)
+        }
+
+        if(!id_only)
+        {
+            lapply(res, function(grp)
+            {
+                op <- file.path("groups", grp)
+                private$graph_op(op)
+            })
+        }
+        else res
+    },
+
+    list_direct_memberships=function(id_only)
+    {
+        op <- file.path("users", self$properties$id, "memberOf")
+        lst <- private$graph_op(op)
+
+        res <- lst$value
+        while(!is_empty(lst$`@odata.nextLink`))
+        {
+            lst <- call_graph_url(self$token, lst$`@odata.nextLink`)
+            res <- c(res, lst$value)
+        }
+
+        if(id_only)
+            lapply(res, function(grp) grp$id)
+        else res
+    },
 
     graph_op=function(op="", ...)
     {

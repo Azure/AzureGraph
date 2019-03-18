@@ -19,7 +19,7 @@ Base class representing an AAD user account.
 \item \code{update(...)}: Update the user information in Azure Active Directory.
 \item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
 \item `reset_password(password=NULL, force_password_change=TRUE): Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
-\item \code{list_group_memberships()}: List the groups this user is a member of.
+\item \code{list_group_memberships(direct_only=TRUE, id_only=TRUE)}: List the groups this user is a member of. Set \code{direct_only=FALSE} to get a \emph{transitive} list of memberships, ie including groups that the user's groups are members of. Set \code{id_only=TRUE} to return only a vector of group IDs (the default), or \code{id_only=FALSE} to return a list of group objects (which will be slow for a transitive list).
 }
 }
 
