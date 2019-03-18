@@ -1,6 +1,8 @@
 # AzureGraph
 
-A simple interface to the [Azure Active Directory Graph API](https://docs.microsoft.com/en-au/azure/active-directory/develop/active-directory-graph-api). The companion package to [AzureRMR](https://github.com/cloudyr/AzureRMR) and [AzureAuth](https://github.com/cloudyr/AzureAuth).
+A simple interface to the [Microsoft Graph API](https://docs.microsoft.com/en-us/graph/overview). The companion package to [AzureRMR](https://github.com/cloudyr/AzureRMR) and [AzureAuth](https://github.com/cloudyr/AzureAuth).
+
+Microsoft Graph is a comprehensive framework for accessing data in various online Microsoft services. Currently, this package aims to provide an R interface only to the Azure Active Directory part: registered apps and service principals, and to a lesser extent, users and groups. Like AzureRMR, it could potentially be extended to support other services.
 
 
 ## Authentication
@@ -22,15 +24,18 @@ library(AzureGraph)
 # - on subsequent logins, call get_graph_login()
 gr <- create_graph_login()
 
+# my user information
+me <- gr$get_user("me")
+
+# my groups
+me$list_group_memberships()
+
 # create an app
 # by default, this will have a randomly generated strong password with duration 1 year
 app <- gr$create_app("AzureR_newapp")
 
 # get the associated service principal
 app$get_service_principal()
-
-# my user information
-gr$get_user("me")
 ```
 
 ---
