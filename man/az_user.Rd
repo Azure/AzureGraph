@@ -11,6 +11,15 @@ az_user
 \description{
 Base class representing an AAD user account.
 }
+\section{Fields}{
+
+\itemize{
+\item \code{token}: The token used to authenticate with the Graph host.
+\item \code{tenant}: The Azure Active Directory tenant for this user.
+\item \code{properties}: The user properties.
+}
+}
+
 \section{Methods}{
 
 \itemize{

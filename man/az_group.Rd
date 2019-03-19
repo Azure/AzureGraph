@@ -11,6 +11,15 @@ az_group
 \description{
 Base class representing an AAD group.
 }
+\section{Fields}{
+
+\itemize{
+\item \code{token}: The token used to authenticate with the Graph host.
+\item \code{tenant}: The Azure Active Directory tenant for this group.
+\item \code{properties}: The group properties.
+}
+}
+
 \section{Methods}{
 
 \itemize{

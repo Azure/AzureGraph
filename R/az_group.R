@@ -3,6 +3,10 @@
 #' Base class representing an AAD group.
 #'
 #' @docType class
+#' @section Fields:
+#' - `token`: The token used to authenticate with the Graph host.
+#' - `tenant`: The Azure Active Directory tenant for this group.
+#' - `properties`: The group properties.
 #' @section Methods:
 #' - `new(...)`: Initialize a new group object. Do not call this directly; see 'Initialization' below.
 #' - `delete(confirm=TRUE)`: Delete a group. By default, ask for confirmation first.

@@ -3,6 +3,11 @@
 #' Base class representing an AAD app.
 #'
 #' @docType class
+#' @section Fields:
+#' - `token`: The token used to authenticate with the Graph host.
+#' - `tenant`: The Azure Active Directory tenant for this app.
+#' - `properties`: The app properties.
+#' - `password`: The app password. Note that the Graph API does not return passwords, so this will be NULL for an app retrieved via `az_graph$get_app()`.
 #' @section Methods:
 #' - `new(...)`: Initialize a new app object. Do not call this directly; see 'Initialization' below.
 #' - `delete(confirm=TRUE)`: Delete an app. By default, ask for confirmation first.
@@ -32,7 +37,20 @@
 #' app$update_password()
 #'
 #' # set a redirect URI
-#' app$update(replyUrls=I("http://localhost:1410"))
+#' app$update(publicClient=list(redirectUris=I("http://localhost:1410")))
+#'
+#' # add API permission (access Azure Storage as user)
+#' app$update(requiredResourceAccess=list(
+#'     list(
+#'         resourceAppId="e406a681-f3d4-42a8-90b6-c2b029497af1",
+#'         resourceAccess=list(
+#'             list(
+#'                 id="03e0da56-190b-40ad-a80c-ea378c433f7f",
+#'                 type="Scope"
+#'             )
+#'         )
+#'     )
+#' ))
 #'
 #' # change the app name
 #' app$update(displayName="MyRenamedApp")
@@ -135,7 +153,7 @@ public=list(
         az_service_principal$new(
             self$token,
             self$tenant,
-            private$graph_op(op)
+            private$graph_op(op)$value[[1]]
         )
     },
 

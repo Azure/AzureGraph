@@ -57,8 +57,6 @@
 #' # create a new app and associated service principal, set password duration to 10 years
 #' app <- gr$create_app("mynewapp", password_duration=10)
 #'
-#' svc <- gr$get_service_principal(app_id=app$properties$appId)
-#'
 #' # delete the app
 #' gr$delete_app(app_id=app$properties$appId)
 #' # ... but better to call the object's delete method directly

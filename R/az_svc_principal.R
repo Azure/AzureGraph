@@ -3,6 +3,10 @@
 #' Base class representing an AAD service principal.
 #'
 #' @docType class
+#' @section Fields:
+#' - `token`: The token used to authenticate with the Graph host.
+#' - `tenant`: The Azure Active Directory tenant for this service principal.
+#' - `properties`: The service principal properties.
 #' @section Methods:
 #' - `new(...)`: Initialize a new service principal object. Do not call this directly; see 'Initialization' below.
 #' - `delete(confirm=TRUE)`: Delete a service principal. By default, ask for confirmation first.
