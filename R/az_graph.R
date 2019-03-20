@@ -274,7 +274,7 @@ public=list(
 
     print=function(...)
     {
-        cat("<Azure Active Directory Graph client>\n")
+        cat("<Microsoft Graph client>\n")
         cat("<Authentication>\n")
         fmt_token <- gsub("\n  ", "\n    ", format_auth_header(self$token))
         cat(" ", fmt_token)
