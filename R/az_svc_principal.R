@@ -53,6 +53,15 @@ public=list(
         op <- file.path("servicePrincipals", self$properties$id)
         private$graph_op(op, http_verb="DELETE")
         invisible(NULL)
+    },
+
+    print=function(...)
+    {
+        cat("<Graph service principal '", self$properties$displayName, "'>\n", sep="")
+        cat("  app id:", self$properties$appId, "\n")
+        cat("  directory id:", self$properties$id, "\n")
+        cat("  app tenant:", self$properties$appOwnerOrganizationId, "\n")
+        invisible(self)
     }
 ),
 

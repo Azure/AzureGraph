@@ -109,6 +109,15 @@ public=list(
         op <- file.path("users", self$properties$id)
         private$graph_op(op, http_verb="DELETE")
         invisible(NULL)
+    },
+
+    print=function(...)
+    {
+        cat("<Graph user account '", self$properties$displayName, "'>\n", sep="")
+        cat("  principal name:", self$properties$userPrincipalName, "\n")
+        cat("  email:", self$properties$mail, "\n")
+        cat("  directory id:", self$properties$id, "\n")
+        invisible(self)
     }
 ),
 

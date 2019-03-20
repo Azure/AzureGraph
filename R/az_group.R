@@ -70,6 +70,14 @@ public=list(
         op <- file.path("groups", self$properties$id)
         private$graph_op(op, http_verb="DELETE")
         invisible(NULL)
+    },
+    
+    print=function(...)
+    {
+        cat("<Graph group '", self$properties$displayName, "'>\n", sep="")
+        cat("  directory id:", self$properties$id, "\n")
+        cat("  description:", self$properties$description, "\n")
+        invisible(self)
     }
 ),
 

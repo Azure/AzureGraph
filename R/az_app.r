@@ -160,6 +160,15 @@ public=list(
     delete_service_principal=function(confirm=TRUE)
     {
         self$get_service_principal()$delete(confirm=confirm)
+    },
+
+    print=function(...)
+    {
+        cat("<Graph registered app '", self$properties$displayName, "'>\n", sep="")
+        cat("  app id:", self$properties$appId, "\n")
+        cat("  directory id:", self$properties$id, "\n")
+        cat("  domain:", self$properties$publisherDomain, "\n")
+        invisible(self)
     }
 ),
 
