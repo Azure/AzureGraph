@@ -4,7 +4,7 @@
 \name{az_user}
 \alias{az_user}
 \title{User in Azure Active Directory}
-\format{An R6 object of class \code{az_user}.}
+\format{An R6 object of class \code{az_user}, inheriting from \code{az_object}.}
 \usage{
 az_user
 }
@@ -27,8 +27,10 @@ Base class representing an AAD user account.
 \item \code{delete(confirm=TRUE)}: Delete a user account. By default, ask for confirmation first.
 \item \code{update(...)}: Update the user information in Azure Active Directory.
 \item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
+\item \code{list_group_memberships()}: Return the IDs of all groups this user is a member of.
+\item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this user is a member of.
+\item \code{list_direct_memberships(id_only=TRUE)}: List the groups this user is a direct member of. Set \code{id_only=TRUE} to return only a vector of group IDs (the default), or \code{id_only=FALSE} to return a list of group objects.
 \item `reset_password(password=NULL, force_password_change=TRUE): Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
-\item \code{list_group_memberships(direct_only=TRUE, id_only=TRUE)}: List the groups this user is a member of. Set \code{direct_only=FALSE} to get a \emph{transitive} list of memberships, ie including groups that the user's groups are members of. Set \code{id_only=TRUE} to return only a vector of group IDs (the default), or \code{id_only=FALSE} to return a list of group objects (which will be slow for a transitive list).
 }
 }
 
@@ -37,8 +39,19 @@ Base class representing an AAD user account.
 Creating new objects of this class should be done via the \code{create_user} and \code{get_user} methods of the \link{ms_graph} and \link{az_app} classes. Calling the \code{new()} method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual user account.
 }
 
+\examples{
+\dontrun{
+
+gr <- get_graph_login()
+usr <- gr$get_user("myname@aadtenant.com")
+
+grps <- usr$list_direct_memberships()
+head(grps)
+
+}
+}
 \seealso{
-\link{ms_graph}, \link{az_app}, \link{az_group}
+\link{ms_graph}, \link{az_app}, \link{az_group}, \link{az_object}
 
 \href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
 \href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta}{REST API reference}

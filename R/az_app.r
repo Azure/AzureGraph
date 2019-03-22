@@ -13,6 +13,8 @@
 #' - `delete(confirm=TRUE)`: Delete an app. By default, ask for confirmation first.
 #' - `update(...)`: Update the app data in Azure Active Directory. For what properties can be updated, consult the REST API documentation link below.
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
+#' - `list_group_memberships()`: Return the IDs of all groups this app is a member of.
+#' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this app is a member of.
 #' - `create_service_principal(...)`: Create a service principal for this app, by default in the current tenant.
 #' - `get_service_principal()`: Get the service principal for this app.
 #' - `delete_service_principal(confirm=TRUE)`: Delete the service principal for this app. By default, ask for confirmation first.
@@ -25,7 +27,7 @@
 #' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
 #'
 #' @seealso
-#' [ms_graph], [az_service_principal], [az_user], [az_group]
+#' [ms_graph], [az_service_principal], [az_user], [az_group], [az_object]
 #'
 #' @examples
 #' \dontrun{
@@ -56,41 +58,19 @@
 #' app$update(displayName="MyRenamedApp")
 #'
 #' }
-#' @format An R6 object of class `az_app`.
+#' @format An R6 object of class `az_app`, inheriting from `az_object`.
 #' @export
-az_app <- R6::R6Class("az_app",
+az_app <- R6::R6Class("az_app", inherit=az_object,
 
 public=list(
-
-    token=NULL,
-    tenant=NULL,
-
-    # app data from server
-    properties=NULL,
 
     password=NULL,
 
     initialize=function(token, tenant=NULL, properties=NULL, password=NULL)
     {
-        self$token <- token
-        self$tenant <- tenant
-        self$properties <- properties
+        self$type <- "application"
         self$password <- password
-    },
-
-    delete=function(confirm=TRUE)
-    {
-        if(confirm && interactive())
-        {
-            msg <- paste0("Do you really want to delete the app '", self$properties$displayName, "'? (y/N) ")
-            yn <- readline(msg)
-            if(tolower(substr(yn, 1, 1)) != "y")
-                return(invisible(NULL))
-        }
-
-        op <- file.path("applications", self$properties$id)
-        self$graph_op(op, http_verb="DELETE")
-        invisible(NULL)
+        super$initialize(token, tenant, properties)
     },
 
     update_password=function(password=NULL, name="key1", password_duration=1)
@@ -120,21 +100,6 @@ public=list(
         self$properties <- self$graph_op(op)
         self$password <- password
         password
-    },
-
-    update=function(...)
-    {
-        op <- file.path("applications", self$properties$id)
-        self$graph_op(op, body=list(...), encode="json", http_verb="PATCH")
-        self$properties <- self$graph_op(op)
-        self
-    },
-
-    sync_fields=function()
-    {
-        op <- file.path("applications", self$properties$id)
-        self$properties <- self$graph_op(op)
-        invisible(self)
     },
 
     create_service_principal=function(...)
@@ -169,10 +134,5 @@ public=list(
         cat("  directory id:", self$properties$id, "\n")
         cat("  domain:", self$properties$publisherDomain, "\n")
         invisible(self)
-    },
-
-    graph_op=function(op="", ...)
-    {
-        call_graph_endpoint(self$token, op, ...)
     }
 ))

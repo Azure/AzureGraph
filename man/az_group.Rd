@@ -4,7 +4,7 @@
 \name{az_group}
 \alias{az_group}
 \title{Group in Azure Active Directory}
-\format{An R6 object of class \code{az_group}.}
+\format{An R6 object of class \code{az_group}, inheriting from \code{az_object}.}
 \usage{
 az_group
 }
@@ -26,9 +26,11 @@ Base class representing an AAD group.
 \item \code{new(...)}: Initialize a new group object. Do not call this directly; see 'Initialization' below.
 \item \code{delete(confirm=TRUE)}: Delete a group. By default, ask for confirmation first.
 \item \code{update(...)}: Update the group information in Azure Active Directory.
+\item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
+\item \code{list_group_memberships()}: Return the IDs of all groups this group is a member of.
+\item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this group is a member of.
 \item \code{list_members()}: Return a list of all members of this group.
 \item \code{list_owners()}: Return a list of all owners of this group.
-\item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
 }
 }
 
@@ -37,8 +39,22 @@ Base class representing an AAD group.
 Creating new objects of this class should be done via the \code{create_group} and \code{get_group} methods of the \link{ms_graph} and \link{az_app} classes. Calling the \code{new()} method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual group.
 }
 
+\examples{
+\dontrun{
+
+gr <- get_graph_login()
+usr <- gr$get_user("myname@aadtenant.com")
+
+grps <- usr$list_direct_memberships()
+grp <- grp[[1]]
+
+grp$list_members()
+grp$list_owners()
+
+}
+}
 \seealso{
-\link{ms_graph}, \link{az_app}, \link{az_user}
+\link{ms_graph}, \link{az_app}, \link{az_user}, \link{az_object}
 
 \href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
 \href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta}{REST API reference}

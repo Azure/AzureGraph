@@ -4,7 +4,7 @@
 \name{az_app}
 \alias{az_app}
 \title{Registered app in Azure Active Directory}
-\format{An R6 object of class \code{az_app}.}
+\format{An R6 object of class \code{az_app}, inheriting from \code{az_object}.}
 \usage{
 az_app
 }
@@ -28,6 +28,8 @@ Base class representing an AAD app.
 \item \code{delete(confirm=TRUE)}: Delete an app. By default, ask for confirmation first.
 \item \code{update(...)}: Update the app data in Azure Active Directory. For what properties can be updated, consult the REST API documentation link below.
 \item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
+\item \code{list_group_memberships()}: Return the IDs of all groups this app is a member of.
+\item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this app is a member of.
 \item \code{create_service_principal(...)}: Create a service principal for this app, by default in the current tenant.
 \item \code{get_service_principal()}: Get the service principal for this app.
 \item \code{delete_service_principal(confirm=TRUE)}: Delete the service principal for this app. By default, ask for confirmation first.
@@ -74,6 +76,6 @@ app$update(displayName="MyRenamedApp")
 }
 }
 \seealso{
-\link{ms_graph}, \link{az_service_principal}, \link{az_user}, \link{az_group}
+\link{ms_graph}, \link{az_service_principal}, \link{az_user}, \link{az_group}, \link{az_object}
 }
 \keyword{datasets}

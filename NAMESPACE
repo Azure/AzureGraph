@@ -2,6 +2,7 @@
 
 export(az_app)
 export(az_group)
+export(az_object)
 export(az_service_principal)
 export(az_user)
 export(call_graph_endpoint)

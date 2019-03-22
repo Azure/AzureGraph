@@ -20,21 +20,20 @@ test_that("User/group read functionality works",
     me2 <- gr$get_user(user)
     expect_equal(me2$properties$mail, user)
 
-    grps0 <- me$list_group_memberships(TRUE, TRUE)
-    expect_true(is.character(grps0))
+    objs <- me$list_object_memberships()
+    expect_true(is.character(objs))
+ 
+    grps1 <- me$list_group_memberships()
+    expect_true(is.character(grps1))
 
-    grps1 <- me$list_group_memberships(TRUE, FALSE)
-    expect_true(all(sapply(grps1, is_group)))
-    expect_true(all(sapply(grps1, function(g) !is.null(g$properties$id))))
-
-    grps2 <- me$list_group_memberships(FALSE, TRUE)
+    grps2 <- me$list_direct_memberships(id_only=TRUE)
     expect_true(is.character(grps2))
 
-    grps3 <- me$list_group_memberships(FALSE, FALSE)
+    grps3 <- me$list_direct_memberships(id_only=FALSE)
     expect_true(all(sapply(grps3, is_group)))
     expect_true(all(sapply(grps3, function(g) !is.null(g$properties$id))))
 
-    grp <- gr$get_group(grps0[1])
+    grp <- gr$get_group(grps1[1])
     expect_true(is_group(grp) && !is.null(grp$properties$id))
 })
 

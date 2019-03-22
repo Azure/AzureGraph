@@ -4,7 +4,7 @@
 \name{az_service_principal}
 \alias{az_service_principal}
 \title{Service principal in Azure Active Directory}
-\format{An R6 object of class \code{az_service_principal}.}
+\format{An R6 object of class \code{az_service_principal}, inheriting from \code{az_object}.}
 \usage{
 az_service_principal
 }
@@ -25,6 +25,10 @@ Base class representing an AAD service principal.
 \itemize{
 \item \code{new(...)}: Initialize a new service principal object. Do not call this directly; see 'Initialization' below.
 \item \code{delete(confirm=TRUE)}: Delete a service principal. By default, ask for confirmation first.
+\item \code{update(...)}: Update the service principal information in Azure Active Directory.
+\item \code{sync_fields()}: Synchronise the R object with the service principal data in Azure Active Directory.
+\item \code{list_group_memberships()}: Return the IDs of all groups this service principal is a member of.
+\item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this service principal is a member of.
 }
 }
 
@@ -34,7 +38,7 @@ Creating new objects of this class should be done via the \code{create_service_p
 }
 
 \seealso{
-\link{ms_graph}, \link{az_app}
+\link{ms_graph}, \link{az_app}, \link{az_object}
 
 \href{https://docs.microsoft.com/en-us/graph/overview}{Azure Microsoft Graph overview},
 \href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta}{REST API reference}
