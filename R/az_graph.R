@@ -265,7 +265,9 @@ public=list(
     },
 
     delete_group=function(group_id, confirm=TRUE)
-    {},
+    {
+        self$get_group(group_id)$delete(confirm=confirm)
+    },
 
     call_graph_endpoint=function(op="", ...)
     {
