@@ -10,7 +10,7 @@
 #' @export
 is_app <- function(object)
 {
-    R6::is.R6(object) && inherits(object, "az_app")
+    R6::is.R6(object) && inherits(object, "gr_app")
 }
 
 
@@ -18,7 +18,7 @@ is_app <- function(object)
 #' @export
 is_service_principal <- function(object)
 {
-    R6::is.R6(object) && inherits(object, "az_service_principal")
+    R6::is.R6(object) && inherits(object, "gr_service_principal")
 }
 
 
@@ -26,7 +26,7 @@ is_service_principal <- function(object)
 #' @export
 is_user <- function(object)
 {
-    R6::is.R6(object) && inherits(object, "az_user")
+    R6::is.R6(object) && inherits(object, "gr_user")
 }
 
 
@@ -34,5 +34,5 @@ is_user <- function(object)
 #' @export
 is_group <- function(object)
 {
-    R6::is.R6(object) && inherits(object, "az_group")
+    R6::is.R6(object) && inherits(object, "gr_group")
 }

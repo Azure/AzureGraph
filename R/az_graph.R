@@ -22,7 +22,7 @@
 #' @section Authentication:
 #' The recommended way to authenticate with Microsoft Graph is via the [create_graph_login] function, which creates a new instance of this class.
 #'
-#' To authenticate with the `az_graph` class directly, provide the following arguments to the `new` method:
+#' To authenticate with the `gr_graph` class directly, provide the following arguments to the `new` method:
 #' - `tenant`: Your tenant ID. This can be a name ("myaadtenant"), a fully qualified domain name ("myaadtenant.onmicrosoft.com" or "mycompanyname.com"), or a GUID.
 #' - `app`: The client/app ID to use to authenticate with Azure Active Directory. The default is to login interactively using the Azure CLI cross-platform app, but it's recommended to supply your own app credentials if possible.
 #' - `password`: if `auth_type == "client_credentials"`, the app secret; if `auth_type == "resource_owner"`, your account password.
@@ -43,13 +43,13 @@
 #' \dontrun{
 #'
 #' # start a new Graph session
-#' gr <- az_graph$new(tenant="myaadtenant.onmicrosoft.com", app="app_id", password="password")
+#' gr <- gr_graph$new(tenant="myaadtenant.onmicrosoft.com", app="app_id", password="password")
 #'
 #' # authenticate with credentials in a file
-#' gr <- az_graph$new(config_file="creds.json")
+#' gr <- gr_graph$new(config_file="creds.json")
 #'
 #' # authenticate with device code
-#' gr <- az_graph$new(tenant="myaadtenant.onmicrosoft.com", app="app_id", auth_type="device_code")
+#' gr <- gr_graph$new(tenant="myaadtenant.onmicrosoft.com", app="app_id", auth_type="device_code")
 #'
 #' # retrieve a registered app
 #' gr$get_app(app_id="myappid")
@@ -63,9 +63,9 @@
 #' app$delete()
 #'
 #' }
-#' @format An R6 object of class `az_graph`.
+#' @format An R6 object of class `gr_graph`.
 #' @export
-az_graph <- R6::R6Class("az_graph",
+gr_graph <- R6::R6Class("gr_graph",
 
 public=list(
     host=NULL,
@@ -140,7 +140,7 @@ public=list(
             ))
         }
 
-        res <- az_app$new(
+        res <- gr_app$new(
             self$token,
             self$tenant,
             self$call_graph_endpoint("applications", body=properties, encode="json", http_verb="POST"),
@@ -157,12 +157,12 @@ public=list(
         if(!is.null(app_id))
         {
             op <- sprintf("applications?$filter=appId+eq+'%s'", app_id)
-            az_app$new(self$token, self$tenant, self$call_graph_endpoint(op)$value[[1]])
+            gr_app$new(self$token, self$tenant, self$call_graph_endpoint(op)$value[[1]])
         }
         else if(!is.null(object_id))
         {
             op <- file.path("applications", object_id)
-            az_app$new(self$token, self$tenant, self$call_graph_endpoint(op))
+            gr_app$new(self$token, self$tenant, self$call_graph_endpoint(op))
         }
         else stop("Must supply either app ID or object (directory) ID")
     },
@@ -182,12 +182,12 @@ public=list(
         if(!is.null(app_id) && is_guid(app_id))
         {
             op <- sprintf("servicePrincipals?$filter=appId+eq+'%s'", app_id)
-            az_service_principal$new(self$token, self$tenant, self$call_graph_endpoint(op)$value[[1]])
+            gr_service_principal$new(self$token, self$tenant, self$call_graph_endpoint(op)$value[[1]])
         }
         else if(!is.null(object_id) && is_guid(object_id))
         {
             op <- file.path("servicePrincipals", object_id)
-            az_service_principal$new(self$token, self$tenant, self$call_graph_endpoint(op))
+            gr_service_principal$new(self$token, self$tenant, self$call_graph_endpoint(op))
         }
         else stop("Must supply either app ID or object (directory) ID")
     },
@@ -220,7 +220,7 @@ public=list(
             )
         ))
 
-        az_user$new(
+        gr_user$new(
             self$token,
             self$tenant,
             self$call_graph_endpoint("users", body=properties, encode="json", http_verb="POST"),
@@ -234,7 +234,7 @@ public=list(
             "me"
         else file.path("users", user_id)
 
-        az_user$new(self$token, self$tenant, self$call_graph_endpoint(op))
+        gr_user$new(self$token, self$tenant, self$call_graph_endpoint(op))
     },
 
     delete_user=function(user_id, confirm=TRUE)
@@ -251,7 +251,7 @@ public=list(
             securityEnabled=TRUE
         )
 
-        az_group$new(
+        gr_group$new(
             self$token,
             self$tenant,
             self$call_graph_endpoint("groups", body=properties, encode="json", http_verb="POST")
@@ -261,7 +261,7 @@ public=list(
     get_group=function(group_id)
     {
         op <- file.path("groups", group_id)
-        az_group$new(self$token, self$tenant, self$call_graph_endpoint(op))
+        gr_group$new(self$token, self$tenant, self$call_graph_endpoint(op))
     },
 
     delete_group=function(group_id, confirm=TRUE)

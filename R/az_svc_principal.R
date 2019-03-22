@@ -12,17 +12,17 @@
 #' - `delete(confirm=TRUE)`: Delete a service principal. By default, ask for confirmation first.
 #'
 #' @section Initialization:
-#' Creating new objects of this class should be done via the `create_service_principal` and `get_service_principal` methods of the [az_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual service principal.
+#' Creating new objects of this class should be done via the `create_service_principal` and `get_service_principal` methods of the [gr_graph] and [gr_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual service principal.
 #'
 #' @seealso
-#' [az_graph], [az_app]
+#' [gr_graph], [gr_app]
 #'
 #' [Azure Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
 #' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
 #'
-#' @format An R6 object of class `az_service_principal`.
+#' @format An R6 object of class `gr_service_principal`.
 #' @export
-az_service_principal <- R6::R6Class("az_service_principal",
+gr_service_principal <- R6::R6Class("gr_service_principal",
 
 public=list(
 
