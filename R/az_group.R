@@ -107,7 +107,10 @@ public=list(
     list_owners=function()
     {
         op <- file.path("groups", self$properties$id, "owners")
-        az_user$new(self$token, self$tenant, self$graph_op(op))
+        lst <- self$graph_op(op)
+
+        res <- lst$value
+        lapply(res, function(obj) az_user$new(self$token, self$tenant, obj))
     },
 
     print=function(...)
