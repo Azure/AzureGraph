@@ -16,6 +16,7 @@ Base class representing an AAD app.
 \itemize{
 \item \code{token}: The token used to authenticate with the Graph host.
 \item \code{tenant}: The Azure Active Directory tenant for this app.
+\item \code{type}: always "application" for an app object.
 \item \code{properties}: The app properties.
 \item \code{password}: The app password. Note that the Graph API does not return passwords, so this will be NULL for an app retrieved via \code{ms_graph$get_app()}.
 }

@@ -6,6 +6,7 @@
 #' @section Fields:
 #' - `token`: The token used to authenticate with the Graph host.
 #' - `tenant`: The Azure Active Directory tenant for this service principal.
+#' - `type`: always "service principal" for a service principal object.
 #' - `properties`: The service principal properties.
 #' @section Methods:
 #' - `new(...)`: Initialize a new service principal object. Do not call this directly; see 'Initialization' below.

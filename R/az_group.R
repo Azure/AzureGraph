@@ -6,6 +6,7 @@
 #' @section Fields:
 #' - `token`: The token used to authenticate with the Graph host.
 #' - `tenant`: The Azure Active Directory tenant for this group.
+#' - `type`: always "group" for a group object.
 #' - `properties`: The group properties.
 #' @section Methods:
 #' - `new(...)`: Initialize a new group object. Do not call this directly; see 'Initialization' below.

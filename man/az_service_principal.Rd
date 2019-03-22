@@ -16,6 +16,7 @@ Base class representing an AAD service principal.
 \itemize{
 \item \code{token}: The token used to authenticate with the Graph host.
 \item \code{tenant}: The Azure Active Directory tenant for this service principal.
+\item \code{type}: always "service principal" for a service principal object.
 \item \code{properties}: The service principal properties.
 }
 }

@@ -16,6 +16,7 @@ Base class representing an AAD user account.
 \itemize{
 \item \code{token}: The token used to authenticate with the Graph host.
 \item \code{tenant}: The Azure Active Directory tenant for this user.
+\item \code{type}: always "user" for a user object.
 \item \code{properties}: The user properties.
 }
 }
