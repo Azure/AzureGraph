@@ -7,7 +7,7 @@
 #' - `token`: The token used to authenticate with the Graph host.
 #' - `tenant`: The Azure Active Directory tenant for this app.
 #' - `properties`: The app properties.
-#' - `password`: The app password. Note that the Graph API does not return passwords, so this will be NULL for an app retrieved via `graph$get_app()`.
+#' - `password`: The app password. Note that the Graph API does not return passwords, so this will be NULL for an app retrieved via `az_graph$get_app()`.
 #' @section Methods:
 #' - `new(...)`: Initialize a new app object. Do not call this directly; see 'Initialization' below.
 #' - `delete(confirm=TRUE)`: Delete an app. By default, ask for confirmation first.
@@ -19,13 +19,13 @@
 #' - `update_password(password=NULL, name="key1", password_duration=1)`: Updates the app password. Note that this will invalidate any existing password.
 #'
 #' @section Initialization:
-#' Creating new objects of this class should be done via the `create_app` and `get_app` methods of the [graph] class. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual app.
+#' Creating new objects of this class should be done via the `create_app` and `get_app` methods of the [az_graph] class. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual app.
 #'
 #' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
 #' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
 #'
 #' @seealso
-#' [graph], [service_principal], [user], [group]
+#' [az_graph], [az_service_principal], [az_user], [az_group]
 #'
 #' @examples
 #' \dontrun{
@@ -56,9 +56,9 @@
 #' app$update(displayName="MyRenamedApp")
 #'
 #' }
-#' @format An R6 object of class `app`.
+#' @format An R6 object of class `az_app`.
 #' @export
-gr_app <- R6::R6Class("gr_app",
+az_app <- R6::R6Class("az_app",
 
 public=list(
 
@@ -140,7 +140,7 @@ public=list(
     create_service_principal=function(...)
     {
         properties <- modifyList(list(...), list(appId=self$properties$appId))
-        gr_service_principal$new(
+        az_service_principal$new(
             self$token,
             self$tenant,
             private$graph_op("servicePrincipals", body=properties, encode="json", http_verb="POST")
@@ -150,7 +150,7 @@ public=list(
     get_service_principal=function()
     {
         op <- sprintf("servicePrincipals?$filter=appId+eq+'%s'", self$properties$appId)
-        gr_service_principal$new(
+        az_service_principal$new(
             self$token,
             self$tenant,
             private$graph_op(op)$value[[1]]
