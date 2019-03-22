@@ -89,7 +89,7 @@ public=list(
         }
 
         op <- file.path("applications", self$properties$id)
-        private$graph_op(op, http_verb="DELETE")
+        self$graph_op(op, http_verb="DELETE")
         invisible(NULL)
     },
 
@@ -116,8 +116,8 @@ public=list(
         )
 
         op <- file.path("applications", self$properties$id)
-        private$graph_op(op, body=properties, encode="json", http_verb="PATCH")
-        self$properties <- private$graph_op(op)
+        self$graph_op(op, body=properties, encode="json", http_verb="PATCH")
+        self$properties <- self$graph_op(op)
         self$password <- password
         password
     },
@@ -125,15 +125,15 @@ public=list(
     update=function(...)
     {
         op <- file.path("applications", self$properties$id)
-        private$graph_op(op, body=list(...), encode="json", http_verb="PATCH")
-        self$properties <- private$graph_op(op)
+        self$graph_op(op, body=list(...), encode="json", http_verb="PATCH")
+        self$properties <- self$graph_op(op)
         self
     },
 
     sync_fields=function()
     {
         op <- file.path("applications", self$properties$id)
-        self$properties <- private$graph_op(op)
+        self$properties <- self$graph_op(op)
         invisible(self)
     },
 
@@ -143,7 +143,7 @@ public=list(
         az_service_principal$new(
             self$token,
             self$tenant,
-            private$graph_op("servicePrincipals", body=properties, encode="json", http_verb="POST")
+            self$graph_op("servicePrincipals", body=properties, encode="json", http_verb="POST")
         )
     },
 
@@ -153,7 +153,7 @@ public=list(
         az_service_principal$new(
             self$token,
             self$tenant,
-            private$graph_op(op)$value[[1]]
+            self$graph_op(op)$value[[1]]
         )
     },
 
@@ -169,10 +169,7 @@ public=list(
         cat("  directory id:", self$properties$id, "\n")
         cat("  domain:", self$properties$publisherDomain, "\n")
         invisible(self)
-    }
-),
-
-private=list(
+    },
 
     graph_op=function(op="", ...)
     {

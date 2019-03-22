@@ -51,7 +51,7 @@ public=list(
         }
 
         op <- file.path("servicePrincipals", self$properties$id)
-        private$graph_op(op, http_verb="DELETE")
+        self$graph_op(op, http_verb="DELETE")
         invisible(NULL)
     },
 
@@ -62,10 +62,7 @@ public=list(
         cat("  directory id:", self$properties$id, "\n")
         cat("  app tenant:", self$properties$appOwnerOrganizationId, "\n")
         invisible(self)
-    }
-),
-
-private=list(
+    },
 
     graph_op=function(op="", ...)
     {

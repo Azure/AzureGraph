@@ -60,8 +60,8 @@ public=list(
         ))
 
         op <- file.path("users", self$properties$id)
-        private$graph_op(op, body=properties, encode="json", http_verb="PATCH")
-        self$properties <- private$graph_op(op)
+        self$graph_op(op, body=properties, encode="json", http_verb="PATCH")
+        self$properties <- self$graph_op(op)
         self$password <- password
         password
     },
@@ -69,15 +69,15 @@ public=list(
     update=function(...)
     {
         op <- file.path("users", self$properties$id)
-        private$graph_op(op, body=list(...), encode="json", http_verb="PATCH")
-        self$properties <- private$graph_op(op)
+        self$graph_op(op, body=list(...), encode="json", http_verb="PATCH")
+        self$properties <- self$graph_op(op)
         self
     },
 
     sync_fields=function()
     {
         op <- file.path("users", self$properties$id)
-        self$properties <- private$graph_op(op)
+        self$properties <- self$graph_op(op)
         invisible(self)
     },
 
@@ -107,7 +107,7 @@ public=list(
         }
 
         op <- file.path("users", self$properties$id)
-        private$graph_op(op, http_verb="DELETE")
+        self$graph_op(op, http_verb="DELETE")
         invisible(NULL)
     },
 
@@ -118,6 +118,11 @@ public=list(
         cat("  email:", self$properties$mail, "\n")
         cat("  directory id:", self$properties$id, "\n")
         invisible(self)
+    },
+
+    graph_op=function(op="", ...)
+    {
+        call_graph_endpoint(self$token, op, ...)
     }
 ),
 
@@ -126,7 +131,7 @@ private=list(
     list_transitive_memberships=function(id_only)
     {
         op <- file.path("users", self$properties$id, "getMemberGroups")
-        lst <- private$graph_op(op, body=list(securityEnabledOnly=TRUE),
+        lst <- self$graph_op(op, body=list(securityEnabledOnly=TRUE),
             encode="json", http_verb="POST")
 
         res <- lst$value
@@ -141,7 +146,7 @@ private=list(
             lapply(res, function(grp)
             {
                 op <- file.path("groups", grp)
-                private$graph_op(op)
+                self$graph_op(op)
             })
         }
         else res
@@ -150,7 +155,7 @@ private=list(
     list_direct_memberships=function(id_only)
     {
         op <- file.path("users", self$properties$id, "memberOf")
-        lst <- private$graph_op(op)
+        lst <- self$graph_op(op)
 
         res <- lst$value
         while(!is_empty(lst$`@odata.nextLink`))
@@ -162,10 +167,5 @@ private=list(
         if(id_only)
             lapply(res, function(grp) grp$id)
         else res
-    },
-
-    graph_op=function(op="", ...)
-    {
-        call_graph_endpoint(self$token, op, ...)
     }
 ))

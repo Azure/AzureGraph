@@ -44,15 +44,15 @@ public=list(
     update=function(...)
     {
         op <- file.path("groups", self$properties$id)
-        private$graph_op(op, body=list(...), encode="json", http_verb="PATCH")
-        self$properties <- private$graph_op(op)
+        self$graph_op(op, body=list(...), encode="json", http_verb="PATCH")
+        self$properties <- self$graph_op(op)
         self
     },
 
     sync_fields=function()
     {
         op <- file.path("groups", self$properties$id)
-        self$properties <- private$graph_op(op)
+        self$properties <- self$graph_op(op)
         invisible(self)
     },
 
@@ -68,7 +68,7 @@ public=list(
         }
 
         op <- file.path("groups", self$properties$id)
-        private$graph_op(op, http_verb="DELETE")
+        self$graph_op(op, http_verb="DELETE")
         invisible(NULL)
     },
     
@@ -78,10 +78,7 @@ public=list(
         cat("  directory id:", self$properties$id, "\n")
         cat("  description:", self$properties$description, "\n")
         invisible(self)
-    }
-),
-
-private=list(
+    },
 
     graph_op=function(op="", ...)
     {
