@@ -16,10 +16,10 @@
 #' - `list_group_memberships(direct_only=TRUE, id_only=TRUE)`: List the groups this user is a member of. Set `direct_only=FALSE` to get a _transitive_ list of memberships, ie including groups that the user's groups are members of. Set `id_only=TRUE` to return only a vector of group IDs (the default), or `id_only=FALSE` to return a list of group objects (which will be slow for a transitive list).
 #'
 #' @section Initialization:
-#' Creating new objects of this class should be done via the `create_user` and `get_user` methods of the [az_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual user account.
+#' Creating new objects of this class should be done via the `create_user` and `get_user` methods of the [ms_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual user account.
 #'
 #' @seealso
-#' [az_graph], [az_app], [az_group]
+#' [ms_graph], [az_app], [az_group]
 #'
 #' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
 #' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)

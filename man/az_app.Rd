@@ -17,7 +17,7 @@ Base class representing an AAD app.
 \item \code{token}: The token used to authenticate with the Graph host.
 \item \code{tenant}: The Azure Active Directory tenant for this app.
 \item \code{properties}: The app properties.
-\item \code{password}: The app password. Note that the Graph API does not return passwords, so this will be NULL for an app retrieved via \code{az_graph$get_app()}.
+\item \code{password}: The app password. Note that the Graph API does not return passwords, so this will be NULL for an app retrieved via \code{ms_graph$get_app()}.
 }
 }
 
@@ -37,7 +37,7 @@ Base class representing an AAD app.
 
 \section{Initialization}{
 
-Creating new objects of this class should be done via the \code{create_app} and \code{get_app} methods of the \link{az_graph} class. Calling the \code{new()} method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual app.
+Creating new objects of this class should be done via the \code{create_app} and \code{get_app} methods of the \link{ms_graph} class. Calling the \code{new()} method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual app.
 
 \href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
 \href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta}{REST API reference}
@@ -74,6 +74,6 @@ app$update(displayName="MyRenamedApp")
 }
 }
 \seealso{
-\link{az_graph}, \link{az_service_principal}, \link{az_user}, \link{az_group}
+\link{ms_graph}, \link{az_service_principal}, \link{az_user}, \link{az_group}
 }
 \keyword{datasets}

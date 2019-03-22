@@ -11,7 +11,7 @@
 #' @param refresh For `get_graph_login`, whether to refresh the authentication token on loading the client.
 #' @param selection For `get_graph_login`, if you have multiple logins for a given tenant, which one to use. This can be a number, or the input MD5 hash of the token used for the login. If not supplied, `get_graph_login` will print a menu and ask you to choose a login.
 #' @param confirm For `delete_graph_login`, whether to ask for confirmation before deleting.
-#' @param ... Other arguments passed to `az_graph$new()`.
+#' @param ... Other arguments passed to `ms_graph$new()`.
 #'
 #' @details
 #' `create_graph_login` creates a login client to authenticate with Microsoft Graph, using the supplied arguments. The authentication token is obtained using [get_azure_token], which automatically caches and reuses tokens for subsequent sessions. Note that credentials are only cached if you allowed AzureGraph to create a data directory at package startup.
@@ -24,12 +24,12 @@
 #' If you are using a Linux [Data Science Virtual Machine](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) in Azure, you may have problems running `create_graph_login()` (ie, without any arguments). In this case, try `create_graph_login(auth_type="device_code")`.
 #'
 #' @return
-#' For `get_graph_login` and `create_graph_login`, an object of class `az_graph`, representing the login client. For `list_graph_logins`, a (possibly nested) list of such objects.
+#' For `get_graph_login` and `create_graph_login`, an object of class `ms_graph`, representing the login client. For `list_graph_logins`, a (possibly nested) list of such objects.
 #'
 #' If the AzureR data directory for saving credentials does not exist, `get_graph_login` will throw an error.
 #'
 #' @seealso
-#' [az_graph], [AzureAuth::get_azure_token] for more details on authentication methods
+#' [ms_graph], [AzureAuth::get_azure_token] for more details on authentication methods
 #'
 #' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
 #' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
@@ -88,7 +88,7 @@ create_graph_login <- function(tenant="common", app=.az_cli_app_id, password=NUL
     app <- normalize_guid(app)
 
     message("Creating Microsoft Graph login for ", format_tenant(tenant))
-    client <- az_graph$new(tenant, app, password, username, auth_type, host, aad_host, config_file, ...)
+    client <- ms_graph$new(tenant, app, password, username, auth_type, host, aad_host, config_file, ...)
 
     # save login info for future sessions
     graph_logins <- load_graph_logins()
@@ -149,7 +149,7 @@ get_graph_login <- function(tenant="common", selection=NULL, refresh=TRUE)
     message("Loading Microsoft Graph login for ", format_tenant(tenant))
 
     token <- readRDS(file)
-    client <- az_graph$new(token=token)
+    client <- ms_graph$new(token=token)
 
     if(refresh)
         client$token$refresh()
@@ -197,7 +197,7 @@ list_graph_logins <- function()
         sapply(tenant, function(hash)
         {
             file <- file.path(AzureR_dir(), hash)
-            az_graph$new(token=readRDS(file))
+            ms_graph$new(token=readRDS(file))
         }, simplify=FALSE)
     }, simplify=FALSE)
 

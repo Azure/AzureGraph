@@ -36,7 +36,7 @@ list_graph_logins()
 
 \item{config_file}{Optionally, a JSON file containing any of the arguments listed above. Arguments supplied in this file take priority over those supplied on the command line. You can also use the output from the Azure CLI \code{az ad sp create-for-rbac} command.}
 
-\item{...}{Other arguments passed to \code{az_graph$new()}.}
+\item{...}{Other arguments passed to \code{ms_graph$new()}.}
 
 \item{selection}{For \code{get_graph_login}, if you have multiple logins for a given tenant, which one to use. This can be a number, or the input MD5 hash of the token used for the login. If not supplied, \code{get_graph_login} will print a menu and ask you to choose a login.}
 
@@ -45,7 +45,7 @@ list_graph_logins()
 \item{confirm}{For \code{delete_graph_login}, whether to ask for confirmation before deleting.}
 }
 \value{
-For \code{get_graph_login} and \code{create_graph_login}, an object of class \code{az_graph}, representing the login client. For \code{list_graph_logins}, a (possibly nested) list of such objects.
+For \code{get_graph_login} and \code{create_graph_login}, an object of class \code{ms_graph}, representing the login client. For \code{list_graph_logins}, a (possibly nested) list of such objects.
 
 If the AzureR data directory for saving credentials does not exist, \code{get_graph_login} will throw an error.
 }
@@ -83,7 +83,7 @@ az <- create_graph_login(config_file="~/creds.json")
 }
 }
 \seealso{
-\link{az_graph}, \link[AzureAuth:get_azure_token]{AzureAuth::get_azure_token} for more details on authentication methods
+\link{ms_graph}, \link[AzureAuth:get_azure_token]{AzureAuth::get_azure_token} for more details on authentication methods
 
 \href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
 \href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta}{REST API reference}

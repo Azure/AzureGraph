@@ -22,7 +22,7 @@
 #' @section Authentication:
 #' The recommended way to authenticate with Microsoft Graph is via the [create_graph_login] function, which creates a new instance of this class.
 #'
-#' To authenticate with the `az_graph` class directly, provide the following arguments to the `new` method:
+#' To authenticate with the `ms_graph` class directly, provide the following arguments to the `new` method:
 #' - `tenant`: Your tenant ID. This can be a name ("myaadtenant"), a fully qualified domain name ("myaadtenant.onmicrosoft.com" or "mycompanyname.com"), or a GUID.
 #' - `app`: The client/app ID to use to authenticate with Azure Active Directory. The default is to login interactively using the Azure CLI cross-platform app, but it's recommended to supply your own app credentials if possible.
 #' - `password`: if `auth_type == "client_credentials"`, the app secret; if `auth_type == "resource_owner"`, your account password.
@@ -43,13 +43,13 @@
 #' \dontrun{
 #'
 #' # start a new Graph session
-#' gr <- az_graph$new(tenant="myaadtenant.onmicrosoft.com", app="app_id", password="password")
+#' gr <- ms_graph$new(tenant="myaadtenant.onmicrosoft.com", app="app_id", password="password")
 #'
 #' # authenticate with credentials in a file
-#' gr <- az_graph$new(config_file="creds.json")
+#' gr <- ms_graph$new(config_file="creds.json")
 #'
 #' # authenticate with device code
-#' gr <- az_graph$new(tenant="myaadtenant.onmicrosoft.com", app="app_id", auth_type="device_code")
+#' gr <- ms_graph$new(tenant="myaadtenant.onmicrosoft.com", app="app_id", auth_type="device_code")
 #'
 #' # retrieve a registered app
 #' gr$get_app(app_id="myappid")
@@ -63,9 +63,9 @@
 #' app$delete()
 #'
 #' }
-#' @format An R6 object of class `az_graph`.
+#' @format An R6 object of class `ms_graph`.
 #' @export
-az_graph <- R6::R6Class("az_graph",
+ms_graph <- R6::R6Class("ms_graph",
 
 public=list(
     host=NULL,

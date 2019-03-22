@@ -14,10 +14,10 @@
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
 #'
 #' @section Initialization:
-#' Creating new objects of this class should be done via the `create_group` and `get_group` methods of the [az_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual group.
+#' Creating new objects of this class should be done via the `create_group` and `get_group` methods of the [ms_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual group.
 #'
 #' @seealso
-#' [az_graph], [az_app], [az_user]
+#' [ms_graph], [az_app], [az_user]
 #'
 #' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
 #' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
