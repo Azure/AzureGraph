@@ -26,6 +26,8 @@ Base class representing an AAD group.
 \item \code{new(...)}: Initialize a new group object. Do not call this directly; see 'Initialization' below.
 \item \code{delete(confirm=TRUE)}: Delete a group. By default, ask for confirmation first.
 \item \code{update(...)}: Update the group information in Azure Active Directory.
+\item \code{list_members()}: Return a list of all members of this group.
+\item \code{list_owners()}: Return a list of all owners of this group.
 \item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
 }
 }

@@ -11,6 +11,8 @@
 #' - `new(...)`: Initialize a new group object. Do not call this directly; see 'Initialization' below.
 #' - `delete(confirm=TRUE)`: Delete a group. By default, ask for confirmation first.
 #' - `update(...)`: Update the group information in Azure Active Directory.
+#' - `list_members()`: Return a list of all members of this group.
+#' - `list_owners()`: Return a list of all owners of this group.
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
 #'
 #' @section Initialization:
@@ -71,7 +73,43 @@ public=list(
         self$graph_op(op, http_verb="DELETE")
         invisible(NULL)
     },
-    
+
+    list_members=function()
+    {
+        op <- file.path("groups", self$properties$id, "members")
+        lst <- self$graph_op(op)
+
+        res <- lst$value
+        while(!is_empty(lst$`@odata.nextLink`))
+        {
+            lst <- call_graph_url(self$token, lst$`@odata.nextLink`)
+            res <- c(res, lst$value)
+        }
+
+        lapply(res, function(obj)
+        {
+            if(obj$`@odata.type` == "#microsoft.graph.user")
+                az_user$new(self$token, self$tenant, obj)
+            else if(obj$`@odata.type` == "#microsoft.graph.group")
+                az_group$new(self$token, self$tenant, obj)
+            else if(obj$`@odata.type` == "#microsoft.graph.application")
+                az_app$new(self$token, self$tenant, obj)
+            else if(obj$`@odata.type` == "#microsoft.graph.servicePrincipal")
+                az_service_principal$new(self$token, self$tenant, obj)
+            else
+            {
+                warning("Unknown directory object type ", obj$`@odata.type`)
+                obj
+            }
+        })
+    },
+
+    list_owners=function()
+    {
+        op <- file.path("groups", self$properties$id, "owners")
+        az_user$new(self$token, self$tenant, self$graph_op(op))
+    },
+
     print=function(...)
     {
         cat("<Graph group '", self$properties$displayName, "'>\n", sep="")
