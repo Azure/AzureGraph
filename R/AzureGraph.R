@@ -7,7 +7,6 @@ utils::globalVariables(c("self", "private"))
 .onLoad <- function(libname, pkgname)
 {
     options(azure_graph_api_version="beta")
-    make_AzureR_dir()
     invisible(NULL)
 }
 
