@@ -5,14 +5,14 @@
 #' @docType class
 #' @section Fields:
 #' - `token`: The token used to authenticate with the Graph host.
-#' - `tenant`: The Azure Active Directory tenant for this group.
+#' - `tenant`: The Azure Active Directory tenant for this object.
 #' - `type`: The type of object: user, group, application or service principal.
-#' - `properties`: The group properties.
+#' - `properties`: The object properties.
 #' @section Methods:
-#' - `new(...)`: Initialize a new group object. Do not call this directly; see 'Initialization' below.
-#' - `delete(confirm=TRUE)`: Delete a group. By default, ask for confirmation first.
-#' - `update(...)`: Update the group information in Azure Active Directory.
-#' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
+#' - `new(...)`: Initialize a new directory object. Do not call this directly; see 'Initialization' below.
+#' - `delete(confirm=TRUE)`: Delete an object. By default, ask for confirmation first.
+#' - `update(...)`: Update the object information in Azure Active Directory.
+#' - `sync_fields()`: Synchronise the R object with the data in Azure Active Directory.
 #' - `list_group_memberships()`: Return the IDs of all groups this object is a member of.
 #' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this object is a member of.
 #'

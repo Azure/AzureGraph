@@ -1,14 +1,15 @@
 Package: AzureGraph
-Title: Interface to 'Azure Active Directory Graph'
+Title: Simple interface to 'Microsoft Graph'
 Version: 0.1.0
 Authors@R: c(
     person("Hong", "Ooi", , "hongooi@microsoft.com", role = c("aut", "cre")),
     person("Microsoft", role="cph")
     )
-Description: A simple R interface to the 'Azure Active Directory Graph' REST API. It currently includes functionality to create and delete registered apps and service principals.
+Description: A simple R interface to 'Graph', the API framework for accessing data in Microsoft's various online services. It currently includes functionality to manage 'Azure Active Directory' objects, with a view to enhancing R interoperability with Microsoft's 'Azure' cloud. It supports creating, updating and deleting registered apps, service principals, users and groups; and can be extended to support other services in 'Graph'.
 URL: https://github.com/cloudyr/AzureGraph
 BugReports: https://github.com/cloudyr/AzureGraph/issues
 License: MIT + file LICENSE
+VignetteBuilder: knitr
 Depends: 
     R (>= 3.3)
 Imports: 
@@ -20,7 +21,7 @@ Imports:
     R6
 Suggests:
     AzureRMR,
-    testthat,
-    httpuv
+    knitr,
+    testthat
 Roxygen: list(markdown=TRUE)
 RoxygenNote: 6.1.1
