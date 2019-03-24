@@ -33,10 +33,21 @@
 #' \dontrun{
 #'
 #' gr <- get_graph_login()
+#'
+#' # my user account
+#' gr$get_user()
+#'
+#' # another user account
 #' usr <- gr$get_user("myname@aadtenant.com")
 #'
 #' grps <- usr$list_direct_memberships()
 #' head(grps)
+#'
+#' # owned objects
+#' usr$list_owned_objects()
+#'
+#' # owned apps and service principals
+#' usr$list_owned_objects(type=c("application", "servicePrincipal"))
 #'
 #' }
 #' @format An R6 object of class `az_user`, inheriting from `az_object`.
