@@ -1,5 +1,5 @@
 Package: AzureGraph
-Title: Simple interface to 'Microsoft Graph'
+Title: Simple Interface to 'Microsoft Graph'
 Version: 0.1.0
 Authors@R: c(
     person("Hong", "Ooi", , "hongooi@microsoft.com", role = c("aut", "cre")),
