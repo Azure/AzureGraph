@@ -17,6 +17,7 @@
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
 #' - `list_group_memberships()`: Return the IDs of all groups this app is a member of.
 #' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this app is a member of.
+#' - `list_owners(type=c("user", "group", "application", "servicePrincipal"))`: Return a list of all owners of this app. Specify the `type` argument to filter the result for specific object type(s).
 #' - `create_service_principal(...)`: Create a service principal for this app, by default in the current tenant.
 #' - `get_service_principal()`: Get the service principal for this app.
 #' - `delete_service_principal(confirm=TRUE)`: Delete the service principal for this app. By default, ask for confirmation first.
@@ -101,6 +102,12 @@ public=list(
         self$properties <- self$do_operation()
         self$password <- password
         password
+    },
+
+    list_owners=function(type=c("user", "group", "application", "servicePrincipal"))
+    {
+        res <- private$get_paged_list(self$do_operation("owners"))
+        private$init_list_objects(private$filter_list(res, type))
     },
 
     create_service_principal=function(...)
