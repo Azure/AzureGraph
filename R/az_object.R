@@ -117,7 +117,7 @@ private=list(
         res
     },
 
-    filter_list=function(lst, type)
+    filter_list=function(lst, type=c("user", "group", "application", "servicePrincipal", "device"))
     {
         type <- paste0("#microsoft.graph.", type)
         keep <- sapply(lst, function(obj) obj$`@odata.type` %in% type)
@@ -128,19 +128,22 @@ private=list(
     {
         lapply(lst, function(obj)
         {
-            if(obj$`@odata.type` == "#microsoft.graph.user")
-                az_user$new(self$token, self$tenant, obj)
-            else if(obj$`@odata.type` == "#microsoft.graph.group")
-                az_group$new(self$token, self$tenant, obj)
-            else if(obj$`@odata.type` == "#microsoft.graph.application")
-                az_app$new(self$token, self$tenant, obj)
-            else if(obj$`@odata.type` == "#microsoft.graph.servicePrincipal")
-                az_service_principal$new(self$token, self$tenant, obj)
-            else
-            {
-                warning("Unknown directory object type ", obj$`@odata.type`)
-                obj
-            }
+            switch(obj$`@odata.type`,
+                "#microsoft.graph.user"=
+                    az_user$new(self$token, self$tenant, obj),
+                "#microsoft.graph.group"=
+                    az_group$new(self$token, self$tenant, obj),
+                "#microsoft.graph.application"=
+                    az_app$new(self$token, self$tenant, obj),
+                "#microsoft.graph.servicePrincipal"=
+                    az_service_principal$new(self$token, self$tenant, obj),
+                "#microsoft.graph.device"=
+                    az_device$new(self$token, self$tenant, obj),
+                {
+                    warning("Unknown directory object type ", obj$`@odata.type`)
+                    obj
+                }
+            )
         })
     },
 

@@ -19,13 +19,15 @@
 #' - `list_direct_memberships(id_only=TRUE)`: List the groups this user is a direct member of. Set `id_only=TRUE` to return only a vector of group IDs (the default), or `id_only=FALSE` to return a list of group objects.
 #' - `list_owned_objects(type=c("user", "group", "application", "servicePrincipal"))`: List directory objects (groups/apps/service principals) owned by this user. Specify the `type` argument to filter the result for specific object type(s).
 #' - `list_created_objects(type=c("user", "group", "application", "servicePrincipal"))`: List directory objects (groups/apps/service principals) created by this user. Specify the `type` argument to filter the result for specific object type(s).
+#' - `list_owned_devices()`: List the devices owned by this user.
+#' - `list_registered_devices()`: List the devices registered by this user.
 #' - `reset_password(password=NULL, force_password_change=TRUE): Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
 #'
 #' @section Initialization:
 #' Creating new objects of this class should be done via the `create_user` and `get_user` methods of the [ms_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual user account.
 #'
 #' @seealso
-#' [ms_graph], [az_app], [az_group], [az_object]
+#' [ms_graph], [az_app], [az_group], [az_device], [az_object]
 #'
 #' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
 #' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
@@ -95,6 +97,12 @@ public=list(
     {
         res <- private$get_paged_list(self$do_operation("createdObjects"))
         private$init_list_objects(private$filter_list(res, type))
+    },
+
+    list_owned_devices=function()
+    {
+        res <- private$get_paged_list(self$do_operation("ownedDevices"))
+        private$init_list_objects(private$filter_list(res))
     },
 
     list_direct_memberships=function(id_only=TRUE)

@@ -34,6 +34,8 @@ Base class representing an AAD user account.
 \item \code{list_direct_memberships(id_only=TRUE)}: List the groups this user is a direct member of. Set \code{id_only=TRUE} to return only a vector of group IDs (the default), or \code{id_only=FALSE} to return a list of group objects.
 \item \code{list_owned_objects(type=c("user", "group", "application", "servicePrincipal"))}: List directory objects (groups/apps/service principals) owned by this user. Specify the \code{type} argument to filter the result for specific object type(s).
 \item \code{list_created_objects(type=c("user", "group", "application", "servicePrincipal"))}: List directory objects (groups/apps/service principals) created by this user. Specify the \code{type} argument to filter the result for specific object type(s).
+\item \code{list_owned_devices()}: List the devices owned by this user.
+\item \code{list_registered_devices()}: List the devices registered by this user.
 \item `reset_password(password=NULL, force_password_change=TRUE): Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
 }
 }
@@ -66,7 +68,7 @@ usr$list_owned_objects(type=c("application", "servicePrincipal"))
 }
 }
 \seealso{
-\link{ms_graph}, \link{az_app}, \link{az_group}, \link{az_object}
+\link{ms_graph}, \link{az_app}, \link{az_group}, \link{az_device}, \link{az_object}
 
 \href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
 \href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta}{REST API reference}
