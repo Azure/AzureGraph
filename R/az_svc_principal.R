@@ -12,6 +12,7 @@
 #' - `new(...)`: Initialize a new service principal object. Do not call this directly; see 'Initialization' below.
 #' - `delete(confirm=TRUE)`: Delete a service principal. By default, ask for confirmation first.
 #' - `update(...)`: Update the service principal information in Azure Active Directory.
+#' - `do_operation(...)`: Carry out an arbitrary operation on the service principal.
 #' - `sync_fields()`: Synchronise the R object with the service principal data in Azure Active Directory.
 #' - `list_group_memberships()`: Return the IDs of all groups this service principal is a member of.
 #' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this service principal is a member of.

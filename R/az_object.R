@@ -12,6 +12,7 @@
 #' - `new(...)`: Initialize a new directory object. Do not call this directly; see 'Initialization' below.
 #' - `delete(confirm=TRUE)`: Delete an object. By default, ask for confirmation first.
 #' - `update(...)`: Update the object information in Azure Active Directory.
+#' - `do_operation(...)`: Carry out an arbitrary operation on the object.
 #' - `sync_fields()`: Synchronise the R object with the data in Azure Active Directory.
 #' - `list_group_memberships()`: Return the IDs of all groups this object is a member of.
 #' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this object is a member of.
@@ -47,16 +48,14 @@ public=list(
 
     update=function(...)
     {
-        op <- file.path(private$get_endpoint(), self$properties$id)
-        self$graph_op(op, body=list(...), encode="json", http_verb="PATCH")
-        self$properties <- self$graph_op(op)
+        self$do_operation(body=list(...), encode="json", http_verb="PATCH")
+        self$properties <- self$do_operation()
         self
     },
 
     sync_fields=function()
     {
-        op <- file.path(private$get_endpoint(), self$properties$id)
-        self$properties <- self$graph_op(op)
+        self$properties <- self$do_operation()
         invisible(self)
     },
 
@@ -71,15 +70,13 @@ public=list(
                 return(invisible(NULL))
         }
 
-        op <- file.path(private$get_endpoint(), self$properties$id)
-        self$graph_op(op, http_verb="DELETE")
+        self$do_operation(http_verb="DELETE")
         invisible(NULL)
     },
 
     list_object_memberships=function()
     {
-        op <- file.path(private$get_endpoint(), self$properties$id, "getMemberObjects")
-        lst <- self$graph_op(op, body=list(securityEnabledOnly=TRUE),
+        lst <- self$do_operation("getMemberObjects", body=list(securityEnabledOnly=TRUE),
             encode="json", http_verb="POST")
 
         unlist(private$get_paged_list(lst))
@@ -87,15 +84,15 @@ public=list(
 
     list_group_memberships=function()
     {
-        op <- file.path(private$get_endpoint(), self$properties$id, "getMemberGroups")
-        lst <- self$graph_op(op, body=list(securityEnabledOnly=TRUE),
+        lst <- self$do_operation("getMemberGroups", body=list(securityEnabledOnly=TRUE),
             encode="json", http_verb="POST")
 
         unlist(private$get_paged_list(lst))
     },
 
-    graph_op=function(op="", ...)
+    do_operation=function(op="", ...)
     {
+        op <- construct_path(private$get_endpoint(), self$properties$id, op)
         call_graph_endpoint(self$token, op, ...)
     },
 
@@ -154,6 +151,7 @@ private=list(
             "group"="groups",
             "application"="applications",
             "service principal"="servicePrincipals",
+            "device"="devices",
             stop("Unknown directory object type"))
     }
 ))

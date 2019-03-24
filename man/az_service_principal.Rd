@@ -27,6 +27,7 @@ Base class representing an AAD service principal.
 \item \code{new(...)}: Initialize a new service principal object. Do not call this directly; see 'Initialization' below.
 \item \code{delete(confirm=TRUE)}: Delete a service principal. By default, ask for confirmation first.
 \item \code{update(...)}: Update the service principal information in Azure Active Directory.
+\item \code{do_operation(...)}: Carry out an arbitrary operation on the service principal.
 \item \code{sync_fields()}: Synchronise the R object with the service principal data in Azure Active Directory.
 \item \code{list_group_memberships()}: Return the IDs of all groups this service principal is a member of.
 \item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this service principal is a member of.

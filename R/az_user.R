@@ -12,6 +12,7 @@
 #' - `new(...)`: Initialize a new user object. Do not call this directly; see 'Initialization' below.
 #' - `delete(confirm=TRUE)`: Delete a user account. By default, ask for confirmation first.
 #' - `update(...)`: Update the user information in Azure Active Directory.
+#' - `do_operation(...)`: Carry out an arbitrary operation on the user account.
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
 #' - `list_group_memberships()`: Return the IDs of all groups this user is a member of.
 #' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this user is a member of.
@@ -78,31 +79,27 @@ public=list(
             )
         ))
 
-        op <- file.path("users", self$properties$id)
-        self$graph_op(op, body=properties, encode="json", http_verb="PATCH")
-        self$properties <- self$graph_op(op)
+        self$do_operation(body=properties, encode="json", http_verb="PATCH")
+        self$properties <- self$do_operation()
         self$password <- password
         password
     },
 
     list_owned_objects=function(type=c("user", "group", "application", "servicePrincipal"))
     {
-        op <- file.path("users", self$properties$id, "ownedObjects")
-        res <- private$get_paged_list(self$graph_op(op))
+        res <- private$get_paged_list(self$do_operation("ownedObjects"))
         private$init_list_objects(private$filter_list(res, type))
     },
 
     list_created_objects=function(type=c("user", "group", "application", "servicePrincipal"))
     {
-        op <- file.path("users", self$properties$id, "createdObjects")
-        res <- private$get_paged_list(self$graph_op(op))
+        res <- private$get_paged_list(self$do_operation("createdObjects"))
         private$init_list_objects(private$filter_list(res, type))
     },
 
     list_direct_memberships=function(id_only=TRUE)
     {
-        op <- file.path("users", self$properties$id, "memberOf")
-        res <- private$get_paged_list(self$graph_op(op))
+        res <- private$get_paged_list(self$do_operation("memberOf"))
 
         if(id_only)
             sapply(res, function(grp) grp$id)

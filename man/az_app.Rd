@@ -28,6 +28,7 @@ Base class representing an AAD app.
 \item \code{new(...)}: Initialize a new app object. Do not call this directly; see 'Initialization' below.
 \item \code{delete(confirm=TRUE)}: Delete an app. By default, ask for confirmation first.
 \item \code{update(...)}: Update the app data in Azure Active Directory. For what properties can be updated, consult the REST API documentation link below.
+\item \code{do_operation(...)}: Carry out an arbitrary operation on the app.
 \item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
 \item \code{list_group_memberships()}: Return the IDs of all groups this app is a member of.
 \item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this app is a member of.

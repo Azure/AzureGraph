@@ -13,6 +13,7 @@
 #' - `new(...)`: Initialize a new app object. Do not call this directly; see 'Initialization' below.
 #' - `delete(confirm=TRUE)`: Delete an app. By default, ask for confirmation first.
 #' - `update(...)`: Update the app data in Azure Active Directory. For what properties can be updated, consult the REST API documentation link below.
+#' - `do_operation(...)`: Carry out an arbitrary operation on the app.
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
 #' - `list_group_memberships()`: Return the IDs of all groups this app is a member of.
 #' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this app is a member of.
@@ -96,9 +97,8 @@ public=list(
             ))
         )
 
-        op <- file.path("applications", self$properties$id)
-        self$graph_op(op, body=properties, encode="json", http_verb="PATCH")
-        self$properties <- self$graph_op(op)
+        self$do_operation(body=properties, encode="json", http_verb="PATCH")
+        self$properties <- self$do_operation()
         self$password <- password
         password
     },
@@ -109,7 +109,7 @@ public=list(
         az_service_principal$new(
             self$token,
             self$tenant,
-            self$graph_op("servicePrincipals", body=properties, encode="json", http_verb="POST")
+            call_graph_endpoint(self$token, "servicePrincipals", body=properties, encode="json", http_verb="POST")
         )
     },
 
@@ -119,7 +119,7 @@ public=list(
         az_service_principal$new(
             self$token,
             self$tenant,
-            self$graph_op(op)$value[[1]]
+            call_graph_endpoint(self$token, op)$value[[1]]
         )
     },
 

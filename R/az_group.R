@@ -12,6 +12,7 @@
 #' - `new(...)`: Initialize a new group object. Do not call this directly; see 'Initialization' below.
 #' - `delete(confirm=TRUE)`: Delete a group. By default, ask for confirmation first.
 #' - `update(...)`: Update the group information in Azure Active Directory.
+#' - `do_operation(...)`: Carry out an arbitrary operation on the group.
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
 #' - `list_group_memberships()`: Return the IDs of all groups this group is a member of.
 #' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this group is a member of.
@@ -54,15 +55,13 @@ public=list(
 
     list_members=function(type=c("user", "group", "application", "servicePrincipal"))
     {
-        op <- file.path("groups", self$properties$id, "members")
-        res <- private$get_paged_list(self$graph_op(op))
+        res <- private$get_paged_list(self$do_operation("members"))
         private$init_list_objects(private$filter_list(res, type))
     },
 
     list_owners=function(type=c("user", "group", "application", "servicePrincipal"))
     {
-        op <- file.path("groups", self$properties$id, "owners")
-        res <- private$get_paged_list(self$graph_op(op))
+        res <- private$get_paged_list(self$do_operation("owners"))
         private$init_list_objects(private$filter_list(res, type))
     },
 

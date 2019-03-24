@@ -27,6 +27,7 @@ Base class representing an AAD user account.
 \item \code{new(...)}: Initialize a new user object. Do not call this directly; see 'Initialization' below.
 \item \code{delete(confirm=TRUE)}: Delete a user account. By default, ask for confirmation first.
 \item \code{update(...)}: Update the user information in Azure Active Directory.
+\item \code{do_operation(...)}: Carry out an arbitrary operation on the user account.
 \item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
 \item \code{list_group_memberships()}: Return the IDs of all groups this user is a member of.
 \item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this user is a member of.
