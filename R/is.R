@@ -36,3 +36,11 @@ is_group <- function(object)
 {
     R6::is.R6(object) && inherits(object, "az_group")
 }
+
+
+#' @rdname info
+#' @export
+is_directory_object <- function(object)
+{
+    R6::is.R6(object) && inherits(object, "az_object")
+}

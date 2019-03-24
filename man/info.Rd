@@ -5,6 +5,7 @@
 \alias{is_service_principal}
 \alias{is_user}
 \alias{is_group}
+\alias{is_directory_object}
 \title{Informational functions}
 \usage{
 is_app(object)
@@ -14,6 +15,8 @@ is_service_principal(object)
 is_user(object)
 
 is_group(object)
+
+is_directory_object(object)
 }
 \arguments{
 \item{object}{An R object.}
