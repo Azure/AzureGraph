@@ -16,6 +16,8 @@
 #' - `list_group_memberships()`: Return the IDs of all groups this user is a member of.
 #' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this user is a member of.
 #' - `list_direct_memberships(id_only=TRUE)`: List the groups this user is a direct member of. Set `id_only=TRUE` to return only a vector of group IDs (the default), or `id_only=FALSE` to return a list of group objects.
+#' - `list_owned_objects(type=c("user", "group", "application", "servicePrincipal"))`: List directory objects (groups/apps/service principals) owned by this user. Specify the `type` argument to filter the result for specific object type(s).
+#' - `list_created_objects(type=c("user", "group", "application", "servicePrincipal"))`: List directory objects (groups/apps/service principals) created by this user. Specify the `type` argument to filter the result for specific object type(s).
 #' - `reset_password(password=NULL, force_password_change=TRUE): Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
 #'
 #' @section Initialization:
@@ -72,10 +74,24 @@ public=list(
         password
     },
 
+    list_owned_objects=function(type=c("user", "group", "application", "servicePrincipal"))
+    {
+        op <- file.path("users", self$properties$id, "ownedObjects")
+        res <- private$get_paged_list(self$graph_op(op))
+        private$init_list_objects(private$filter_list(res, type))
+    },
+
+    list_created_objects=function(type=c("user", "group", "application", "servicePrincipal"))
+    {
+        op <- file.path("users", self$properties$id, "createdObjects")
+        res <- private$get_paged_list(self$graph_op(op))
+        private$init_list_objects(private$filter_list(res, type))
+    },
+
     list_direct_memberships=function(id_only=TRUE)
     {
         op <- file.path("users", self$properties$id, "memberOf")
-        res <- get_paged_list(self$graph_op(op), self$token)
+        res <- private$get_paged_list(self$graph_op(op))
 
         if(id_only)
             sapply(res, function(grp) grp$id)

@@ -30,8 +30,8 @@ Base class representing an AAD group.
 \item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
 \item \code{list_group_memberships()}: Return the IDs of all groups this group is a member of.
 \item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this group is a member of.
-\item \code{list_members()}: Return a list of all members of this group.
-\item \code{list_owners()}: Return a list of all owners of this group.
+\item \code{list_members(type=c("user", "group", "application", "servicePrincipal"))}: Return a list of all members of this group. Specify the \code{type} argument to filter the result for specific object type(s).
+\item \code{list_owners(type=c("user", "group", "application", "servicePrincipal"))}: Return a list of all owners of this group. Specify the \code{type} argument to filter the result for specific object type(s).
 }
 }
 

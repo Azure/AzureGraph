@@ -35,6 +35,18 @@ test_that("User/group read functionality works",
 
     grp <- gr$get_group(grps1[1])
     expect_true(is_group(grp) && !is.null(grp$properties$id))
+
+    owned <- me$list_owned_objects()
+    expect_true(is.list(owned) && all(sapply(owned, inherits, "az_object")))
+
+    owned_apps <- me$list_owned_objects(type="application")
+    expect_true(is.list(owned_apps) && all(sapply(owned_apps, is_app)))
+
+    created <- me$list_created_objects()
+    expect_true(is.list(created) && all(sapply(owned, inherits, "az_object")))
+
+    created_apps <- me$list_created_objects(type="application")
+    expect_true(is.list(created_apps) && all(sapply(created_apps, is_app)))
 })
 
 

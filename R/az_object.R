@@ -82,7 +82,7 @@ public=list(
         lst <- self$graph_op(op, body=list(securityEnabledOnly=TRUE),
             encode="json", http_verb="POST")
 
-        unlist(get_paged_list(lst, self$token))
+        unlist(private$get_paged_list(lst))
     },
 
     list_group_memberships=function()
@@ -91,7 +91,7 @@ public=list(
         lst <- self$graph_op(op, body=list(securityEnabledOnly=TRUE),
             encode="json", http_verb="POST")
 
-        unlist(get_paged_list(lst, self$token))
+        unlist(private$get_paged_list(lst))
     },
 
     graph_op=function(op="", ...)
@@ -109,6 +109,44 @@ public=list(
 
 private=list(
 
+    get_paged_list=function(lst, next_link_name="@odata.nextLink", value_name="value")
+    {
+        res <- lst[[value_name]]
+        while(!is_empty(lst[[next_link_name]]))
+        {
+            lst <- call_graph_url(self$token, lst[[next_link_name]])
+            res <- c(res, lst[[value_name]])
+        }
+        res
+    },
+
+    filter_list=function(lst, type)
+    {
+        type <- paste0("#microsoft.graph.", type)
+        keep <- sapply(lst, function(obj) obj$`@odata.type` %in% type)
+        lst[keep]
+    },
+
+    init_list_objects=function(lst)
+    {
+        lapply(lst, function(obj)
+        {
+            if(obj$`@odata.type` == "#microsoft.graph.user")
+                az_user$new(self$token, self$tenant, obj)
+            else if(obj$`@odata.type` == "#microsoft.graph.group")
+                az_group$new(self$token, self$tenant, obj)
+            else if(obj$`@odata.type` == "#microsoft.graph.application")
+                az_app$new(self$token, self$tenant, obj)
+            else if(obj$`@odata.type` == "#microsoft.graph.servicePrincipal")
+                az_service_principal$new(self$token, self$tenant, obj)
+            else
+            {
+                warning("Unknown directory object type ", obj$`@odata.type`)
+                obj
+            }
+        })
+    },
+
     get_endpoint=function()
     {
         switch(self$type,
@@ -119,17 +157,5 @@ private=list(
             stop("Unknown directory object type"))
     }
 ))
-
-
-get_paged_list <- function(lst, token, next_link_name="@odata.nextLink", value_name="value")
-{
-    res <- lst[[value_name]]
-    while(!is_empty(lst[[next_link_name]]))
-    {
-        lst <- call_graph_url(token, lst[[next_link_name]])
-        res <- c(res, lst[[value_name]])
-    }
-    res
-}
 
 

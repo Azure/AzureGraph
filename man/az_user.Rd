@@ -31,6 +31,8 @@ Base class representing an AAD user account.
 \item \code{list_group_memberships()}: Return the IDs of all groups this user is a member of.
 \item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this user is a member of.
 \item \code{list_direct_memberships(id_only=TRUE)}: List the groups this user is a direct member of. Set \code{id_only=TRUE} to return only a vector of group IDs (the default), or \code{id_only=FALSE} to return a list of group objects.
+\item \code{list_owned_objects(type=c("user", "group", "application", "servicePrincipal"))}: List directory objects (groups/apps/service principals) owned by this user. Specify the \code{type} argument to filter the result for specific object type(s).
+\item \code{list_created_objects(type=c("user", "group", "application", "servicePrincipal"))}: List directory objects (groups/apps/service principals) created by this user. Specify the \code{type} argument to filter the result for specific object type(s).
 \item `reset_password(password=NULL, force_password_change=TRUE): Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
 }
 }
