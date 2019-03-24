@@ -5,7 +5,7 @@ Authors@R: c(
     person("Hong", "Ooi", , "hongooi@microsoft.com", role = c("aut", "cre")),
     person("Microsoft", role="cph")
     )
-Description: A simple R interface to 'Graph', the API framework for accessing data in Microsoft's various online services. It currently includes functionality to manage 'Azure Active Directory' objects, with a view to enhancing R interoperability with Microsoft's 'Azure' cloud. It supports creating, updating and deleting registered apps, service principals, users and groups; and can be extended to support other services in 'Graph'.
+Description: A simple interface to the 'Microsoft Graph' API <https://docs.microsoft.com/en-us/graph/overview>. 'Graph' is a comprehensive framework for accessing data in various online Microsoft services. Currently, this package aims to provide an R interface only to the 'Azure Active Directory' part: users, groups, registered apps and service principals. However it can be easily extended to cover other services.
 URL: https://github.com/cloudyr/AzureGraph
 BugReports: https://github.com/cloudyr/AzureGraph/issues
 License: MIT + file LICENSE
