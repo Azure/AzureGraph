@@ -124,6 +124,8 @@ public=list(
         cat("  principal name:", self$properties$userPrincipalName, "\n")
         cat("  email:", self$properties$mail, "\n")
         cat("  directory id:", self$properties$id, "\n")
+        cat("---\n")
+        cat(format_public_methods(self))
         invisible(self)
     }
 ))

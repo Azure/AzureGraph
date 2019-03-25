@@ -166,6 +166,11 @@ The classes described above inherit from a base `az_object` class, which represe
 
 For efficiency the `list_group_memberships` and `list_object_memberships` methods return only the IDs of the groups/objects, since these lists can be rather long.
 
+```r
+# get my OneDrive
+me$do_operation("drive")
+```
+
 ## See also
 
 See the following links on Microsoft Docs for more information.

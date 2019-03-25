@@ -141,6 +141,8 @@ public=list(
         cat("  app id:", self$properties$appId, "\n")
         cat("  directory id:", self$properties$id, "\n")
         cat("  domain:", self$properties$publisherDomain, "\n")
+        cat("---\n")
+        cat(format_public_methods(self))
         invisible(self)
     }
 ))

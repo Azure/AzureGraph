@@ -100,6 +100,8 @@ public=list(
     {
         cat("<Graph directory object '", self$properties$displayName, "'>\n", sep="")
         cat("  directory id:", self$properties$id, "\n")
+        cat("---\n")
+        cat(format_public_methods(self))
         invisible(self)
     }
 ),
