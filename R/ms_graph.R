@@ -83,7 +83,7 @@ public=list(
                 token$resource
             else
             {
-                scope <- httr::parse_url(token[1])
+                scope <- httr::parse_url(token$scope[1])
                 scope$path <- NULL
                 httr::build_url(scope)
             }
