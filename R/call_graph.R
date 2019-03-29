@@ -57,8 +57,8 @@ process_headers <- function(token, ..., auto_refresh)
         token$refresh()
     }
 
+    host <- httr::parse_url(if(token$version == 1) token$resource else token$scope[1])$hostname
     creds <- token$credentials
-    host <- httr::parse_url(creds$resource)$host
     headers <- c(Host=host, Authorization=paste(creds$token_type, creds$access_token))
 
     # default content-type is json, set this if encoding not specified

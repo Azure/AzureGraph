@@ -81,7 +81,12 @@ public=list(
         {
             self$host <- if(token$version == 1)
                 token$resource
-            else token$scope
+            else
+            {
+                scope <- httr::parse_url(token[1])
+                scope$path <- NULL
+                httr::build_url(scope)
+            }
             self$tenant <- token$tenant
             self$token <- token
             return(NULL)
@@ -94,6 +99,7 @@ public=list(
             if(!is.null(conf$app)) app <- conf$app
             if(!is.null(conf$auth_type)) auth_type <- conf$auth_type
             if(!is.null(conf$password)) password <- conf$password
+            if(!is.null(conf$username)) username <- conf$username
             if(!is.null(conf$graph_host)) host <- conf$graph_host
             if(!is.null(conf$aad_host)) aad_host <- conf$aad_host
         }
