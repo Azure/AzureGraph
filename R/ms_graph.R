@@ -73,7 +73,7 @@ public=list(
     token=NULL,
 
     # authenticate and get subscriptions
-    initialize=function(tenant, app=.az_cli_app_id, password=NULL, username=NULL, auth_type=NULL,
+    initialize=function(tenant="common", app=.az_cli_app_id, password=NULL, username=NULL, auth_type=NULL,
                         host="https://graph.microsoft.com/", aad_host="https://login.microsoftonline.com/",
                         config_file=NULL, token=NULL)
     {

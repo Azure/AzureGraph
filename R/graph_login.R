@@ -64,6 +64,7 @@ create_graph_login <- function(tenant="common", app=.az_cli_app_id, password=NUL
         if(!is.null(conf$app)) app <- conf$app
         if(!is.null(conf$auth_type)) auth_type <- conf$auth_type
         if(!is.null(conf$password)) password <- conf$password
+        if(!is.null(conf$username)) username <- conf$username
         if(!is.null(conf$host)) host <- conf$host
         if(!is.null(conf$aad_host)) aad_host <- conf$aad_host
     }
