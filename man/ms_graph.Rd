@@ -14,8 +14,8 @@ Base class for interacting with Microsoft Graph API.
 \section{Methods}{
 
 \itemize{
-\item \code{new(tenant, app, ...)}: Initialize a new Microsoft Graph connection with the given credentials. See 'Authentication` for more details.
-\item \code{create_app(name, ..., password=NULL, password_duration=1, create_service_principal=TRUE)}: Creates a new registered app in Azure Active Directory. By default the app will have a randomly generated strong password with a duration of 1 year, and an associated service principal will also be created. To skip assigning a password, set \code{password=FALSE}.
+\item \code{new(tenant, app, ...)}: Initialize a new Microsoft Graph connection with the given credentials. See 'Authentication' for more details.
+\item \code{create_app(name, ..., password=NULL, password_duration=1, certificate=NULL, create_service_principal=TRUE)}: Creates a new registered app in Azure Active Directory. See 'App creation' below.
 \item \code{get_app(app_id, object_id)}: Retrieves an existing registered app, via either its app ID or object ID.
 \item \code{delete_app(app_id, object_id, confirm=TRUE)}: Deletes an existing registered app. Any associated service principal will also be deleted.
 \item \code{create_service_principal(app_id, ...)}: Creates a service principal for a registered app.
@@ -49,6 +49,15 @@ To authenticate with the \code{ms_graph} class directly, provide the following a
 }
 }
 
+\section{App creation}{
+
+The \code{create_app} method creates a new registered app. By default, a new app will have a randomly generated strong password with duration of 1 year. To skip assigning a password, set the \code{password} argument to FALSE.
+
+The \code{certificate} argument allows authenticating via a certificate instead of a password. This should be a character string containing the certificate public key (aka the CER file). Alternatively it can be an list, or an object of class \code{AzureKeyVault::stored_cert} representing a certificate stored in an Azure Key Vault. See the examples below.
+
+A new app will also have a service principal created for it by default. To disable this, set \code{create_service_principal=FALSE}.
+}
+
 \examples{
 \dontrun{
 
@@ -71,6 +80,10 @@ app <- gr$create_app("mynewapp", password_duration=10)
 gr$delete_app(app_id=app$properties$appId)
 # ... but better to call the object's delete method directly
 app$delete()
+
+# create an app with authentication via a certificate
+cert <- readLines("mycert.cer")
+gr$create_app("mycertapp", password=FALSE, certificate=cert)
 
 }
 }
