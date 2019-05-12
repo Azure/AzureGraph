@@ -30,7 +30,6 @@
 #' - `auth_type`: The OAuth authentication method to use, one of "client_credentials", "authorization_code", "device_code" or "resource_owner". See [get_azure_token] for how the default method is chosen, along with some caveats.
 #' - `host`: your Microsoft Graph host. Defaults to `https://graph.microsoft.com/`.
 #' - `aad_host`: Azure Active Directory host for authentication. Defaults to `https://login.microsoftonline.com/`. Change this if you are using a government or private cloud.
-#' - `config_file`: Optionally, a JSON file containing any of the arguments listed above. Arguments supplied in this file take priority over those supplied on the command line. You can also use the output from the Azure CLI `az ad sp create-for-rbac` command.
 #' - `token`: Optionally, an OAuth 2.0 token, of class [AzureAuth::AzureToken]. This allows you to reuse the authentication details for an existing session. If supplied, all other arguments will be ignored.
 #'
 #' @section App creation:
@@ -84,9 +83,10 @@ public=list(
     token=NULL,
 
     # authenticate and get subscriptions
-    initialize=function(tenant="common", app=.az_cli_app_id, password=NULL, username=NULL, auth_type=NULL,
+    initialize=function(tenant="common", app=.az_cli_app_id,
+                        password=NULL, username=NULL, certificate=NULL, auth_type=NULL,
                         host="https://graph.microsoft.com/", aad_host="https://login.microsoftonline.com/",
-                        config_file=NULL, token=NULL)
+                        token=NULL, ...)
     {
         if(is_azure_token(token))
         {
@@ -103,31 +103,20 @@ public=list(
             return(NULL)
         }
 
-        if(!is.null(config_file))
-        {
-            conf <- jsonlite::fromJSON(config_file)
-            if(!is.null(conf$tenant)) tenant <- conf$tenant
-            if(!is.null(conf$app)) app <- conf$app
-            if(!is.null(conf$auth_type)) auth_type <- conf$auth_type
-            if(!is.null(conf$password)) password <- conf$password
-            if(!is.null(conf$username)) username <- conf$username
-            if(!is.null(conf$graph_host)) host <- conf$graph_host
-            if(!is.null(conf$aad_host)) aad_host <- conf$aad_host
-        }
-
-        tenant <- normalize_tenant(tenant)
+        self$host <- host
+        self$tenant <- normalize_tenant(tenant)
         app <- normalize_guid(app)
 
-        self$host <- host
-        self$tenant <- tenant
-
-        self$token <- get_azure_token(self$host, 
-            tenant=tenant,
+        self$token <- get_azure_token(resource=self$host,
+            tenant=self$tenant,
             app=app,
             password=password,
-            username=username,
-            auth_type=auth_type, 
-            aad_host=aad_host)
+            username=username, 
+            certificate=certificate,
+            auth_type=auth_type,
+            aad_host=aad_host,
+            ...)
+
         NULL
     },
 

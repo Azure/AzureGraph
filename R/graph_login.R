@@ -8,6 +8,7 @@
 #' @param host Your Microsoft Graph host. Defaults to `https://graph.microsoft.com/`. Change this if you are using a government or private cloud.
 #' @param aad_host Azure Active Directory host for authentication. Defaults to `https://login.microsoftonline.com/`. Change this if you are using a government or private cloud.
 #' @param config_file Optionally, a JSON file containing any of the arguments listed above. Arguments supplied in this file take priority over those supplied on the command line. You can also use the output from the Azure CLI `az ad sp create-for-rbac` command.
+#' @param token Optionally, an OAuth 2.0 token, of class [AzureAuth::AzureToken]. This allows you to reuse the authentication details for an existing session. If supplied, all other arguments to `create_graph_login` will be ignored.
 #' @param refresh For `get_graph_login`, whether to refresh the authentication token on loading the client.
 #' @param selection For `get_graph_login`, if you have multiple logins for a given tenant, which one to use. This can be a number, or the input MD5 hash of the token used for the login. If not supplied, `get_graph_login` will print a menu and ask you to choose a login.
 #' @param confirm For `delete_graph_login`, whether to ask for confirmation before deleting.
@@ -53,43 +54,48 @@
 #' }
 #' @rdname graph_login
 #' @export
-create_graph_login <- function(tenant="common", app=.az_cli_app_id, password=NULL, username=NULL, auth_type=NULL,
+create_graph_login <- function(tenant="common", app=.az_cli_app_id,
+                               password=NULL, username=NULL, certificate=NULL, auth_type=NULL,
                                host="https://graph.microsoft.com/", aad_host="https://login.microsoftonline.com/",
-                               config_file=NULL, ...)
+                               config_file=NULL, token=NULL, ...)
 {
-    if(!is.null(config_file))
+    if(!is_azure_token(token))
     {
-        conf <- jsonlite::fromJSON(config_file)
-        if(!is.null(conf$tenant)) tenant <- conf$tenant
-        if(!is.null(conf$app)) app <- conf$app
-        if(!is.null(conf$auth_type)) auth_type <- conf$auth_type
-        if(!is.null(conf$password)) password <- conf$password
-        if(!is.null(conf$username)) username <- conf$username
-        if(!is.null(conf$host)) host <- conf$host
-        if(!is.null(conf$aad_host)) aad_host <- conf$aad_host
+        if(!is.null(config_file))
+        {
+            conf <- jsonlite::fromJSON(config_file)
+            call <- as.list(match.call())[-1]
+            call$config_file <- NULL
+            call <- lapply(modifyList(call, conf), function(x) eval.parent(x))
+            return(do.call(create_graph_login, call))
+        }
+
+        tenant <- normalize_tenant(tenant)
+        app <- normalize_guid(app)
+
+        token_args <- list(resource=host, 
+            tenant=tenant, 
+            app=app, 
+            password=password, 
+            username=username,
+            certificate=certificate,
+            auth_type=auth_type, 
+            aad_host=aad_host,
+            ...)
+
+        hash <- do.call(token_hash, token_args)
+        tokenfile <- file.path(AzureR_dir(), hash)
+        if(file.exists(tokenfile))
+        {
+            message("Deleting existing Azure Active Directory token for this set of credentials")
+            file.remove(tokenfile)
+        }
+
+        message("Creating Microsoft Graph login for ", format_tenant(tenant))
+        token <- do.call(get_azure_token, token_args)
     }
 
-    hash <- token_hash(
-        resource=host,
-        tenant=tenant,
-        app=app,
-        password=password,
-        username=username,
-        auth_type=auth_type,
-        aad_host=aad_host
-    )
-    tokenfile <- file.path(AzureR_dir(), hash)
-    if(file.exists(tokenfile))
-    {
-        message("Deleting existing Azure Active Directory token for this set of credentials")
-        file.remove(tokenfile)
-    }
-
-    tenant <- normalize_tenant(tenant)
-    app <- normalize_guid(app)
-
-    message("Creating Microsoft Graph login for ", format_tenant(tenant))
-    client <- ms_graph$new(tenant, app, password, username, auth_type, host, aad_host, config_file, ...)
+    client <- ms_graph$new(token=token)
 
     # save login info for future sessions
     graph_logins <- load_graph_logins()

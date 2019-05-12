@@ -16,10 +16,9 @@ test_that("Graph authentication works",
     expect_is(gr, "ms_graph")
     expect_true(is_azure_token(gr$token))
 
-    creds <- tempfile(fileext=".json")
-    writeLines(jsonlite::toJSON(list(tenant=tenant, app=app)), creds)
+    token <- get_azure_token("https://graph.microsoft.com/", tenant, app)
                         
-    gr2 <- ms_graph$new(config_file=creds)
+    gr2 <- ms_graph$new(token=token)
     expect_is(gr2, "ms_graph")
     expect_true(is_azure_token(gr2$token))
 })
@@ -37,6 +36,7 @@ test_that("Login interface works",
 
     gr4 <- create_graph_login(config_file=creds)
     expect_is(gr4, "ms_graph")
+    expect_identical(normalize_tenant(tenant), gr4$tenant)
 
     gr5 <- get_graph_login(tenant)
     expect_is(gr5, "ms_graph")
