@@ -28,6 +28,8 @@ list_graph_logins()
 
 \item{username}{If \code{auth_type == "resource_owner"}, your username.}
 
+\item{certificate}{If `auth_type == "client_credentials", a certificate to authenticate with. This is a more secure alternative to using an app secret.}
+
 \item{auth_type}{The OAuth authentication method to use, one of "client_credentials", "authorization_code", "device_code" or "resource_owner". If \code{NULL}, this is chosen based on the presence of the \code{username} and \code{password} arguments.}
 
 \item{host}{Your Microsoft Graph host. Defaults to \code{https://graph.microsoft.com/}. Change this if you are using a government or private cloud.}
