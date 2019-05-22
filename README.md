@@ -2,9 +2,9 @@
 
 [![CRAN](https://www.r-pkg.org/badges/version/AzureGraph)](https://cran.r-project.org/package=AzureGraph)
 ![Downloads](https://cranlogs.r-pkg.org/badges/AzureGraph)
-[![Travis Build Status](https://travis-ci.org/cloudyr/AzureGraph.png?branch=master)](https://travis-ci.org/cloudyr/AzureGraph)
+[![Travis Build Status](https://travis-ci.org/Azure/AzureGraph.png?branch=master)](https://travis-ci.org/Azure/AzureGraph)
 
-A simple interface to the [Microsoft Graph API](https://docs.microsoft.com/en-us/graph/overview). The companion package to [AzureRMR](https://github.com/cloudyr/AzureRMR) and [AzureAuth](https://github.com/cloudyr/AzureAuth).
+A simple interface to the [Microsoft Graph API](https://docs.microsoft.com/en-us/graph/overview). The companion package to [AzureRMR](https://github.com/Azure/AzureRMR) and [AzureAuth](https://github.com/Azure/AzureAuth).
 
 Microsoft Graph is a comprehensive framework for accessing data in various online Microsoft services. Currently, this package aims to provide an R interface only to the Azure Active Directory part, with a view to supporting interoperability of R and Azure: users, groups, registered apps and service principals. Like AzureRMR, it could potentially be extended to cover other services.
 
