@@ -8,6 +8,8 @@
 #' @param http_verb The HTTP verb as a string, one of `GET`, `PUT`, `POST`, `DELETE`, `HEAD` or `PATCH`.
 #' @param http_status_handler How to handle in R the HTTP status code of a response. `"stop"`, `"warn"` or `"message"` will call the appropriate handlers in httr, while `"pass"` ignores the status code.
 #' @param auto_refresh Whether to refresh/renew the OAuth token if it is no longer valid.
+#' @param body The body of the request, for `PUT`/`POST`/`PATCH`.
+#' @param encode The encoding (really content-type) for the request body. The default value "json" means to serialize a list body into a JSON object. If you pass an already-serialized JSON object as the body, set `encode` to "raw".
 #' @param ... Other arguments passed to lower-level code, ultimately to the appropriate functions in httr.
 #'
 #' @details
@@ -34,15 +36,23 @@ call_graph_endpoint <- function(token, operation, ..., options=list(),
 
 #' @rdname call_graph
 #' @export
-call_graph_url <- function(token, url, ...,
+call_graph_url <- function(token, url, ..., body=NULL, encode="json",
                            http_verb=c("GET", "DELETE", "PUT", "POST", "HEAD", "PATCH"),
                            http_status_handler=c("stop", "warn", "message", "pass"),
                            auto_refresh=TRUE)
 {
-    headers <- process_headers(token, ..., auto_refresh=auto_refresh)
+    headers <- process_headers(token, ..., encode=encode, auto_refresh=auto_refresh)
+
+    # if content-type is json, serialize it manually to ensure proper handling of nulls
+    if(encode == "json" && !is_empty(body))
+    {
+        null <- vapply(body, is.null, logical(1))
+        body <- jsonlite::toJSON(body[!null], auto_unbox=TRUE, digits=22, null="null")
+        encode <- "raw"
+    }
 
     # do actual API call
-    res <- httr::VERB(match.arg(http_verb), url, headers, ...)
+    res <- httr::VERB(match.arg(http_verb), url, headers, ..., body=body, encode=encode)
 
     process_response(res, match.arg(http_status_handler))
 }
@@ -59,12 +69,11 @@ process_headers <- function(token, ..., auto_refresh)
 
     host <- httr::parse_url(if(token$version == 1) token$resource else token$scope[1])$hostname
     creds <- token$credentials
-    headers <- c(Host=host, Authorization=paste(creds$token_type, creds$access_token))
-
-    # default content-type is json, set this if encoding not specified
-    dots <- list(...)
-    if(is_empty(dots) || !("encode" %in% names(dots)) || dots$encode == "raw")
-        headers <- c(headers, `Content-type`="application/json")
+    headers <- c(
+        Host=host,
+        Authorization=paste(creds$token_type, creds$access_token),
+        `Content-Type`="application/json"
+    )
 
     httr::add_headers(.headers=headers)
 }
@@ -89,7 +98,7 @@ process_response <- function(response, handler)
 }
 
 
-# provide complete error messages from Resource Manager/AMicrosoft Graph/etc
+# provide complete error messages from Resource Manager/Microsoft Graph/etc
 error_message <- function(cont)
 {
     # kiboze through possible message locations
@@ -105,7 +114,7 @@ error_message <- function(cont)
             cont$error$message
         else if(is.list(cont$odata.error)) # Graph OData
             cont$odata.error$message$value
-    } 
+    }
     else ""
 
     paste0(strwrap(msg), collapse="\n")

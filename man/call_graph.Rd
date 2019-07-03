@@ -8,9 +8,10 @@
 call_graph_endpoint(token, operation, ..., options = list(),
   api_version = getOption("azure_graph_api_version"))
 
-call_graph_url(token, url, ..., http_verb = c("GET", "DELETE", "PUT",
-  "POST", "HEAD", "PATCH"), http_status_handler = c("stop", "warn",
-  "message", "pass"), auto_refresh = TRUE)
+call_graph_url(token, url, ..., body = NULL, encode = "json",
+  http_verb = c("GET", "DELETE", "PUT", "POST", "HEAD", "PATCH"),
+  http_status_handler = c("stop", "warn", "message", "pass"),
+  auto_refresh = TRUE)
 }
 \arguments{
 \item{token}{An Azure OAuth token, of class \link{AzureToken}.}
@@ -24,6 +25,10 @@ call_graph_url(token, url, ..., http_verb = c("GET", "DELETE", "PUT",
 \item{api_version}{The API version to use, which will form part of the URL sent to the host.}
 
 \item{url}{A complete URL to send to the host.}
+
+\item{body}{The body of the request, for \code{PUT}/\code{POST}/\code{PATCH}.}
+
+\item{encode}{The encoding (really content-type) for the request body. The default value "json" means to serialize a list body into a JSON object. If you pass an already-serialized JSON object as the body, set \code{encode} to "raw".}
 
 \item{http_verb}{The HTTP verb as a string, one of \code{GET}, \code{PUT}, \code{POST}, \code{DELETE}, \code{HEAD} or \code{PATCH}.}
 
