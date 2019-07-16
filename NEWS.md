@@ -1,3 +1,7 @@
+# AzureGraph 1.0.3.9000
+
+- Minor bug fixes.
+
 # AzureGraph 1.0.3
 
 - Improved handling of null object properties.
