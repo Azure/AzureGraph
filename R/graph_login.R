@@ -95,6 +95,7 @@ create_graph_login <- function(tenant="common", app=.az_cli_app_id,
         message("Creating Microsoft Graph login for ", format_tenant(tenant))
         token <- do.call(get_azure_token, token_args)
     }
+    else tenant <- token$tenant
 
     client <- ms_graph$new(token=token)
 
