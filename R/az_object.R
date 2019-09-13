@@ -63,10 +63,9 @@ public=list(
     {
         if(confirm && interactive())
         {
-            msg <- sprintf("Do you really want to delete the %s '%s'? (y/N) ",
+            msg <- sprintf("Do you really want to delete the %s '%s'?",
                            self$type, self$properties$displayName)
-            yn <- readline(msg)
-            if(tolower(substr(yn, 1, 1)) != "y")
+            if(!get_confirmation(msg, FALSE))
                 return(invisible(NULL))
         }
 

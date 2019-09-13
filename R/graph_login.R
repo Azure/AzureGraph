@@ -182,10 +182,8 @@ delete_graph_login <- function(tenant="common", confirm=TRUE)
     if(confirm && interactive())
     {
         msg <- paste0("Do you really want to delete the Microsoft Graph login(s) for ",
-                      format_tenant(tenant), "? (y/N) ")
-
-        yn <- readline(msg)
-        if(tolower(substr(yn, 1, 1)) != "y")
+                      format_tenant(tenant), "?")
+        if(!get_confirmation(msg, FALSE))
             return(invisible(NULL))
     }
 

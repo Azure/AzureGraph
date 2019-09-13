@@ -1,6 +1,8 @@
-# AzureGraph 1.0.3.9000
+# AzureGraph 1.0.4
 
-- Minor bug fixes.
+- Allow Azure Active Directory (AAD) v2.0 tokens to be used for authenticating. Note that AAD v1.0 is still the default and recommended version.
+- Use `utils::askYesNo` for confirmation prompts on R >= 3.5, eg when deleting objects; this fixes a bug in reading the input. As a side-effect, Windows users who are using RGUI.exe will see a popup dialog box instead of a message in the terminal.
+- Various other bug fixes.
 
 # AzureGraph 1.0.3
 
