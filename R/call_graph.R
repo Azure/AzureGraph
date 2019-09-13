@@ -27,7 +27,7 @@
 call_graph_endpoint <- function(token, operation, ..., options=list(),
                                 api_version=getOption("azure_graph_api_version"))
 {
-    url <- httr::parse_url(token$credentials$resource)
+    url <- httr::parse_url(decode_jwt(token$credentials$access_token)$payload$aud)
     url$path <- construct_path(api_version, operation)
     url$query <- options
 
