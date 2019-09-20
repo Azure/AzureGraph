@@ -22,7 +22,7 @@ test_that("User/group read functionality works",
 
     objs <- me$list_object_memberships()
     expect_true(is.character(objs))
- 
+
     grps1 <- me$list_group_memberships()
     expect_true(is.character(grps1))
 

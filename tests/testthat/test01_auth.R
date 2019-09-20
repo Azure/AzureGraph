@@ -17,7 +17,7 @@ test_that("Graph authentication works",
     expect_true(is_azure_token(gr$token))
 
     token <- get_azure_token("https://graph.microsoft.com/", tenant, app)
-                        
+
     gr2 <- ms_graph$new(token=token)
     expect_is(gr2, "ms_graph")
     expect_true(is_azure_token(gr2$token))
