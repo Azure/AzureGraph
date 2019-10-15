@@ -121,7 +121,7 @@ private=list(
     filter_list=function(lst, type=c("user", "group", "application", "servicePrincipal", "device"))
     {
         type <- paste0("#microsoft.graph.", type)
-        keep <- sapply(lst, function(obj) obj$`@odata.type` %in% type)
+        keep <- vapply(lst, function(obj) obj$`@odata.type` %in% type, FUN.VALUE=logical(1))
         lst[keep]
     },
 

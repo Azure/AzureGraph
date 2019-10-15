@@ -25,6 +25,8 @@ test_that("Graph authentication works",
 
 test_that("Login interface works",
 {
+    delete_graph_login(tenant, confirm=FALSE)
+
     lst <- list_graph_logins()
     expect_true(is.list(lst))
 

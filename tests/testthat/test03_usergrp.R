@@ -1,7 +1,7 @@
 context("Users/groups")
 
 tenant <- Sys.getenv("AZ_TEST_TENANT_ID")
-user <- Sys.getenv("AZ_TEST_USERNAME")
+user <- Sys.getenv("AZ_TEST_USERPRINCIPALNAME")
 
 if(tenant == "" || user == "")
     skip("User method tests skipped: login credentials not set")
@@ -15,10 +15,10 @@ gr <- get_graph_login(tenant=tenant)
 test_that("User/group read functionality works",
 {
     me <- gr$get_user()
-    expect_equal(me$properties$mail, user)
+    expect_equal(me$properties$userPrincipalName, user)
 
     me2 <- gr$get_user(user)
-    expect_equal(me2$properties$mail, user)
+    expect_equal(me2$properties$userPrincipalName, user)
 
     objs <- me$list_object_memberships()
     expect_true(is.character(objs))

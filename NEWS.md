@@ -1,5 +1,6 @@
 # AzureGraph 1.0.5
 
+- Fix a bug in user methods for listing objects when the result is empty.
 - Fix a bug in retrieving users added to an Azure Active Directory (AAD) tenant from an external directory.
 
 # AzureGraph 1.0.4
