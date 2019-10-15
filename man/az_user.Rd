@@ -36,7 +36,7 @@ Base class representing an AAD user account.
 \item \code{list_created_objects(type=c("user", "group", "application", "servicePrincipal"))}: List directory objects (groups/apps/service principals) created by this user. Specify the \code{type} argument to filter the result for specific object type(s).
 \item \code{list_owned_devices()}: List the devices owned by this user.
 \item \code{list_registered_devices()}: List the devices registered by this user.
-\item `reset_password(password=NULL, force_password_change=TRUE): Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
+\item \code{reset_password(password=NULL, force_password_change=TRUE)}: Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
 }
 }
 

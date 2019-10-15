@@ -21,7 +21,7 @@
 #' - `list_created_objects(type=c("user", "group", "application", "servicePrincipal"))`: List directory objects (groups/apps/service principals) created by this user. Specify the `type` argument to filter the result for specific object type(s).
 #' - `list_owned_devices()`: List the devices owned by this user.
 #' - `list_registered_devices()`: List the devices registered by this user.
-#' - `reset_password(password=NULL, force_password_change=TRUE): Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
+#' - `reset_password(password=NULL, force_password_change=TRUE)`: Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
 #'
 #' @section Initialization:
 #' Creating new objects of this class should be done via the `create_user` and `get_user` methods of the [ms_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual user account.
