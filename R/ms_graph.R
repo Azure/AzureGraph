@@ -256,7 +256,7 @@ public=list(
     {
         op <- if(user_id == "me")
             "me"
-        else file.path("users", user_id)
+        else file.path("users", curl::curl_escape(user_id))
 
         az_user$new(self$token, self$tenant, self$call_graph_endpoint(op))
     },
