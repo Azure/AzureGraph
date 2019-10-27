@@ -91,14 +91,7 @@ public=list(
     {
         if(is_azure_token(token))
         {
-            self$host <- if(token$version == 1)
-                token$resource
-            else
-            {
-                scope <- httr::parse_url(token$scope[1])
-                scope$path <- NULL
-                httr::build_url(scope)
-            }
+            self$host <- httr::build_url(find_resource_host(token))
             self$tenant <- token$tenant
             self$token <- token
             return(NULL)
