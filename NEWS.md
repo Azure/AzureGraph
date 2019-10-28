@@ -1,3 +1,7 @@
+# AzureGraph 1.0.5.9000
+
+- Treat the access token as opaque; this prevents errors when logging in without an AAD tenant.
+
 # AzureGraph 1.0.5
 
 - Fix a bug in user methods for listing objects when the result is empty.
