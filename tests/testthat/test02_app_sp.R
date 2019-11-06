@@ -16,6 +16,7 @@ test_that("App creation works",
     newapp_name <- paste0("AzureRtest_", paste0(sample(letters, 5, TRUE), collapse=""))
     newapp <- gr$create_app(name=newapp_name, create_service_principal=FALSE)
     expect_true(is_app(newapp))
+    expect_true(is.character(newapp$password))
     newapp_id <- newapp$properties$appId
 
     newsvc <- newapp$create_service_principal()

@@ -36,7 +36,8 @@ Base class representing an AAD app.
 \item \code{create_service_principal(...)}: Create a service principal for this app, by default in the current tenant.
 \item \code{get_service_principal()}: Get the service principal for this app.
 \item \code{delete_service_principal(confirm=TRUE)}: Delete the service principal for this app. By default, ask for confirmation first.
-\item \code{update_password(password=NULL, name="key1", password_duration=1)}: Updates the app password. Note that this will invalidate any existing password.
+\item \code{add_password(password_name=NULL, password_duration=NULL)}: Adds a strong password.
+\item \code{remove_password(password_id, confirm=TRUE)}: Removes the password with the given ID. By default, ask for confirmation first.
 }
 }
 

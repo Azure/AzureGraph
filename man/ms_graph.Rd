@@ -15,7 +15,7 @@ Base class for interacting with Microsoft Graph API.
 
 \itemize{
 \item \code{new(tenant, app, ...)}: Initialize a new Microsoft Graph connection with the given credentials. See 'Authentication' for more details.
-\item \code{create_app(name, ..., password=NULL, password_duration=1, certificate=NULL, create_service_principal=TRUE)}: Creates a new registered app in Azure Active Directory. See 'App creation' below.
+\item \code{create_app(name, ..., add_password=TRUE, password_name=NULL, password_duration=2, certificate=NULL, create_service_principal=TRUE)}: Creates a new registered app in Azure Active Directory. See 'App creation' below.
 \item \code{get_app(app_id, object_id)}: Retrieves an existing registered app, via either its app ID or object ID.
 \item \code{delete_app(app_id, object_id, confirm=TRUE)}: Deletes an existing registered app. Any associated service principal will also be deleted.
 \item \code{create_service_principal(app_id, ...)}: Creates a service principal for a registered app.
@@ -51,7 +51,7 @@ To authenticate with the \code{ms_graph} class directly, provide the following a
 
 \section{App creation}{
 
-The \code{create_app} method creates a new registered app. By default, a new app will have a randomly generated strong password with duration of 1 year. To skip assigning a password, set the \code{password} argument to FALSE.
+The \code{create_app} method creates a new registered app. By default, a new app will have a randomly generated strong password with duration of 2 years. To skip assigning a password, set the \code{add_password} argument to FALSE.
 
 The \code{certificate} argument allows authenticating via a certificate instead of a password. This should be a character string containing the certificate public key (aka the CER file). Alternatively it can be an list, or an object of class \code{AzureKeyVault::stored_cert} representing a certificate stored in an Azure Key Vault. See the examples below.
 

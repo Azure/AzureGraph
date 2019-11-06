@@ -5,7 +5,7 @@
 #' @docType class
 #' @section Methods:
 #' - `new(tenant, app, ...)`: Initialize a new Microsoft Graph connection with the given credentials. See 'Authentication' for more details.
-#' - `create_app(name, ..., password=NULL, password_duration=1, certificate=NULL, create_service_principal=TRUE)`: Creates a new registered app in Azure Active Directory. See 'App creation' below.
+#' - `create_app(name, ..., add_password=TRUE, password_name=NULL, password_duration=2, certificate=NULL, create_service_principal=TRUE)`: Creates a new registered app in Azure Active Directory. See 'App creation' below.
 #' - `get_app(app_id, object_id)`: Retrieves an existing registered app, via either its app ID or object ID.
 #' - `delete_app(app_id, object_id, confirm=TRUE)`: Deletes an existing registered app. Any associated service principal will also be deleted.
 #' - `create_service_principal(app_id, ...)`: Creates a service principal for a registered app.
@@ -34,7 +34,7 @@
 #' - `token`: Optionally, an OAuth 2.0 token, of class [AzureAuth::AzureToken]. This allows you to reuse the authentication details for an existing session. If supplied, all other arguments will be ignored.
 #'
 #' @section App creation:
-#' The `create_app` method creates a new registered app. By default, a new app will have a randomly generated strong password with duration of 1 year. To skip assigning a password, set the `password` argument to FALSE.
+#' The `create_app` method creates a new registered app. By default, a new app will have a randomly generated strong password with duration of 2 years. To skip assigning a password, set the `add_password` argument to FALSE.
 #'
 #' The `certificate` argument allows authenticating via a certificate instead of a password. This should be a character string containing the certificate public key (aka the CER file). Alternatively it can be an list, or an object of class `AzureKeyVault::stored_cert` representing a certificate stored in an Azure Key Vault. See the examples below.
 #'
@@ -114,33 +114,10 @@ public=list(
         NULL
     },
 
-    create_app=function(name, ..., password=NULL, password_duration=1, certificate=NULL,
+    create_app=function(name, ..., add_password=TRUE, password_name=NULL, password_duration=2, certificate=NULL,
         create_service_principal=TRUE)
     {
         properties <- list(displayName=name, ...)
-        if(is.null(password) || password != FALSE)
-        {
-            key <- "awBlAHkAMQA=" # base64/UTF-16LE encoded "key1"
-            if(is.null(password))
-                password <- openssl::base64_encode(openssl::rand_bytes(40))
-
-            end_date <- if(is.finite(password_duration))
-            {
-                now <- as.POSIXlt(Sys.time())
-                now$year <- now$year + password_duration
-                format(as.POSIXct(now), "%Y-%m-%dT%H:%M:%SZ", tz="GMT")
-            }
-            else "2299-12-30T12:00:00Z"
-
-            properties <- modifyList(properties, list(
-                passwordCredentials=list(list(
-                    customKeyIdentifier=key,
-                    endDateTime=end_date,
-                    secretText=password
-                ))
-            ))
-        }
-
         if(!is_empty(certificate))
         {
             key <- if(is.character(certificate))
@@ -166,6 +143,8 @@ public=list(
 
         if(create_service_principal)
             res$create_service_principal()
+        if(add_password)
+            res$add_password(password_name, password_duration)
         res
     },
 

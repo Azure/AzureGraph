@@ -21,7 +21,8 @@
 #' - `create_service_principal(...)`: Create a service principal for this app, by default in the current tenant.
 #' - `get_service_principal()`: Get the service principal for this app.
 #' - `delete_service_principal(confirm=TRUE)`: Delete the service principal for this app. By default, ask for confirmation first.
-#' - `update_password(password=NULL, name="key1", password_duration=1)`: Updates the app password. Note that this will invalidate any existing password.
+#' - `add_password(password_name=NULL, password_duration=NULL)`: Adds a strong password.
+#' - `remove_password(password_id, confirm=TRUE)`: Removes the password with the given ID. By default, ask for confirmation first.
 #'
 #' @section Initialization:
 #' Creating new objects of this class should be done via the `create_app` and `get_app` methods of the [ms_graph] class. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual app.
@@ -76,32 +77,39 @@ public=list(
         super$initialize(token, tenant, properties)
     },
 
-    update_password=function(password=NULL, name="key1", password_duration=1)
+    add_password=function(password_name=NULL, password_duration=NULL)
     {
-        key <- openssl::base64_encode(iconv(name, to="UTF-16LE", toRaw=TRUE)[[1]])
-        if(is.null(password))
-            password <- openssl::base64_encode(openssl::rand_bytes(40))
-
-        end_date <- if(is.finite(password_duration))
+        creds <- list()
+        if(!is.null(name))
+            creds$displayName <- name
+        if(!is.null(password_duration))
         {
             now <- as.POSIXlt(Sys.time())
             now$year <- now$year + password_duration
-            format(as.POSIXct(now), "%Y-%m-%dT%H:%M:%SZ", tz="GMT")
+            creds$endDateTime <- format(as.POSIXct(now), "%Y-%m-%dT%H:%M:%SZ", tz="GMT")
         }
-        else "2299-12-30T12:00:00Z"
 
-        properties <- list(
-            passwordCredentials=list(list(
-                customKeyIdentifier=key,
-                endDateTime=end_date,
-                secretText=password
-            ))
-        )
+        properties <- if(!is_empty(creds))
+            list(passwordCredential=creds)
+        else NULL
 
-        self$do_operation(body=properties, encode="json", http_verb="PATCH")
+        res <- self$do_operation("addPassword", body=properties, http_verb="POST")
         self$properties <- self$do_operation()
-        self$password <- password
-        password
+        self$password <- res$secretText
+        invisible(self$password)
+    },
+
+    remove_password=function(password_id, confirm=TRUE)
+    {
+        if(confirm && interactive())
+        {
+            msg <- sprintf("Do you really want to remove the password '%s'?", password_id)
+            if(!get_confirmation(msg, FALSE))
+                return(invisible(NULL))
+        }
+
+        self$do_operation("removePassword", body=list(keyId=password_id), http_verb="POST")
+        invisible(NULL)
     },
 
     list_owners=function(type=c("user", "group", "application", "servicePrincipal"))
