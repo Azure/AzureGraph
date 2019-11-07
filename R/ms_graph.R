@@ -120,11 +120,7 @@ public=list(
         properties <- list(displayName=name, ...)
         if(!is_empty(certificate))
         {
-            key <- if(is.character(certificate))
-                certificate
-            else if(is.list(certificate) || inherits(certificate, "stored_cert"))
-                certificate$cer
-
+            key <- read_cert(certificate)
             properties <- modifyList(properties, list(
                 keyCredentials=list(list(
                     key=key,

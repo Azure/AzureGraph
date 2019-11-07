@@ -1,8 +1,9 @@
 context("App creation/deletion")
 
 tenant <- Sys.getenv("AZ_TEST_TENANT_ID")
+pemfile <- Sys.getenv("AZ_TEST_CERT_FILE")
 
-if(tenant == "")
+if(tenant == "" || cert_thumb == "")
     skip("App method tests skipped: login credentials not set")
 
 if(!interactive())
@@ -34,6 +35,14 @@ test_that("App creation works",
 
     expect_type(newapp$add_password(), "character")
     expect_true(is_app(newapp$update(displayName=paste0(newapp_name, "_update"))))
+
+    pem <- openssl::read_cert(pemfile)
+    key_creds <- list(list(
+        key=pem$certificate,
+        type="AsymmetricX509Cert",
+        usage="verify"
+    ))
+    expect_true(is_app(newapp$update(keyCredentials=key_creds)))
 
     Sys.setenv(AZ_TEST_NEWAPP_ID=newapp_id)
 })

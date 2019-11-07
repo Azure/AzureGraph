@@ -1,5 +1,6 @@
 # AzureGraph 1.0.5.9000
 
+- Updated to use the new Graph API calls for managing app passwords. Call the `az_app$addPassword()` method to add a password to an app, and `az_app$remove_password()` to remove it. As a security measure, app passwords can no longer be manually specified; instead all passwords are now auto-generated on the server with a cryptographically secure PRNG.
 - Treat the access token as opaque; this prevents errors when logging in without an AAD tenant.
 
 # AzureGraph 1.0.5

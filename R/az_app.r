@@ -8,7 +8,7 @@
 #' - `tenant`: The Azure Active Directory tenant for this app.
 #' - `type`: always "application" for an app object.
 #' - `properties`: The app properties.
-#' - `password`: The app password. Note that the Graph API does not return passwords, so this will be NULL for an app retrieved via `ms_graph$get_app()`.
+#' - `password`: The app password. Note that the Graph API does not return previously-generated passwords. This field will only be populated for an app object created with `ms_graph$create_app()`, or after a call to the `add_password()` method below.
 #' @section Methods:
 #' - `new(...)`: Initialize a new app object. Do not call this directly; see 'Initialization' below.
 #' - `delete(confirm=TRUE)`: Delete an app. By default, ask for confirmation first.
@@ -21,7 +21,7 @@
 #' - `create_service_principal(...)`: Create a service principal for this app, by default in the current tenant.
 #' - `get_service_principal()`: Get the service principal for this app.
 #' - `delete_service_principal(confirm=TRUE)`: Delete the service principal for this app. By default, ask for confirmation first.
-#' - `add_password(password_name=NULL, password_duration=NULL)`: Adds a strong password.
+#' - `add_password(password_name=NULL, password_duration=NULL)`: Adds a strong password. `password_duration` is the length of time in years that the password remains valid, with default duration 2 years. Returns the ID of the generated password.
 #' - `remove_password(password_id, confirm=TRUE)`: Removes the password with the given ID. By default, ask for confirmation first.
 #'
 #' @section Initialization:
@@ -96,7 +96,7 @@ public=list(
         res <- self$do_operation("addPassword", body=properties, http_verb="POST")
         self$properties <- self$do_operation()
         self$password <- res$secretText
-        invisible(self$password)
+        invisible(res$keyId)
     },
 
     remove_password=function(password_id, confirm=TRUE)
@@ -109,7 +109,31 @@ public=list(
         }
 
         self$do_operation("removePassword", body=list(keyId=password_id), http_verb="POST")
+        self$sync_fields()
         invisible(NULL)
+    },
+
+    add_certificate=function(certificate)
+    {
+        key <- read_cert(certificate)
+        creds <- c(self$properties$keyCredentials, list(list(
+            key=key,
+            type="AsymmetricX509Cert",
+            usage="verify"
+        )))
+
+        self$update(keyCredentials=creds)
+    },
+
+    remove_certificate=function(certificate_id)
+    {
+        creds <- self$properties$keyCredentials
+
+        idx <- vapply(creds, function(keycred) keycred$keyId == certificate_id, logical(1))
+        if(!any(idx))
+            stop("Certificate not found", call.=FALSE)
+
+        self$update(keyCredentials=creds[-idx])
     },
 
     list_owners=function(type=c("user", "group", "application", "servicePrincipal"))
