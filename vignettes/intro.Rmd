@@ -126,7 +126,7 @@ gr$get_app("5af7bc65-8834-4ee6-90df-e7271a12cc62")
 #>   domain: microsoft.onmicrosoft.com
 ```
 
-By default, creating a new app will also generate a strong password with a duration of one year, and create a corresponding service principal in your AAD tenant. You can retrieve this with the `get_service_principal` method, which returns an object of class `az_service_principal`.
+By default, creating a new app will also generate a strong password with a duration of two years, and create a corresponding service principal in your AAD tenant. You can retrieve this with the `get_service_principal` method, which returns an object of class `az_service_principal`.
 
 ```r
 appnew$get_service_principal()
@@ -143,14 +143,35 @@ gr$get_service_principal("1751d755-71b1-40e7-9f81-526d636c1029")
 #>   app tenant: 72f988bf-86f1-41af-91ab-2d7cd011db47
 ```
 
-To update an app, call its `update` method. For example, use this to set a redirect URL or change its permissions. Consult the Microsoft Graph documentation for what properties you can update. To update its password specifically, call the `update_password` method.
+To update an app, call its `update` method. For example, use this to set a redirect URL or change its permissions. Consult the Microsoft Graph documentation for what properties you can update.
 
 ```r
 #' # set a public redirect URL
 newapp$update(publicClient=list(redirectUris=I("http://localhost:1410")))
+```
 
-#' # change the password
-newapp$update_password()
+One app property you _cannot_ change with `update` is its password. As a security measure, app passwords are auto-generated on the server, rather than being specified manually. To manage an app's password, call the `add_password` and `remove_password` methods.
+
+```r
+#' # add a password
+newapp$add_password()
+
+#' remove a password
+pwd_id <- newapp$properties$passwordCredentials[[1]]$keyId
+newapp$remove_password(pwd_id)
+```
+
+Similarly, to manage an app's certificate for authentication, call the `add_certificate` and `remove_certificate` methods.
+
+```r
+#' add a certificate:
+#' can be specified as a filename, openssl::cert object, AzureKeyVault::stored_cert object,
+#' or raw or character vector
+newapp$add_certificate("cert.pem")
+
+#' remove a certificate
+cert_id <- newapp$properties$keyCredentials[[1]]$keyId
+newapp$remove_certificate(cert_id)
 ```
 
 ## Common methods

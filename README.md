@@ -40,7 +40,7 @@ head(me$list_group_memberships())
 me$list_owned_objects(type="application")
 
 # create an app
-# by default, this will have a randomly generated strong password with duration 1 year
+# by default, this will have a randomly generated strong password with duration 2 years
 app <- gr$create_app("AzureR_newapp")
 
 # get the associated service principal
