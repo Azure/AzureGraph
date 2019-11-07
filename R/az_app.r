@@ -8,7 +8,7 @@
 #' - `tenant`: The Azure Active Directory tenant for this app.
 #' - `type`: always "application" for an app object.
 #' - `properties`: The app properties.
-#' - `password`: The app password. Note that the Graph API does not return passwords, so this will be NULL for an app retrieved via `ms_graph$get_app()`.
+#' - `password`: The app password. Note that the Graph API does not return previously-generated passwords. This field will only be populated for an app object created with `ms_graph$create_app()`, or after a call to the `add_password()` method below.
 #' @section Methods:
 #' - `new(...)`: Initialize a new app object. Do not call this directly; see 'Initialization' below.
 #' - `delete(confirm=TRUE)`: Delete an app. By default, ask for confirmation first.
@@ -21,7 +21,10 @@
 #' - `create_service_principal(...)`: Create a service principal for this app, by default in the current tenant.
 #' - `get_service_principal()`: Get the service principal for this app.
 #' - `delete_service_principal(confirm=TRUE)`: Delete the service principal for this app. By default, ask for confirmation first.
-#' - `update_password(password=NULL, name="key1", password_duration=1)`: Updates the app password. Note that this will invalidate any existing password.
+#' - `add_password(password_name=NULL, password_duration=NULL)`: Adds a strong password. `password_duration` is the length of time in years that the password remains valid, with default duration 2 years. Returns the ID of the generated password.
+#' - `remove_password(password_id, confirm=TRUE)`: Removes the password with the given ID. By default, ask for confirmation first.
+#' - `add_certificate(certificate)`: Adds a certificate for authentication. This can be specified as the name of a .pfx or .pem file, an `openssl::cert` object, an `AzureKeyVault::stored_cert` object, or a raw or character vector.
+#' - `remove_certificate(certificate_id, confirm=TRUE`): Removes the certificate with the given ID. By default, ask for confirmation first.
 #'
 #' @section Initialization:
 #' Creating new objects of this class should be done via the `create_app` and `get_app` methods of the [ms_graph] class. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual app.
@@ -38,8 +41,10 @@
 #' gr <- get_graph_login()
 #' app <- gr$create_app("MyNewApp")
 #'
-#' # password reset
-#' app$update_password()
+#' # password resetting: remove the old password, add a new one
+#' pwd_id <- app$properties$passwordCredentials[[1]]$keyId
+#' app$add_password()
+#' app$remove_password(pwd_id)
 #'
 #' # set a redirect URI
 #' app$update(publicClient=list(redirectUris=I("http://localhost:1410")))
@@ -56,6 +61,18 @@
 #'         )
 #'     )
 #' ))
+#'
+#' # add a certificate from a .pem file
+#' app$add_certificate("cert.pem")
+#'
+#' # can also read the file into an openssl object, and then add the cert
+#' cert <- openssl::read_cert("cert.pem")
+#' app$add_certificate(cert)
+#'
+#' # add a certificate stored in Azure Key Vault
+#' vault <- AzureKeyVault::key_vault("mytenant")
+#' cert2 <- vault$certificates$get("certname")
+#' app$add_certificate(cert2)
 #'
 #' # change the app name
 #' app$update(displayName="MyRenamedApp")
@@ -76,32 +93,69 @@ public=list(
         super$initialize(token, tenant, properties)
     },
 
-    update_password=function(password=NULL, name="key1", password_duration=1)
+    add_password=function(password_name=NULL, password_duration=NULL)
     {
-        key <- openssl::base64_encode(iconv(name, to="UTF-16LE", toRaw=TRUE)[[1]])
-        if(is.null(password))
-            password <- openssl::base64_encode(openssl::rand_bytes(40))
-
-        end_date <- if(is.finite(password_duration))
+        creds <- list()
+        if(!is.null(password_name))
+            creds$displayName <- password_name
+        if(!is.null(password_duration))
         {
             now <- as.POSIXlt(Sys.time())
             now$year <- now$year + password_duration
-            format(as.POSIXct(now), "%Y-%m-%dT%H:%M:%SZ", tz="GMT")
+            creds$endDateTime <- format(as.POSIXct(now), "%Y-%m-%dT%H:%M:%SZ", tz="GMT")
         }
-        else "2299-12-30T12:00:00Z"
 
-        properties <- list(
-            passwordCredentials=list(list(
-                customKeyIdentifier=key,
-                endDateTime=end_date,
-                secretText=password
-            ))
-        )
+        properties <- if(!is_empty(creds))
+            list(passwordCredential=creds)
+        else NULL
 
-        self$do_operation(body=properties, encode="json", http_verb="PATCH")
+        res <- self$do_operation("addPassword", body=properties, http_verb="POST")
         self$properties <- self$do_operation()
-        self$password <- password
-        password
+        self$password <- res$secretText
+        invisible(res$keyId)
+    },
+
+    remove_password=function(password_id, confirm=TRUE)
+    {
+        if(confirm && interactive())
+        {
+            msg <- sprintf("Do you really want to remove the password '%s'?", password_id)
+            if(!get_confirmation(msg, FALSE))
+                return(invisible(NULL))
+        }
+
+        self$do_operation("removePassword", body=list(keyId=password_id), http_verb="POST")
+        self$sync_fields()
+        invisible(NULL)
+    },
+
+    add_certificate=function(certificate)
+    {
+        key <- read_cert(certificate)
+        creds <- c(self$properties$keyCredentials, list(list(
+            key=key,
+            type="AsymmetricX509Cert",
+            usage="verify"
+        )))
+
+        self$update(keyCredentials=creds)
+    },
+
+    remove_certificate=function(certificate_id, confirm=TRUE)
+    {
+        if(confirm && interactive())
+        {
+            msg <- sprintf("Do you really want to remove the certificate '%s'?", certificate_id)
+            if(!get_confirmation(msg, FALSE))
+                return(invisible(NULL))
+        }
+
+        creds <- self$properties$keyCredentials
+        idx <- vapply(creds, function(keycred) keycred$keyId == certificate_id, logical(1))
+        if(!any(idx))
+            stop("Certificate not found", call.=FALSE)
+
+        self$update(keyCredentials=creds[-idx])
     },
 
     list_owners=function(type=c("user", "group", "application", "servicePrincipal"))

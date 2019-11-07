@@ -18,7 +18,7 @@ Base class representing an AAD app.
 \item \code{tenant}: The Azure Active Directory tenant for this app.
 \item \code{type}: always "application" for an app object.
 \item \code{properties}: The app properties.
-\item \code{password}: The app password. Note that the Graph API does not return passwords, so this will be NULL for an app retrieved via \code{ms_graph$get_app()}.
+\item \code{password}: The app password. Note that the Graph API does not return previously-generated passwords. This field will only be populated for an app object created with \code{ms_graph$create_app()}, or after a call to the \code{add_password()} method below.
 }
 }
 
@@ -36,7 +36,10 @@ Base class representing an AAD app.
 \item \code{create_service_principal(...)}: Create a service principal for this app, by default in the current tenant.
 \item \code{get_service_principal()}: Get the service principal for this app.
 \item \code{delete_service_principal(confirm=TRUE)}: Delete the service principal for this app. By default, ask for confirmation first.
-\item \code{update_password(password=NULL, name="key1", password_duration=1)}: Updates the app password. Note that this will invalidate any existing password.
+\item \code{add_password(password_name=NULL, password_duration=NULL)}: Adds a strong password. \code{password_duration} is the length of time in years that the password remains valid, with default duration 2 years. Returns the ID of the generated password.
+\item \code{remove_password(password_id, confirm=TRUE)}: Removes the password with the given ID. By default, ask for confirmation first.
+\item \code{add_certificate(certificate)}: Adds a certificate for authentication. This can be specified as the name of a .pfx or .pem file, an \code{openssl::cert} object, an \code{AzureKeyVault::stored_cert} object, or a raw or character vector.
+\item \code{remove_certificate(certificate_id, confirm=TRUE}): Removes the certificate with the given ID. By default, ask for confirmation first.
 }
 }
 
@@ -54,8 +57,10 @@ Creating new objects of this class should be done via the \code{create_app} and 
 gr <- get_graph_login()
 app <- gr$create_app("MyNewApp")
 
-# password reset
-app$update_password()
+# password resetting: remove the old password, add a new one
+pwd_id <- app$properties$passwordCredentials[[1]]$keyId
+app$add_password()
+app$remove_password(pwd_id)
 
 # set a redirect URI
 app$update(publicClient=list(redirectUris=I("http://localhost:1410")))
@@ -72,6 +77,18 @@ app$update(requiredResourceAccess=list(
         )
     )
 ))
+
+# add a certificate from a .pem file
+app$add_certificate("cert.pem")
+
+# can also read the file into an openssl object, and then add the cert
+cert <- openssl::read_cert("cert.pem")
+app$add_certificate(cert)
+
+# add a certificate stored in Azure Key Vault
+vault <- AzureKeyVault::key_vault("mytenant")
+cert2 <- vault$certificates$get("certname")
+app$add_certificate(cert2)
 
 # change the app name
 app$update(displayName="MyRenamedApp")
