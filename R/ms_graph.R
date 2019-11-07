@@ -133,8 +133,7 @@ public=list(
         res <- az_app$new(
             self$token,
             self$tenant,
-            self$call_graph_endpoint("applications", body=properties, encode="json", http_verb="POST"),
-            password
+            self$call_graph_endpoint("applications", body=properties, encode="json", http_verb="POST")
         )
 
         if(create_service_principal)

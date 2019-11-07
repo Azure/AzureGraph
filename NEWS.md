@@ -1,6 +1,9 @@
 # AzureGraph 1.0.5.9000
 
-- Updated to use the new Graph API calls for managing app passwords. Call the `az_app$addPassword()` method to add a password to an app, and `az_app$remove_password()` to remove it. As a security measure, app passwords can no longer be manually specified; instead all passwords are now auto-generated on the server with a cryptographically secure PRNG.
+- Updated to use the new Graph API calls for managing app passwords. Call the `az_app$add_password()` method to add a password to an app, and `az_app$remove_password()` to remove it. As a security measure, app passwords can no longer be manually specified; instead all passwords are now auto-generated on the server with a cryptographically secure PRNG.
+- Better handling of app creation with certificates:
+  - The `certificate` argument to `ms_graph$create_app()` can be the name of a .pfx or .pem file, an `openssl::cert` object, an `AzureKeyVault::stored_cert` object, or a raw or character vector containing the certificate.
+  - New `az_app$add_certificate()` and `az_app$remove_certificate()` methods, matching `add_password` and `remove_password`.
 - Treat the access token as opaque; this prevents errors when logging in without an AAD tenant.
 
 # AzureGraph 1.0.5

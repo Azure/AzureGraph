@@ -1,6 +1,7 @@
+# get certificate details to add to an app
 read_cert <- function(cert)
 {
-    UseMethod("cert")
+    UseMethod("read_cert")
 }
 
 
@@ -52,7 +53,5 @@ read_cert_file <- function(file)
         pfx$cert
     }
     else stop("Unsupported file extension: ", ext, call.=FALSE)
-
-    structure(obj, class="openssl_cert_pair")
 }
 

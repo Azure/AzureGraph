@@ -23,6 +23,8 @@
 #' - `delete_service_principal(confirm=TRUE)`: Delete the service principal for this app. By default, ask for confirmation first.
 #' - `add_password(password_name=NULL, password_duration=NULL)`: Adds a strong password. `password_duration` is the length of time in years that the password remains valid, with default duration 2 years. Returns the ID of the generated password.
 #' - `remove_password(password_id, confirm=TRUE)`: Removes the password with the given ID. By default, ask for confirmation first.
+#' - `add_certificate(certificate)`: Adds a certificate for authentication. This can be specified as the name of a .pfx or .pem file, an `openssl::cert` object, an `AzureKeyVault::stored_cert` object, or a raw or character vector.
+#' - `remove_certificate(certificate_id, confirm=TRUE`): Removes the certificate with the given ID. By default, ask for confirmation first.
 #'
 #' @section Initialization:
 #' Creating new objects of this class should be done via the `create_app` and `get_app` methods of the [ms_graph] class. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual app.
@@ -39,8 +41,10 @@
 #' gr <- get_graph_login()
 #' app <- gr$create_app("MyNewApp")
 #'
-#' # password reset
-#' app$update_password()
+#' # password resetting: remove the old password, add a new one
+#' pwd_id <- app$properties$passwordCredentials[[1]]$keyId
+#' app$add_password()
+#' app$remove_password(pwd_id)
 #'
 #' # set a redirect URI
 #' app$update(publicClient=list(redirectUris=I("http://localhost:1410")))
@@ -57,6 +61,18 @@
 #'         )
 #'     )
 #' ))
+#'
+#' # add a certificate from a .pem file
+#' app$add_certificate("cert.pem")
+#'
+#' # can also read the file into an openssl object, and then add the cert
+#' cert <- openssl::read_cert("cert.pem")
+#' app$add_certificate(cert)
+#'
+#' # add a certificate stored in Azure Key Vault
+#' vault <- AzureKeyVault::key_vault("mytenant")
+#' cert2 <- vault$certificates$get("certname")
+#' app$add_certificate(cert2)
 #'
 #' # change the app name
 #' app$update(displayName="MyRenamedApp")
@@ -80,8 +96,8 @@ public=list(
     add_password=function(password_name=NULL, password_duration=NULL)
     {
         creds <- list()
-        if(!is.null(name))
-            creds$displayName <- name
+        if(!is.null(password_name))
+            creds$displayName <- password_name
         if(!is.null(password_duration))
         {
             now <- as.POSIXlt(Sys.time())
@@ -125,10 +141,16 @@ public=list(
         self$update(keyCredentials=creds)
     },
 
-    remove_certificate=function(certificate_id)
+    remove_certificate=function(certificate_id, confirm=TRUE)
     {
-        creds <- self$properties$keyCredentials
+        if(confirm && interactive())
+        {
+            msg <- sprintf("Do you really want to remove the certificate '%s'?", certificate_id)
+            if(!get_confirmation(msg, FALSE))
+                return(invisible(NULL))
+        }
 
+        creds <- self$properties$keyCredentials
         idx <- vapply(creds, function(keycred) keycred$keyId == certificate_id, logical(1))
         if(!any(idx))
             stop("Certificate not found", call.=FALSE)

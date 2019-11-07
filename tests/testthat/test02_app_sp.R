@@ -36,14 +36,6 @@ test_that("App creation works",
     expect_type(newapp$add_password(), "character")
     expect_true(is_app(newapp$update(displayName=paste0(newapp_name, "_update"))))
 
-    pem <- openssl::read_cert(pemfile)
-    key_creds <- list(list(
-        key=pem$certificate,
-        type="AsymmetricX509Cert",
-        usage="verify"
-    ))
-    expect_true(is_app(newapp$update(keyCredentials=key_creds)))
-
     Sys.setenv(AZ_TEST_NEWAPP_ID=newapp_id)
 })
 
@@ -54,3 +46,31 @@ test_that("App deletion works",
     expect_silent(gr$delete_service_principal(app_id=newapp_id, confirm=FALSE))
     expect_silent(gr$delete_app(app_id=newapp_id, confirm=FALSE))
 })
+
+test_that("App with cert works",
+{
+    newapp_name <- paste0("AzureRtest_", paste0(sample(letters, 5, TRUE), collapse=""))
+    newapp <- gr$create_app(name=newapp_name, create_service_principal=FALSE, certificate=pemfile)
+    expect_true(is_app(newapp))
+    expect_false(is_empty(newapp$properties$keyCredentials))
+
+    id <- newapp$properties$keyCredentials[[1]]$keyId
+    expect_type(id, "character")
+    expect_silent(newapp$remove_certificate(id, confirm=FALSE))
+    expect_true(is_empty(newapp$properties$keyCredentials))
+
+    expect_silent(newapp$add_certificate(pemfile))
+    expect_false(is_empty(newapp$properties$keyCredentials))
+
+    id <- newapp$properties$keyCredentials[[1]]$keyId
+    expect_type(id, "character")
+    expect_silent(newapp$remove_certificate(id, confirm=FALSE))
+    expect_true(is_empty(newapp$properties$keyCredentials))
+
+    cert <- openssl::read_cert(pemfile)
+    expect_silent(newapp$add_certificate(cert))
+    expect_false(is_empty(newapp$properties$keyCredentials))
+
+    expect_silent(newapp$delete(confirm=FALSE))
+})
+
