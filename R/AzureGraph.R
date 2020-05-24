@@ -6,7 +6,7 @@ utils::globalVariables(c("self", "private"))
 
 .onLoad <- function(libname, pkgname)
 {
-    options(azure_graph_api_version="beta")
+    options(azure_graph_api_version="v1.0")
     invisible(NULL)
 }
 

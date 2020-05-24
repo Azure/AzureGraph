@@ -1,3 +1,7 @@
+# AzureGraph 1.1.0.9000
+
+- Switch to the v1.0 REST endpoint.
+
 # AzureGraph 1.1.0
 
 - Updated to use the new Graph API calls for managing app passwords. Call the `az_app$add_password()` method to add a password to an app, and `az_app$remove_password()` to remove it. As a security measure, app passwords can no longer be manually specified; instead all passwords are now auto-generated on the server with a cryptographically secure PRNG.
