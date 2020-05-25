@@ -1,4 +1,4 @@
-# AzureGraph 1.1.0.9000
+# AzureGraph 1.1.1
 
 - Switch to the v1.0 REST endpoint.
 
