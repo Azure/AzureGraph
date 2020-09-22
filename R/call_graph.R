@@ -39,9 +39,11 @@ call_graph_endpoint <- function(token, operation, ..., options=list(),
 call_graph_url <- function(token, url, ..., body=NULL, encode="json",
                            http_verb=c("GET", "DELETE", "PUT", "POST", "HEAD", "PATCH"),
                            http_status_handler=c("stop", "warn", "message", "pass"),
-                           auto_refresh=TRUE)
+                           auto_refresh=TRUE,
+                           additionalHeaders=NULL, contentType="application/json")
 {
-    headers <- process_headers(token, url, auto_refresh)
+
+    headers <- process_headers(token, url, auto_refresh, contentType, additionalHeaders)
 
     # if content-type is json, serialize it manually to ensure proper handling of nulls
     if(encode == "json" && !is_empty(body))
@@ -51,6 +53,13 @@ call_graph_url <- function(token, url, ..., body=NULL, encode="json",
         encode <- "raw"
     }
 
+    print("****************** METHOD *************************")
+    print(http_verb)
+    print("****************** HEADERS *************************")
+    print(url)
+    print("****************** HEADERS *************************")
+    print(headers)
+
     # do actual API call
     res <- httr::VERB(match.arg(http_verb), url, headers, ..., body=body, encode=encode)
 
@@ -58,7 +67,7 @@ call_graph_url <- function(token, url, ..., body=NULL, encode="json",
 }
 
 
-process_headers <- function(token, host, auto_refresh)
+process_headers <- function(token, host, auto_refresh, contentType, additionalHeaders)
 {
     # if token has expired, renew it
     if(auto_refresh && !token$validate())
@@ -72,8 +81,10 @@ process_headers <- function(token, host, auto_refresh)
     headers <- c(
         Host=host,
         Authorization=paste(creds$token_type, creds$access_token),
-        `Content-Type`="application/json"
+        `Content-Type`=contentType
     )
+    headers <- c(headers, additionalHeaders)
+    
 
     httr::add_headers(.headers=headers)
 }

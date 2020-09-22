@@ -260,9 +260,86 @@ public=list(
         self$get_group(group_id)$delete(confirm=confirm)
     },
 
+    search_site=function(site_name)
+    {
+        op <- sprintf("sites?search=%s", site_name)
+
+        az_site$new(self$token, self$tenant, self$call_graph_endpoint(op))
+    },
+
+    get_site=function(site_id)
+    {
+        op <- file.path("sites", curl::curl_escape(site_id))
+
+        az_site$new(self$token, self$tenant, self$call_graph_endpoint(op))
+    },
+
+    get_drive=function(drive_id)
+    {
+        op <- file.path("drives",curl::curl_escape(drive_id))
+
+        az_drive$new(self$token, self$tenant, self$call_graph_endpoint(op))
+    },
+    
+    get_file=function(drive_id, file_name)
+    {
+        op <- sprintf("/drives/%s/items/root:/%s:", curl::curl_escape(drive_id), curl::curl_escape(file_name))
+
+        az_file$new(self$token, self$tenant, self$call_graph_endpoint(op))
+    },
+
+    download_file=function(file, localfilePath) 
+    {
+        download.file(file$properties["@microsoft.graph.downloadUrl"], localfilePath)
+    },
+
+
+## Infor about uploading - https://docs.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0
+    upload_file=function(drive_id, file_name, local_file_path)
+    {
+        library(httr)
+        #todo --- chunk file if over 60mb
+
+        file_detail <- file.info(local_file_path)
+        if (file_detail$size == 0) {
+            stop("File is empty")
+        }
+        if (file_detail$size > 60000000) {
+            stop("File is larger than 60mb, chunking is not coded -yet-")
+        }
+        file_size = file_detail$size
+        file_zerosize = file_size -1
+
+        file_remote_path <- paste("items/root:/",curl::curl_escape(file_name),":",sep="")
+        op_createSession <- file.path("drives",curl::curl_escape(drive_id),file_remote_path,"createUploadSession")
+        op_createSession_body <- cbind('{"@odata.type":"microsoft.graph.driveItemUploadableProperties","@microsoft.graph.conflictBehavior" => "replace", "name" => ', file_name, '}')
+        op_createSession_results <- self$call_graph_endpoint(op_createSession, http_verb="POST", body=op_createSession_body)
+
+        print(op_createSession_results$uploadUrl)
+
+        op_fileuploadUrl <- toString(op_createSession_results$uploadUrl)
+        op_filesource <- upload_file(local_file_path)
+        op_cr <- paste("bytes 0-",file_zerosize,"/",file_size, sep = "")
+        op_headers <- c(
+                    "Content-Range"=op_cr
+                    )
+    
+        print(op_fileuploadUrl)
+        print(op_headers)
+
+#can't use call_graph_endpoint as it builds the url used, we need to force the url
+        op_fileupload_result <- self$call_graph_url(url=op_fileuploadUrl, http_verb="PUT", body=op_filesource, additionalHeaders=op_headers, encode="text/plain", contentType="text/plain")
+        print(op_fileupload_result)
+    },
+
     call_graph_endpoint=function(op="", ...)
     {
         call_graph_endpoint(self$token, op, ...)
+    },
+
+    call_graph_url=function(...)
+    {
+        call_graph_url(self$token, ...)
     },
 
     print=function(...)
