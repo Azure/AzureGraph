@@ -290,7 +290,7 @@ public=list(
 
     download_file=function(file, localfilePath) 
     {
-        download.file(file$properties["@microsoft.graph.downloadUrl"], localfilePath)
+        httr::GET(file$properties["@microsoft.graph.downloadUrl"] , write_disk(localfilePath, overwrite=TRUE))
     },
 
 
