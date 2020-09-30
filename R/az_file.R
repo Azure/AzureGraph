@@ -53,11 +53,6 @@ public=list(
         super$initialize(token, tenant, properties)
     },
 
-    download_file=function()
-    {
-        
-    },
-
     print=function(...)
     {
         cat("<Graph file '", self$properties$displayName, "'>\n", sep="")
