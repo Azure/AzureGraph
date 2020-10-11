@@ -2,7 +2,7 @@
 
 [![CRAN](https://www.r-pkg.org/badges/version/AzureGraph)](https://cran.r-project.org/package=AzureGraph)
 ![Downloads](https://cranlogs.r-pkg.org/badges/AzureGraph)
-[![Build Status](https://asiadatascience.visualstudio.com/AzureR/_apis/build/status/Azure.AzureGraph?branchName=master)](https://asiadatascience.visualstudio.com/AzureR/_build/latest?definitionId=5&branchName=master)
+![R-CMD-check](https://github.com/Azure/AzureGraph/workflows/R-CMD-check/badge.svg)
 
 A simple interface to the [Microsoft Graph API](https://docs.microsoft.com/en-us/graph/overview). The companion package to [AzureRMR](https://github.com/Azure/AzureRMR) and [AzureAuth](https://github.com/Azure/AzureAuth).
 
