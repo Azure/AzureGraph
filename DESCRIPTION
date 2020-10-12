@@ -1,6 +1,6 @@
 Package: AzureGraph
 Title: Simple Interface to 'Microsoft Graph'
-Version: 1.1.1.9000
+Version: 1.1.2
 Authors@R: c(
     person("Hong", "Ooi", , "hongooi73@gmail.com", role = c("aut", "cre")),
     person("Microsoft", role="cph")
@@ -22,6 +22,7 @@ Imports:
 Suggests:
     AzureRMR,
     knitr,
+    rmarkdown,
     testthat
 Roxygen: list(markdown=TRUE)
 RoxygenNote: 6.1.1

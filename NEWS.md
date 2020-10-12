@@ -1,4 +1,4 @@
-# AzureGraph 1.1.1.9000
+# AzureGraph 1.1.2
 
 - Change maintainer email address.
 
