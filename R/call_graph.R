@@ -53,12 +53,12 @@ call_graph_url <- function(token, url, ..., body=NULL, encode="json",
         encode <- "raw"
     }
 
-    print("****************** METHOD *************************")
-    print(http_verb)
-    print("****************** HEADERS *************************")
+    # print("****************** METHOD *************************")
+    # print(http_verb)
+    print("****************** URL *************************")
     print(url)
-    print("****************** HEADERS *************************")
-    print(headers)
+    # print("****************** HEADERS *************************")
+    # print(headers)
 
     # do actual API call
     res <- httr::VERB(match.arg(http_verb), url, headers, ..., body=body, encode=encode)
