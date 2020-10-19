@@ -362,7 +362,7 @@ public=list(
 
         file_remote_path <- paste("items/root:/",curl::curl_escape(file_name),":",sep="")
         op_createSession <- file.path("sites", site_id, "drive",file_remote_path,"createUploadSession")
-        op_createSession_body <- cbind('{"@odata.type":"microsoft.graph.driveItemUploadableProperties","@microsoft.graph.conflictBehavior" => "replace", "name" => ', file_name, '}')
+        op_createSession_body <- cbind('{"@microsoft.graph.conflictBehavior" :"replace", "name" : "', file_name, '"}')
         op_createSession_results <- self$call_graph_endpoint(op_createSession, http_verb="POST", body=op_createSession_body)
 
         print(op_createSession_results$uploadUrl)
