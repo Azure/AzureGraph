@@ -324,8 +324,19 @@ public=list(
                     "Content-Range"=op_cr
                     )
     
-        print(op_fileuploadUrl)
-        print(op_headers)
+        # print(op_fileuploadUrl)
+        # print(op_headers)
+
+        # my_request <- httr::PUT("https://mycompany.com/ourdb/data/userInfo/", 
+        #  body = '{"foo":"bar"}',
+        #  httr::add_headers(
+        #    'X-login-Key' = '12345678',
+        #    'OS-Version' = 'iOS 10.3.1',
+        #    'User-Agent' = 'company/1.2.3.456',
+        #    'Content-Type' = 'application/json',
+        #    'X-Access-Token' = 'dkdfjueek12384kdndcos/da8L9u0=',
+        #    'Nonce' = '1',
+        #    'Accept' = 'application/json'), encode = "json")
 
 #can't use call_graph_endpoint as it builds the url used, we need to force the url
         op_fileupload_result <- self$call_graph_url(url=op_fileuploadUrl, http_verb="PUT", body=op_filesource, additionalHeaders=op_headers, encode="text/plain", contentType="text/plain")
