@@ -343,6 +343,56 @@ public=list(
         print(op_fileupload_result)
     },
 
+
+## Infor about uploading - https://docs.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0
+    sp_upload_file=function(site_id, file_name, local_file_path)
+    {
+        library(httr)
+        #todo --- chunk file if over 60mb
+
+        file_detail <- file.info(local_file_path)
+        if (file_detail$size == 0) {
+            stop("File is empty")
+        }
+        if (file_detail$size > 60000000) {
+            stop("File is larger than 60mb, chunking is not coded -yet-")
+        }
+        file_size = file_detail$size
+        file_zerosize = file_size -1
+
+        file_remote_path <- paste("items/root:/",curl::curl_escape(file_name),":",sep="")
+        op_createSession <- file.path("sites", site_id, "drive",file_remote_path,"createUploadSession")
+        op_createSession_body <- cbind('{"@odata.type":"microsoft.graph.driveItemUploadableProperties","@microsoft.graph.conflictBehavior" => "replace", "name" => ', file_name, '}')
+        op_createSession_results <- self$call_graph_endpoint(op_createSession, http_verb="POST", body=op_createSession_body)
+
+        print(op_createSession_results$uploadUrl)
+
+        op_fileuploadUrl <- toString(op_createSession_results$uploadUrl)
+        op_filesource <- upload_file(local_file_path)
+        op_cr <- paste("bytes 0-",file_zerosize,"/",file_size, sep = "")
+        op_headers <- c(
+                    "Content-Range"=op_cr
+                    )
+    
+        # print(op_fileuploadUrl)
+        # print(op_headers)
+
+        # my_request <- httr::PUT("https://mycompany.com/ourdb/data/userInfo/", 
+        #  body = '{"foo":"bar"}',
+        #  httr::add_headers(
+        #    'X-login-Key' = '12345678',
+        #    'OS-Version' = 'iOS 10.3.1',
+        #    'User-Agent' = 'company/1.2.3.456',
+        #    'Content-Type' = 'application/json',
+        #    'X-Access-Token' = 'dkdfjueek12384kdndcos/da8L9u0=',
+        #    'Nonce' = '1',
+        #    'Accept' = 'application/json'), encode = "json")
+
+#can't use call_graph_endpoint as it builds the url used, we need to force the url
+        op_fileupload_result <- self$call_graph_url(url=op_fileuploadUrl, http_verb="PUT", body=op_filesource, additionalHeaders=op_headers, encode="text/plain", contentType="text/plain")
+        print(op_fileupload_result)
+    },
+
     call_graph_endpoint=function(op="", ...)
     {
         call_graph_endpoint(self$token, op, ...)
