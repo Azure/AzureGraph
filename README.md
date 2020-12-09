@@ -2,13 +2,13 @@
 
 [![CRAN](https://www.r-pkg.org/badges/version/AzureGraph)](https://cran.r-project.org/package=AzureGraph)
 ![Downloads](https://cranlogs.r-pkg.org/badges/AzureGraph)
-![R-CMD-check](https://github.com/Azure/AzureGraph/workflows/R-CMD-check/badge.svg)
+![R-CMD-check](https://github.com/AzureRSDK/AzureGraph/workflows/R-CMD-check/badge.svg)
 
-A simple interface to the [Microsoft Graph API](https://docs.microsoft.com/en-us/graph/overview). The companion package to [AzureRMR](https://github.com/Azure/AzureRMR) and [AzureAuth](https://github.com/Azure/AzureAuth).
+A simple interface to the [Microsoft Graph API](https://docs.microsoft.com/en-us/graph/overview). The companion package to [AzureRMR](https://github.com/AzureRSDK/AzureRMR) and [AzureAuth](https://github.com/AzureRSDK/AzureAuth).
 
 Microsoft Graph is a comprehensive framework for accessing data in various online Microsoft services. Currently, this package aims to provide an R interface only to the Azure Active Directory part, with a view to supporting interoperability of R and Azure: users, groups, registered apps and service principals. Like AzureRMR, it could potentially be extended to cover other services.
 
-The primary repo for this package is at https://github.com/Azure/AzureGraph; please submit issues and PRs there. It is also mirrored at the Cloudyr org at https://github.com/cloudyr/AzureGraph. You can install the development version of the package with `devtools::install_github("Azure/AzureGraph")`.
+The primary repo for this package is at https://github.com/AzureRSDK/AzureGraph; please submit issues and PRs there. It is also mirrored at the Cloudyr org at https://github.com/cloudyr/AzureGraph. You can install the development version of the package with `devtools::install_github("AzureRSDK/AzureGraph")`.
 
 
 ## Authentication
@@ -54,4 +54,4 @@ AzureRMR::get_azure_login()$
 ```
 
 ---
-<p align="center"><a href="https://github.com/Azure/AzureR"><img src="https://github.com/Azure/AzureR/raw/master/images/logo2.png" width=800 /></a></p>
+<p align="center"><a href="https://github.com/AzureRSDK/AzureR"><img src="https://github.com/AzureRSDK/AzureR/raw/master/images/logo2.png" width=800 /></a></p>
