@@ -6,8 +6,10 @@
 #' @param username If `auth_type == "resource_owner"`, your username.
 #' @param certificate If `auth_type == "client_credentials", a certificate to authenticate with. This is a more secure alternative to using an app secret.
 #' @param auth_type The OAuth authentication method to use, one of "client_credentials", "authorization_code", "device_code" or "resource_owner". If `NULL`, this is chosen based on the presence of the `username` and `password` arguments.
+#' @param version The Azure Active Directory version to use for authenticating.
 #' @param host Your Microsoft Graph host. Defaults to `https://graph.microsoft.com/`. Change this if you are using a government or private cloud.
 #' @param aad_host Azure Active Directory host for authentication. Defaults to `https://login.microsoftonline.com/`. Change this if you are using a government or private cloud.
+#' @param scopes The Microsoft Graph scopes (permissions) to obtain for this Graph login.
 #' @param config_file Optionally, a JSON file containing any of the arguments listed above. Arguments supplied in this file take priority over those supplied on the command line. You can also use the output from the Azure CLI `az ad sp create-for-rbac` command.
 #' @param token Optionally, an OAuth 2.0 token, of class [AzureAuth::AzureToken]. This allows you to reuse the authentication details for an existing session. If supplied, all other arguments to `create_graph_login` will be ignored.
 #' @param refresh For `get_graph_login`, whether to refresh the authentication token on loading the client.
@@ -34,12 +36,12 @@
 #' [ms_graph], [AzureAuth::get_azure_token] for more details on authentication methods
 #'
 #' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
-#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
+#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0)
 #'
 #' @examples
 #' \dontrun{
 #'
-#' # without any arguments, this will create a client using your AAD credentials
+#' # without any arguments, this will create a client using your AAD organisational account
 #' az <- create_graph_login()
 #'
 #' # retrieve the login in subsequent sessions
@@ -52,13 +54,18 @@
 #' # you can also login using credentials in a json file
 #' az <- create_graph_login(config_file="~/creds.json")
 #'
+#'
+#' # to use your personal account, set the tenant to one of the following
+#' create_graph_login("9188040d-6c67-4c5b-b112-36a304b66dad")
+#' create_graph_login("consumers")  # requires AzureAuth 1.2.6
+#'
 #' }
 #' @rdname graph_login
 #' @export
-create_graph_login <- function(tenant="common", app=.az_cli_app_id,
-                               password=NULL, username=NULL, certificate=NULL, auth_type=NULL,
+create_graph_login <- function(tenant="common", app=NULL,
+                               password=NULL, username=NULL, certificate=NULL, auth_type=NULL, version=2,
                                host="https://graph.microsoft.com/", aad_host="https://login.microsoftonline.com/",
-                               config_file=NULL, token=NULL, ...)
+                               scopes=".default", config_file=NULL, token=NULL, ...)
 {
     if(!is_azure_token(token))
     {
@@ -66,13 +73,22 @@ create_graph_login <- function(tenant="common", app=.az_cli_app_id,
         {
             conf <- jsonlite::fromJSON(config_file)
             call <- as.list(match.call())[-1]
-            call$config_file <- NULL
+            call$config_file <- call$token <- NULL
             call <- lapply(modifyList(call, conf), function(x) eval.parent(x))
             return(do.call(create_graph_login, call))
         }
 
         tenant <- normalize_tenant(tenant)
-        app <- normalize_guid(app)
+        app <- if(is.null(app))
+        {
+            if(tenant %in% c("consumers", "9188040d-6c67-4c5b-b112-36a304b66dad"))
+                .azurer_graph_app_id
+            else .az_cli_app_id
+        }
+        else normalize_guid(app)
+
+        if(version == 2)
+            host <- c(paste0(host, scopes), "openid", "offline_access")
 
         token_args <- list(resource=host,
             tenant=tenant,
@@ -82,6 +98,7 @@ create_graph_login <- function(tenant="common", app=.az_cli_app_id,
             certificate=certificate,
             auth_type=auth_type,
             aad_host=aad_host,
+            version=version,
             ...)
 
         hash <- do.call(token_hash, token_args)

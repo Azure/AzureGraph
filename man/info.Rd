@@ -5,7 +5,12 @@
 \alias{is_service_principal}
 \alias{is_user}
 \alias{is_group}
-\alias{is_directory_object}
+\alias{is_directory_role}
+\alias{is_sharepoint_site}
+\alias{is_drive}
+\alias{is_sharepoint_list}
+\alias{is_aad_object}
+\alias{is_msgraph_object}
 \title{Informational functions}
 \usage{
 is_app(object)
@@ -16,7 +21,17 @@ is_user(object)
 
 is_group(object)
 
-is_directory_object(object)
+is_directory_role(object)
+
+is_sharepoint_site(object)
+
+is_drive(object)
+
+is_sharepoint_list(object)
+
+is_aad_object(object)
+
+is_msgraph_object(object)
 }
 \arguments{
 \item{object}{An R object.}

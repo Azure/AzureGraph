@@ -89,6 +89,7 @@ public=list(
     initialize=function(token, tenant=NULL, properties=NULL, password=NULL)
     {
         self$type <- "application"
+        private$api_type <- "applications"
         self$password <- password
         super$initialize(token, tenant, properties)
     },
@@ -161,7 +162,7 @@ public=list(
     list_owners=function(type=c("user", "group", "application", "servicePrincipal"))
     {
         res <- private$get_paged_list(self$do_operation("owners"))
-        private$init_list_objects(private$filter_list(res, type))
+        private$init_list_objects(res, type)
     },
 
     create_service_principal=function(...)

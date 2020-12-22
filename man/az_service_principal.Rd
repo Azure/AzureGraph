@@ -4,12 +4,11 @@
 \name{az_service_principal}
 \alias{az_service_principal}
 \title{Service principal in Azure Active Directory}
-\format{An R6 object of class \code{az_service_principal}, inheriting from \code{az_object}.}
-\usage{
-az_service_principal
+\format{
+An R6 object of class \code{az_service_principal}, inheriting from \code{az_object}.
 }
 \description{
-Base class representing an AAD service principal.
+Class representing an AAD service principal.
 }
 \section{Fields}{
 
@@ -43,6 +42,5 @@ Creating new objects of this class should be done via the \code{create_service_p
 \link{ms_graph}, \link{az_app}, \link{az_object}
 
 \href{https://docs.microsoft.com/en-us/graph/overview}{Azure Microsoft Graph overview},
-\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta}{REST API reference}
+\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0}{REST API reference}
 }
-\keyword{datasets}

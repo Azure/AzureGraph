@@ -3,7 +3,7 @@ context("App creation/deletion")
 tenant <- Sys.getenv("AZ_TEST_TENANT_ID")
 pemfile <- Sys.getenv("AZ_TEST_CERT_FILE")
 
-if(tenant == "" || cert_thumb == "")
+if(tenant == "" || pemfile == "")
     skip("App method tests skipped: login credentials not set")
 
 if(!interactive())

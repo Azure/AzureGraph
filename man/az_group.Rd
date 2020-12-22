@@ -4,12 +4,11 @@
 \name{az_group}
 \alias{az_group}
 \title{Group in Azure Active Directory}
-\format{An R6 object of class \code{az_group}, inheriting from \code{az_object}.}
-\usage{
-az_group
+\format{
+An R6 object of class \code{az_group}, inheriting from \code{az_object}.
 }
 \description{
-Base class representing an AAD group.
+Class representing an AAD group.
 }
 \section{Fields}{
 
@@ -33,6 +32,9 @@ Base class representing an AAD group.
 \item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this group is a member of.
 \item \code{list_members(type=c("user", "group", "application", "servicePrincipal"))}: Return a list of all members of this group. Specify the \code{type} argument to filter the result for specific object type(s).
 \item \code{list_owners(type=c("user", "group", "application", "servicePrincipal"))}: Return a list of all owners of this group. Specify the \code{type} argument to filter the result for specific object type(s).
+\item \code{get_sharepoint_site()}: Get the SharePoint site associated with this group, if it exists.
+\item \code{list_drives()}: List the drives (shared document libraries) associated with this group.
+\item \code{get_drive()}: Get the default document library for this group.
 }
 }
 
@@ -59,6 +61,5 @@ grp$list_owners()
 \link{ms_graph}, \link{az_app}, \link{az_user}, \link{az_object}
 
 \href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
-\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta}{REST API reference}
+\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0}{REST API reference}
 }
-\keyword{datasets}

@@ -1,6 +1,7 @@
 # AzureGraph 1.1.2.9000
 
 - Transfer to AzureRSDK org on GitHub.
+- Internal refactoring to support future extensibility, including transferring some utility functions from AzureRMR to here.
 
 # AzureGraph 1.1.2
 

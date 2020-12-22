@@ -4,9 +4,8 @@
 \name{ms_graph}
 \alias{ms_graph}
 \title{Azure Active Directory Graph}
-\format{An R6 object of class \code{ms_graph}.}
-\usage{
-ms_graph
+\format{
+An R6 object of class \code{ms_graph}.
 }
 \description{
 Base class for interacting with Microsoft Graph API.
@@ -27,6 +26,8 @@ Base class for interacting with Microsoft Graph API.
 \item \code{create_group(name, email, ...)}: Creates a new group. Note that only security groups can be created via the Microsoft Graph API.
 \item \code{get_group(group_id)}: Retrieves an existing group.
 \item \code{delete_group(group_id, confirm=TRUE)}: Deletes a group.
+\item \code{get_sharepoint_site(site_url, site_id)}: Retrieves a SharePoint site, either by URL or ID.
+\item \verb{get_drive(drive_id}): Retrieves a drive by ID. This can either be a user's OneDrive, or a shared document library associated with a group or SharePoint site. Note that it's probably easier to use the \code{get_drive} method for the associated user, group or site object.
 \item \code{call_graph_endpoint(op="", ...)}: Calls the Microsoft Graph API using this object's token and tenant as authentication arguments. See \link{call_graph_endpoint}.
 }
 }
@@ -43,8 +44,8 @@ To authenticate with the \code{ms_graph} class directly, provide the following a
 \item \code{username}: if \code{auth_type == "resource_owner"}, your username.
 \item \code{certificate}: If `auth_type == "client_credentials", a certificate to authenticate with. This is a more secure alternative to using an app secret.
 \item \code{auth_type}: The OAuth authentication method to use, one of "client_credentials", "authorization_code", "device_code" or "resource_owner". See \link{get_azure_token} for how the default method is chosen, along with some caveats.
-\item \code{host}: your Microsoft Graph host. Defaults to \code{https://graph.microsoft.com/}.
-\item \code{aad_host}: Azure Active Directory host for authentication. Defaults to \code{https://login.microsoftonline.com/}. Change this if you are using a government or private cloud.
+\item \code{host}: your Microsoft Graph host. Defaults to \verb{https://graph.microsoft.com/}.
+\item \code{aad_host}: Azure Active Directory host for authentication. Defaults to \verb{https://login.microsoftonline.com/}. Change this if you are using a government or private cloud.
 \item \code{token}: Optionally, an OAuth 2.0 token, of class \link[AzureAuth:AzureToken]{AzureAuth::AzureToken}. This allows you to reuse the authentication details for an existing session. If supplied, all other arguments will be ignored.
 }
 }
@@ -91,6 +92,5 @@ gr$create_app("mycertapp", password=FALSE, certificate=cert)
 \link{create_graph_login}, \link{get_graph_login}
 
 \href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
-\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta}{REST API reference}
+\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0}{REST API reference}
 }
-\keyword{datasets}

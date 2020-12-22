@@ -11,7 +11,7 @@ call_graph_endpoint(token, operation, ..., options = list(),
 call_graph_url(token, url, ..., body = NULL, encode = "json",
   http_verb = c("GET", "DELETE", "PUT", "POST", "HEAD", "PATCH"),
   http_status_handler = c("stop", "warn", "message", "pass"),
-  auto_refresh = TRUE)
+  simplify = FALSE, auto_refresh = TRUE)
 }
 \arguments{
 \item{token}{An Azure OAuth token, of class \link{AzureToken}.}
@@ -34,6 +34,8 @@ call_graph_url(token, url, ..., body = NULL, encode = "json",
 
 \item{http_status_handler}{How to handle in R the HTTP status code of a response. \code{"stop"}, \code{"warn"} or \code{"message"} will call the appropriate handlers in httr, while \code{"pass"} ignores the status code.}
 
+\item{simplify}{Whether to turn arrays of objects in the JSON response into data frames. Set this to \code{TRUE} if you are expecting the endpoint to return tabular data and you want a tabular result, as opposed to a list of objects.}
+
 \item{auto_refresh}{Whether to refresh/renew the OAuth token if it is no longer valid.}
 }
 \value{
@@ -46,6 +48,8 @@ Call the Microsoft Graph REST API
 }
 \details{
 These functions form the low-level interface between R and Microsoft Graph. \code{call_graph_endpoint} forms a URL from its arguments and passes it to \code{call_graph_url}.
+
+If \code{simplify} is \code{TRUE}, \code{call_graph_url} will exploit the ability of \code{jsonlite::fromJSON} to convert arrays of objects into R data frames. This can be useful for REST calls that return tabular data. However, it can also cause problems for \emph{paged} lists, where each page will be turned into a separate data frame; as the individual objects may not have the same fields, the resulting data frames will also have differing columns. This will cause base R's \code{rbind} to fail when binding the pages together. When processing paged lists, AzureGraph will use \code{vctrs::vec_rbind} instead of \code{rbind} when the vctrs package is available; \code{vec_rbind} does not have this problem. For safety, you should only set \code{simplify=TRUE} when vctrs is installed.
 }
 \seealso{
 \link[httr:GET]{httr::GET}, \link[httr:PUT]{httr::PUT}, \link[httr:POST]{httr::POST}, \link[httr:DELETE]{httr::DELETE}, \link[httr:stop_for_status]{httr::stop_for_status}, \link[httr:content]{httr::content}

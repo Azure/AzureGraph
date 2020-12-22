@@ -4,9 +4,8 @@
 \name{az_app}
 \alias{az_app}
 \title{Registered app in Azure Active Directory}
-\format{An R6 object of class \code{az_app}, inheriting from \code{az_object}.}
-\usage{
-az_app
+\format{
+An R6 object of class \code{az_app}, inheriting from \code{az_object}.
 }
 \description{
 Base class representing an AAD app.
@@ -39,7 +38,7 @@ Base class representing an AAD app.
 \item \code{add_password(password_name=NULL, password_duration=NULL)}: Adds a strong password. \code{password_duration} is the length of time in years that the password remains valid, with default duration 2 years. Returns the ID of the generated password.
 \item \code{remove_password(password_id, confirm=TRUE)}: Removes the password with the given ID. By default, ask for confirmation first.
 \item \code{add_certificate(certificate)}: Adds a certificate for authentication. This can be specified as the name of a .pfx or .pem file, an \code{openssl::cert} object, an \code{AzureKeyVault::stored_cert} object, or a raw or character vector.
-\item \code{remove_certificate(certificate_id, confirm=TRUE}): Removes the certificate with the given ID. By default, ask for confirmation first.
+\item \verb{remove_certificate(certificate_id, confirm=TRUE}): Removes the certificate with the given ID. By default, ask for confirmation first.
 }
 }
 
@@ -98,4 +97,3 @@ app$update(displayName="MyRenamedApp")
 \seealso{
 \link{ms_graph}, \link{az_service_principal}, \link{az_user}, \link{az_group}, \link{az_object}
 }
-\keyword{datasets}

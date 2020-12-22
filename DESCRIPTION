@@ -21,8 +21,9 @@ Imports:
     R6
 Suggests:
     AzureRMR,
+    vctrs,
     knitr,
     rmarkdown,
     testthat
-Roxygen: list(markdown=TRUE)
-RoxygenNote: 6.1.1
+Roxygen: list(markdown=TRUE, r6=FALSE, old_usage=TRUE)
+RoxygenNote: 7.1.1

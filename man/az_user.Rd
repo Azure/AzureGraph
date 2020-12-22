@@ -4,12 +4,11 @@
 \name{az_user}
 \alias{az_user}
 \title{User in Azure Active Directory}
-\format{An R6 object of class \code{az_user}, inheriting from \code{az_object}.}
-\usage{
-az_user
+\format{
+An R6 object of class \code{az_user}, inheriting from \code{az_object}.
 }
 \description{
-Base class representing an AAD user account.
+Class representing an AAD user account.
 }
 \section{Fields}{
 
@@ -31,11 +30,13 @@ Base class representing an AAD user account.
 \item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
 \item \code{list_group_memberships()}: Return the IDs of all groups this user is a member of.
 \item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this user is a member of.
-\item \code{list_direct_memberships(id_only=TRUE)}: List the groups this user is a direct member of. Set \code{id_only=TRUE} to return only a vector of group IDs (the default), or \code{id_only=FALSE} to return a list of group objects.
+\item \code{list_direct_memberships(id_only=TRUE)}: List the groups and directory roles this user is a direct member of. Set \code{id_only=TRUE} to return only a vector of IDs (the default), or \code{id_only=FALSE} to return a list of group objects.
 \item \code{list_owned_objects(type=c("user", "group", "application", "servicePrincipal"))}: List directory objects (groups/apps/service principals) owned by this user. Specify the \code{type} argument to filter the result for specific object type(s).
 \item \code{list_created_objects(type=c("user", "group", "application", "servicePrincipal"))}: List directory objects (groups/apps/service principals) created by this user. Specify the \code{type} argument to filter the result for specific object type(s).
 \item \code{list_owned_devices()}: List the devices owned by this user.
 \item \code{list_registered_devices()}: List the devices registered by this user.
+\item \code{list_drives()}: List the drives associated with this user. See 'Drives' below.
+\item \code{get_drive()}: Get the OneDrive for this user. See 'Drives' below.
 \item \code{reset_password(password=NULL, force_password_change=TRUE)}: Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
 }
 }
@@ -43,6 +44,13 @@ Base class representing an AAD user account.
 \section{Initialization}{
 
 Creating new objects of this class should be done via the \code{create_user} and \code{get_user} methods of the \link{ms_graph} and \link{az_app} classes. Calling the \code{new()} method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual user account.
+}
+
+\section{Drives}{
+
+The \code{list_drives()} and \code{get_drive()} methods return different results based on the authentication used for this Graph login.
+
+If the authentication was to the \code{consumers} endpoint, or the logged-in user does not have an associated tenant in Azure Active Directory, the drive will be their \emph{personal} OneDrive. If the authentication was to the \code{common} or \code{organisations} endpoints, or a specific AAD tenant, the drive will be their OneDrive for Business (this requires the tenant to have the appropriate Office 365 license).
 }
 
 \examples{
@@ -65,12 +73,20 @@ usr$list_owned_objects()
 # owned apps and service principals
 usr$list_owned_objects(type=c("application", "servicePrincipal"))
 
+# OneDrive for Business, assuming 'myname@aadtenant.com' is a work/school account
+usr$get_drive()
+
+## logging in to a personal account
+gr2 <- get_graph_login("consumers")
+
+# personal OneDrive
+gr2$get_user()$get_drive()
+
 }
 }
 \seealso{
 \link{ms_graph}, \link{az_app}, \link{az_group}, \link{az_device}, \link{az_object}
 
 \href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
-\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta}{REST API reference}
+\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0}{REST API reference}
 }
-\keyword{datasets}

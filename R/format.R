@@ -1,5 +1,15 @@
-# copied from AzureRMR:: do not export
-
+#' Format a Microsoft Graph or Azure object
+#'
+#' Miscellaneous functions for printing Microsoft Graph and Azure R6 objects
+#'
+#' @param env An R6 object's environment for printing.
+#' @param exclude Objects in `env` to exclude from the printout.
+#'
+#' @details
+#' These are utilities to aid in printing R6 objects created by this package or its descendants. They are not meant to be called by the user.
+#'
+#' @rdname format
+#' @export
 format_public_fields <- function(env, exclude=character(0))
 {
     objnames <- ls(env)
@@ -7,7 +17,7 @@ format_public_fields <- function(env, exclude=character(0))
     objnames <- setdiff(objnames, c(exclude, std_fields))
 
     maxwidth <- as.integer(0.8 * getOption("width"))
- 
+
     objconts <- sapply(objnames, function(n)
     {
         x <- get(n, env)
@@ -21,13 +31,13 @@ format_public_fields <- function(env, exclude=character(0))
             if(nchar(x) > maxwidth - nchar(n) - 10)
                 x <- paste0(substr(x, 1, maxwidth - nchar(n) - 10), " ...")
             x
-        }            
+        }
         else deparse(x)[[1]]
 
         paste0(strwrap(paste0(n, ": ", deparsed), width=maxwidth, indent=2, exdent=4),
                collapse="\n")
     }, simplify=FALSE)
-    
+
     empty <- sapply(objconts, is.null)
     objconts <- objconts[!empty]
 
@@ -39,6 +49,8 @@ format_public_fields <- function(env, exclude=character(0))
 }
 
 
+#' @rdname format
+#' @export
 format_public_methods <- function(env)
 {
     objnames <- ls(env)

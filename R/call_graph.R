@@ -7,6 +7,7 @@
 #' @param url A complete URL to send to the host.
 #' @param http_verb The HTTP verb as a string, one of `GET`, `PUT`, `POST`, `DELETE`, `HEAD` or `PATCH`.
 #' @param http_status_handler How to handle in R the HTTP status code of a response. `"stop"`, `"warn"` or `"message"` will call the appropriate handlers in httr, while `"pass"` ignores the status code.
+#' @param simplify Whether to turn arrays of objects in the JSON response into data frames. Set this to `TRUE` if you are expecting the endpoint to return tabular data and you want a tabular result, as opposed to a list of objects.
 #' @param auto_refresh Whether to refresh/renew the OAuth token if it is no longer valid.
 #' @param body The body of the request, for `PUT`/`POST`/`PATCH`.
 #' @param encode The encoding (really content-type) for the request body. The default value "json" means to serialize a list body into a JSON object. If you pass an already-serialized JSON object as the body, set `encode` to "raw".
@@ -14,6 +15,8 @@
 #'
 #' @details
 #' These functions form the low-level interface between R and Microsoft Graph. `call_graph_endpoint` forms a URL from its arguments and passes it to `call_graph_url`.
+#'
+#' If `simplify` is `TRUE`, `call_graph_url` will exploit the ability of `jsonlite::fromJSON` to convert arrays of objects into R data frames. This can be useful for REST calls that return tabular data. However, it can also cause problems for _paged_ lists, where each page will be turned into a separate data frame; as the individual objects may not have the same fields, the resulting data frames will also have differing columns. This will cause base R's `rbind` to fail when binding the pages together. When processing paged lists, AzureGraph will use `vctrs::vec_rbind` instead of `rbind` when the vctrs package is available; `vec_rbind` does not have this problem. For safety, you should only set `simplify=TRUE` when vctrs is installed.
 #'
 #' @return
 #' If `http_status_handler` is one of `"stop"`, `"warn"` or `"message"`, the status code of the response is checked. If an error is not thrown, the parsed content of the response is returned with the status code attached as the "status" attribute.
@@ -39,7 +42,7 @@ call_graph_endpoint <- function(token, operation, ..., options=list(),
 call_graph_url <- function(token, url, ..., body=NULL, encode="json",
                            http_verb=c("GET", "DELETE", "PUT", "POST", "HEAD", "PATCH"),
                            http_status_handler=c("stop", "warn", "message", "pass"),
-                           auto_refresh=TRUE)
+                           simplify=FALSE, auto_refresh=TRUE)
 {
     headers <- process_headers(token, url, auto_refresh)
 
@@ -54,7 +57,7 @@ call_graph_url <- function(token, url, ..., body=NULL, encode="json",
     # do actual API call
     res <- httr::VERB(match.arg(http_verb), url, headers, ..., body=body, encode=encode)
 
-    process_response(res, match.arg(http_status_handler))
+    process_response(res, match.arg(http_status_handler), simplify)
 }
 
 
@@ -79,11 +82,11 @@ process_headers <- function(token, host, auto_refresh)
 }
 
 
-process_response <- function(response, handler)
+process_response <- function(response, handler, simplify)
 {
     if(handler != "pass")
     {
-        cont <- httr::content(response)
+        cont <- httr::content(response, simplifyVector=simplify)
         handler <- get(paste0(handler, "_for_status"), getNamespace("httr"))
         handler(response, paste0("complete operation. Message:\n",
                                  sub("\\.$", "", error_message(cont))))
@@ -125,36 +128,6 @@ error_message <- function(cont)
 construct_path <- function(...)
 {
     sub("/$", "", file.path(..., fsep="/"))
-}
-
-
-# same as AzureRMR::named_list, do not export to avoid conflicts
-named_list <- function(lst=NULL, name_fields="name")
-{
-    if(is_empty(lst))
-        return(structure(list(), names=character(0)))
-
-    lst_names <- sapply(name_fields, function(n) sapply(lst, `[[`, n))
-    if(length(name_fields) > 1)
-    {
-        dim(lst_names) <- c(length(lst_names) / length(name_fields), length(name_fields))
-        lst_names <- apply(lst_names, 1, function(nn) paste(nn, collapse="/"))
-    }
-    names(lst) <- lst_names
-    dups <- duplicated(tolower(names(lst)))
-    if(any(dups))
-    {
-        duped_names <- names(lst)[dups]
-        warning("Some names are duplicated: ", paste(unique(duped_names), collapse=" "), call.=FALSE)
-    }
-    lst
-}
-
-
-# same as AzureRMR::is_empty, do not export to avoid conflicts
-is_empty <- function(x)
-{
-    length(x) == 0
 }
 
 
