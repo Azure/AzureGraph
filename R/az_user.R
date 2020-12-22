@@ -21,17 +21,10 @@
 #' - `list_created_objects(type=c("user", "group", "application", "servicePrincipal"))`: List directory objects (groups/apps/service principals) created by this user. Specify the `type` argument to filter the result for specific object type(s).
 #' - `list_owned_devices()`: List the devices owned by this user.
 #' - `list_registered_devices()`: List the devices registered by this user.
-#' - `list_drives()`: List the drives associated with this user. See 'Drives' below.
-#' - `get_drive()`: Get the OneDrive for this user. See 'Drives' below.
 #' - `reset_password(password=NULL, force_password_change=TRUE)`: Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
 #'
 #' @section Initialization:
 #' Creating new objects of this class should be done via the `create_user` and `get_user` methods of the [ms_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual user account.
-#'
-#' @section Drives:
-#' The `list_drives()` and `get_drive()` methods return different results based on the authentication used for this Graph login.
-#'
-#' If the authentication was to the `consumers` endpoint, or the logged-in user does not have an associated tenant in Azure Active Directory, the drive will be their _personal_ OneDrive. If the authentication was to the `common` or `organisations` endpoints, or a specific AAD tenant, the drive will be their OneDrive for Business (this requires the tenant to have the appropriate Office 365 license).
 #'
 #' @seealso
 #' [ms_graph], [az_app], [az_group], [az_device], [az_object]
@@ -58,15 +51,6 @@
 #'
 #' # owned apps and service principals
 #' usr$list_owned_objects(type=c("application", "servicePrincipal"))
-#'
-#' # OneDrive for Business, assuming 'myname@aadtenant.com' is a work/school account
-#' usr$get_drive()
-#'
-#' ## logging in to a personal account
-#' gr2 <- get_graph_login("consumers")
-#'
-#' # personal OneDrive
-#' gr2$get_user()$get_drive()
 #'
 #' }
 #' @format An R6 object of class `az_user`, inheriting from `az_object`.

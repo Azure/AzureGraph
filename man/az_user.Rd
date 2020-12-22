@@ -35,8 +35,6 @@ Class representing an AAD user account.
 \item \code{list_created_objects(type=c("user", "group", "application", "servicePrincipal"))}: List directory objects (groups/apps/service principals) created by this user. Specify the \code{type} argument to filter the result for specific object type(s).
 \item \code{list_owned_devices()}: List the devices owned by this user.
 \item \code{list_registered_devices()}: List the devices registered by this user.
-\item \code{list_drives()}: List the drives associated with this user. See 'Drives' below.
-\item \code{get_drive()}: Get the OneDrive for this user. See 'Drives' below.
 \item \code{reset_password(password=NULL, force_password_change=TRUE)}: Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
 }
 }
@@ -44,13 +42,6 @@ Class representing an AAD user account.
 \section{Initialization}{
 
 Creating new objects of this class should be done via the \code{create_user} and \code{get_user} methods of the \link{ms_graph} and \link{az_app} classes. Calling the \code{new()} method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual user account.
-}
-
-\section{Drives}{
-
-The \code{list_drives()} and \code{get_drive()} methods return different results based on the authentication used for this Graph login.
-
-If the authentication was to the \code{consumers} endpoint, or the logged-in user does not have an associated tenant in Azure Active Directory, the drive will be their \emph{personal} OneDrive. If the authentication was to the \code{common} or \code{organisations} endpoints, or a specific AAD tenant, the drive will be their OneDrive for Business (this requires the tenant to have the appropriate Office 365 license).
 }
 
 \examples{
@@ -72,15 +63,6 @@ usr$list_owned_objects()
 
 # owned apps and service principals
 usr$list_owned_objects(type=c("application", "servicePrincipal"))
-
-# OneDrive for Business, assuming 'myname@aadtenant.com' is a work/school account
-usr$get_drive()
-
-## logging in to a personal account
-gr2 <- get_graph_login("consumers")
-
-# personal OneDrive
-gr2$get_user()$get_drive()
 
 }
 }

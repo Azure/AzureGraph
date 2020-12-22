@@ -26,8 +26,6 @@ Base class for interacting with Microsoft Graph API.
 \item \code{create_group(name, email, ...)}: Creates a new group. Note that only security groups can be created via the Microsoft Graph API.
 \item \code{get_group(group_id)}: Retrieves an existing group.
 \item \code{delete_group(group_id, confirm=TRUE)}: Deletes a group.
-\item \code{get_sharepoint_site(site_url, site_id)}: Retrieves a SharePoint site, either by URL or ID.
-\item \verb{get_drive(drive_id}): Retrieves a drive by ID. This can either be a user's OneDrive, or a shared document library associated with a group or SharePoint site. Note that it's probably easier to use the \code{get_drive} method for the associated user, group or site object.
 \item \code{call_graph_endpoint(op="", ...)}: Calls the Microsoft Graph API using this object's token and tenant as authentication arguments. See \link{call_graph_endpoint}.
 }
 }

@@ -20,7 +20,7 @@ An invisible vector of registered class names.
 Extensible registry of Microsoft Graph classes that AzureGraph supports
 }
 \details{
-As written, AzureGraph knows about a subset of all the object classes contained in Microsoft Graph. These are mostly the classes originating from Azure Active Directory and Microsoft Office: users, groups, app registrations, service principals, SharePoint sites and OneDrive libraries.
+As written, AzureGraph knows about a subset of all the object classes contained in Microsoft Graph. These are mostly the classes originating from Azure Active Directory: users, groups, app registrations, service principals and registered devices.
 
 You can extend AzureGraph by writing your own R6 class that inherits from \code{ms_object}. If so, you should also \emph{register} your class by calling \code{register_graph_class} and providing the generator object, along with a check function. The latter should accept a list of object properties (as obtained from the Graph REST API), and return TRUE/FALSE based on whether the object is of your class.
 }

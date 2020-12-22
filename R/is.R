@@ -48,30 +48,6 @@ is_directory_role <- function(object)
 
 #' @rdname info
 #' @export
-is_sharepoint_site <- function(object)
-{
-    R6::is.R6(object) && inherits(object, "ms_site")
-}
-
-
-#' @rdname info
-#' @export
-is_drive <- function(object)
-{
-    R6::is.R6(object) && inherits(object, "ms_drive")
-}
-
-
-#' @rdname info
-#' @export
-is_sharepoint_list <- function(object)
-{
-    R6::is.R6(object) && inherits(object, "ms_sharepoint_list")
-}
-
-
-#' @rdname info
-#' @export
 is_aad_object <- function(object)
 {
     R6::is.R6(object) && inherits(object, "az_object")

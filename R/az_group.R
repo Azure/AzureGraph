@@ -18,9 +18,6 @@
 #' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this group is a member of.
 #' - `list_members(type=c("user", "group", "application", "servicePrincipal"))`: Return a list of all members of this group. Specify the `type` argument to filter the result for specific object type(s).
 #' - `list_owners(type=c("user", "group", "application", "servicePrincipal"))`: Return a list of all owners of this group. Specify the `type` argument to filter the result for specific object type(s).
-#' - `get_sharepoint_site()`: Get the SharePoint site associated with this group, if it exists.
-#' - `list_drives()`: List the drives (shared document libraries) associated with this group.
-#' - `get_drive()`: Get the default document library for this group.
 #'
 #' @section Initialization:
 #' Creating new objects of this class should be done via the `create_group` and `get_group` methods of the [ms_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual group.

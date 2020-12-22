@@ -32,9 +32,6 @@ Class representing an AAD group.
 \item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this group is a member of.
 \item \code{list_members(type=c("user", "group", "application", "servicePrincipal"))}: Return a list of all members of this group. Specify the \code{type} argument to filter the result for specific object type(s).
 \item \code{list_owners(type=c("user", "group", "application", "servicePrincipal"))}: Return a list of all owners of this group. Specify the \code{type} argument to filter the result for specific object type(s).
-\item \code{get_sharepoint_site()}: Get the SharePoint site associated with this group, if it exists.
-\item \code{list_drives()}: List the drives (shared document libraries) associated with this group.
-\item \code{get_drive()}: Get the default document library for this group.
 }
 }
 
