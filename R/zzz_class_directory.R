@@ -66,12 +66,10 @@ find_class_generator <- function(props, type_filter, default_generator)
     }
     else  # check for each known type in turn
     {
-        found <- FALSE
         type <- NA
         for(n in ls(.graph_classes))
         {
-            found <- .graph_classes[[n]]$check(props)
-            if(found)
+            if(.graph_classes[[n]]$check(props))
             {
                 type <- n
                 break
