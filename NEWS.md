@@ -2,6 +2,7 @@
 
 - Transfer to AzureRSDK org on GitHub.
 - Internal refactoring to support future extensibility, including transferring some utility functions from AzureRMR to here.
+- New "Extending AzureGraph" vignette, showing how to extend this package to represent other object types in Microsoft Graph.
 - Switch to AAD v2.0 as the default for authenticating.
 
 # AzureGraph 1.1.2
