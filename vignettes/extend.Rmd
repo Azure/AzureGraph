@@ -3,7 +3,7 @@ title: "Extending AzureGraph"
 author: Hong Ooi
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introduction}
+  %\VignetteIndexEntry{Extending}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{utf8}
 ---
@@ -79,7 +79,7 @@ Having defined your new class, call `register_graph_class` so that AzureGraph be
 
 ## Add getter and setter methods
 
-Finally, so that people can use the same workflow with your class as with AzureGraph-supplied classes, you can add getter and setter methods to `ms_graph` and any other classes for which it's appropriate. Again, if you're writing a package, this should happen in your package's `.onLoad` function.
+Finally, so that people can use the same workflow with your class as with AzureGraph-supplied classes, you can add getter and setter methods to `ms_graph` and any other classes for which it's appropriate. Again, if you're writing a package, this should happen in the `.onLoad` function.
 
 In the case of `ms_site`, it's appropriate to add a getter method not just to `ms_graph`, but also the `ms_group` class. This is because SharePoint sites have associated user groups, hence it's useful to be able to retrieve a site given the object for a group. The relevant code in the `.onLoad` function looks like this (slightly simplified):
 
