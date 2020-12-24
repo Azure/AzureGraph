@@ -10,7 +10,7 @@ vignette: >
 
 [Microsoft Graph](https://docs.microsoft.com/en-us/graph/overview) is a comprehensive framework for accessing data in various online Microsoft services, including Azure Active Directory (AAD), Office 365, OneDrive, Teams, and more. AzureGraph is a simple R6-based interface to the Graph REST API, and is the companion package to [AzureRMR](https://github.com/AzureRSDK/AzureRMR) and [AzureAuth](https://github.com/AzureRSDK/AzureAuth).
 
-Currently, AzureGraph aims to provide an R interface only to the AAD part, with a view to supporting R interoperability with Azure: registered apps and service principals, users and groups. Like AzureRMR, it could potentially be extended to support other services.
+Currently, AzureGraph aims to provide an R interface only to the AAD part, with a view to supporting R interoperability with Azure: registered apps and service principals, users and groups. However, it can be extended to support other services; for more information, see the "Extending AzureGraph" vignette.
 
 ## Authentication
 
