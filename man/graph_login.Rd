@@ -38,7 +38,7 @@ list_graph_logins()
 
 \item{aad_host}{Azure Active Directory host for authentication. Defaults to \verb{https://login.microsoftonline.com/}. Change this if you are using a government or private cloud.}
 
-\item{scopes}{The Microsoft Graph scopes (permissions) to obtain for this Graph login.}
+\item{scopes}{The Microsoft Graph scopes (permissions) to obtain for this Graph login. Only for \code{version=2}.}
 
 \item{config_file}{Optionally, a JSON file containing any of the arguments listed above. Arguments supplied in this file take priority over those supplied on the command line. You can also use the output from the Azure CLI \verb{az ad sp create-for-rbac} command.}
 

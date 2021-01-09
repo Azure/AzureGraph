@@ -42,8 +42,10 @@ To authenticate with the \code{ms_graph} class directly, provide the following a
 \item \code{username}: if \code{auth_type == "resource_owner"}, your username.
 \item \code{certificate}: If `auth_type == "client_credentials", a certificate to authenticate with. This is a more secure alternative to using an app secret.
 \item \code{auth_type}: The OAuth authentication method to use, one of "client_credentials", "authorization_code", "device_code" or "resource_owner". See \link{get_azure_token} for how the default method is chosen, along with some caveats.
+\item \code{version}: The Azure Active Directory (AAD) version to use for authenticating.
 \item \code{host}: your Microsoft Graph host. Defaults to \verb{https://graph.microsoft.com/}.
 \item \code{aad_host}: Azure Active Directory host for authentication. Defaults to \verb{https://login.microsoftonline.com/}. Change this if you are using a government or private cloud.
+\item \code{scopes}: The Microsoft Graph scopes (permissions) to obtain for this Graph login. Only for \code{version=2}.
 \item \code{token}: Optionally, an OAuth 2.0 token, of class \link[AzureAuth:AzureToken]{AzureAuth::AzureToken}. This allows you to reuse the authentication details for an existing session. If supplied, all other arguments will be ignored.
 }
 }
