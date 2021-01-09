@@ -1,4 +1,4 @@
-# AzureGraph 1.1.2.9000
+# AzureGraph 1.1.3
 
 - Internal refactoring to support future extensibility, including transferring some utility functions from AzureRMR to here.
 - New "Extending AzureGraph" vignette, showing how to extend this package to represent other object types in Microsoft Graph.
