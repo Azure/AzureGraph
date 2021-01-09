@@ -85,9 +85,9 @@ public=list(
 
     # authenticate and get subscriptions
     initialize=function(tenant="common", app=.az_cli_app_id,
-                        password=NULL, username=NULL, certificate=NULL, auth_type=NULL,
+                        password=NULL, username=NULL, certificate=NULL, auth_type=NULL, version=2,
                         host="https://graph.microsoft.com/", aad_host="https://login.microsoftonline.com/",
-                        token=NULL, ...)
+                        scopes=".default", token=NULL, ...)
     {
         if(is_azure_token(token))
         {
@@ -101,7 +101,10 @@ public=list(
         self$tenant <- normalize_tenant(tenant)
         app <- normalize_guid(app)
 
-        self$token <- get_azure_token(resource=self$host,
+        if(version == 2)
+            host <- c(paste0(host, scopes), "openid", "offline_access")
+
+        self$token <- get_azure_token(resource=host,
             tenant=self$tenant,
             app=app,
             password=password,
@@ -109,6 +112,7 @@ public=list(
             certificate=certificate,
             auth_type=auth_type,
             aad_host=aad_host,
+            version=version,
             ...)
 
         NULL
