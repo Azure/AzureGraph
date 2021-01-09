@@ -6,8 +6,8 @@ Authors@R: c(
     person("Microsoft", role="cph")
     )
 Description: A simple interface to the 'Microsoft Graph' API <https://docs.microsoft.com/en-us/graph/overview>. 'Graph' is a comprehensive framework for accessing data in various online Microsoft services. Currently, this package aims to provide an R interface only to the 'Azure Active Directory' part, with a view to supporting interoperability of R and 'Azure': users, groups, registered apps and service principals. However it can be easily extended to cover other services. Part of the 'AzureR' family of packages.
-URL: https://github.com/AzureRSDK/AzureGraph https://github.com/AzureRSDK/AzureR
-BugReports: https://github.com/AzureRSDK/AzureGraph/issues
+URL: https://github.com/Azure/AzureGraph https://github.com/Azure/AzureR
+BugReports: https://github.com/Azure/AzureGraph/issues
 License: MIT + file LICENSE
 VignetteBuilder: knitr
 Depends: 
