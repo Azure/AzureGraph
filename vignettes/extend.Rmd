@@ -1,0 +1,131 @@
+---
+title: "Extending AzureGraph"
+author: Hong Ooi
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Extending}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{utf8}
+---
+
+As written, AzureGraph provides support for Microsoft Graph objects derived from Azure Active Directory (AAD): users, groups, app registrations and service principals. This vignette describes how to extend it to support other services.
+
+## Extend the `ms_object` base class
+
+AzureGraph provides the `ms_object` class to represent a generic object in Graph. You can extend this to support specific services by adding custom methods and fields.
+
+For example, the [SharePointR](https://github.com/hongooi73/SharePointR) package extends AzureGraph to support SharePoint Online sites and OneDrive filesystems (both personal and business). This is the `ms_site` class from that package, which represents a SharePoint site. To save space, the actual code in the new methods has been elided.
+
+```r
+ms_site <- R6::R6Class("ms_site", inherit=ms_object,
+
+public=list(
+
+    initialize=function(token, tenant=NULL, properties=NULL)
+    {
+        self$type <- "site"
+        private$api_type <- "sites"
+        super$initialize(token, tenant, properties)
+    },
+
+    list_drives=function() {}, # ...
+
+    get_drive=function(drive_id=NULL) {}, # ...
+
+    list_subsites=function() {}, # ...
+
+    get_list=function(list_name=NULL, list_id=NULL) {}, # ...
+
+    print=function(...)
+    {
+        cat("<Sharepoint site '", self$properties$displayName, "'>\n", sep="")
+        cat("  directory id:", self$properties$id, "\n")
+        cat("  web link:", self$properties$webUrl, "\n")
+        cat("  description:", self$properties$description, "\n")
+        cat("---\n")
+        cat(format_public_methods(self))
+        invisible(self)
+    }
+))
+```
+
+Note the following:
+
+- The `initialize()` method of your class should take 3 arguments: the OAuth2 token for authenticating with Graph, the name of the AAD tenant, and the list of properties for this object as obtained from the Graph endpoint. It should set 2 fields: `self$type` contains a human-readable name for this type of object, and `private$api_type` contains the object type as it appears in the URL of a Graph API request. It should then call the superclass method to complete the initialisation. `initialize()` itself should not contact the Graph endpoint; it should merely create and populate the R6 object given the response from a previous request.
+
+- The `print()` method is optional and should display any properties that can help identify this object to a human reader.
+
+You can read the code of the existing classes such as `az_user`, `az_app` etc to see how to call the API. The `do_operation()` method should suffice for any regular communication with the Graph endpoint.
+
+## Register the class with `register_graph_class`
+
+Having defined your new class, call `register_graph_class` so that AzureGraph becomes aware of it and can automatically use it to populate object lists. If you are writing a new package, the `register_graph_class` call should go in your package's `.onLoad` startup function. For example, registering the `ms_site` SharePoint class looks like this.
+
+```r
+.onLoad <- function(libname, pkgname)
+{
+    register_graph_class("site", ms_site,
+        function(props) grepl("sharepoint", props$id, fixed=TRUE))
+
+    # ... other startup code ...
+}
+```
+
+`register_graph_class` takes 3 arguments:
+
+- The name of the object class, as it appears in the [Microsoft Graph online documentation](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0).
+- The R6 class generator object, as defined in the previous section.
+- A check function which takes a list of properties (as returned by the Graph API) and returns TRUE/FALSE based on whether the properties are for an object of your class. This is necessary as some Graph calls that return lists of objects do not always include explicit metadata indicating the type of each object, hence the type must be inferred from the properties.
+
+## Add getter and setter methods
+
+Finally, so that people can use the same workflow with your class as with AzureGraph-supplied classes, you can add getter and setter methods to `ms_graph` and any other classes for which it's appropriate. Again, if you're writing a package, this should happen in the `.onLoad` function.
+
+In the case of `ms_site`, it's appropriate to add a getter method not just to `ms_graph`, but also the `ms_group` class. This is because SharePoint sites have associated user groups, hence it's useful to be able to retrieve a site given the object for a group. The relevant code in the `.onLoad` function looks like this (slightly simplified):
+
+```r
+.onLoad <- function(libname, pkgname)
+{
+    # ...
+
+    ms_graph$set("public", "get_sharepoint_site", overwrite=TRUE,
+    function(site_url=NULL, site_id=NULL)
+    {
+        op <- if(is.null(site_url) && !is.null(site_id))
+            file.path("sites", site_id)
+        else if(!is.null(site_url) && is.null(site_id))
+        {
+            site_url <- httr::parse_url(site_url)
+            file.path("sites", paste0(site_url$hostname, ":"), site_url$path)
+        }
+        else stop("Must supply either site ID or URL")
+
+        ms_site$new(self$token, self$tenant, self$call_graph_endpoint(op))
+    })
+
+    az_group$set("public", "get_sharepoint_site", overwrite=TRUE,
+    function()
+    {
+        res <- self$do_operation("sites/root")
+        ms_site$new(self$token, self$tenant, res)
+    })
+
+    # ...
+}
+```
+
+Once this is done, the object for a SharePoint site can be instantiated as follows:
+
+```r
+library(AzureGraph)
+library(SharePointR)
+
+gr <- get_graph_login()
+
+# directly from the Graph client
+mysite1 <- gr$get_sharepoint_site("https://mytenant.sharepoint.com/sites/my-site-name")
+
+# or via a group
+mygroup <- gr$get_group("my-group-guid")
+mysite2 <- mygroup$get_sharepoint_site()
+```

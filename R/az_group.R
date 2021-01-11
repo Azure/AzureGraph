@@ -1,6 +1,6 @@
 #' Group in Azure Active Directory
 #'
-#' Base class representing an AAD group.
+#' Class representing an AAD group.
 #'
 #' @docType class
 #' @section Fields:
@@ -26,7 +26,7 @@
 #' [ms_graph], [az_app], [az_user], [az_object]
 #'
 #' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
-#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
+#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0)
 #'
 #' @examples
 #' \dontrun{
@@ -50,24 +50,32 @@ public=list(
     initialize=function(token, tenant=NULL, properties=NULL)
     {
         self$type <- "group"
+        private$api_type <- "groups"
         super$initialize(token, tenant, properties)
     },
 
     list_members=function(type=c("user", "group", "application", "servicePrincipal"))
     {
         res <- private$get_paged_list(self$do_operation("members"))
-        private$init_list_objects(private$filter_list(res, type))
+        private$init_list_objects(res, type)
     },
 
     list_owners=function(type=c("user", "group", "application", "servicePrincipal"))
     {
         res <- private$get_paged_list(self$do_operation("owners"))
-        private$init_list_objects(private$filter_list(res, type))
+        private$init_list_objects(res, type)
     },
 
     print=function(...)
     {
-        cat("<Graph group '", self$properties$displayName, "'>\n", sep="")
+        group_type <- if("Unified" %in% self$properties$groupTypes)
+            "Microsoft 365"
+        else if(!self$properties$mailEnabled)
+            "Security"
+        else if(self$properties$securityEnabled)
+            "Mail-enabled security"
+        else "Distribution"
+        cat("<", group_type, " group '", self$properties$displayName, "'>\n", sep="")
         cat("  directory id:", self$properties$id, "\n")
         cat("  description:", self$properties$description, "\n")
         cat("---\n")

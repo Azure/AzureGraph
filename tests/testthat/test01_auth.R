@@ -9,6 +9,7 @@ if(tenant == "" || app == "")
 if(!interactive())
     skip("Authentication tests skipped: must be in interactive session")
 
+scopes <- c("https://graph.microsoft.com/.default", "openid", "offline_access")
 
 test_that("Graph authentication works",
 {
@@ -16,7 +17,7 @@ test_that("Graph authentication works",
     expect_is(gr, "ms_graph")
     expect_true(is_azure_token(gr$token))
 
-    token <- get_azure_token("https://graph.microsoft.com/", tenant, app)
+    token <- get_azure_token(scopes, tenant, app, version=2)
 
     gr2 <- ms_graph$new(token=token)
     expect_is(gr2, "ms_graph")

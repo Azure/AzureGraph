@@ -29,8 +29,10 @@
 #' - `username`: if `auth_type == "resource_owner"`, your username.
 #' - `certificate`: If `auth_type == "client_credentials", a certificate to authenticate with. This is a more secure alternative to using an app secret.
 #' - `auth_type`: The OAuth authentication method to use, one of "client_credentials", "authorization_code", "device_code" or "resource_owner". See [get_azure_token] for how the default method is chosen, along with some caveats.
+#' - `version`: The Azure Active Directory (AAD) version to use for authenticating.
 #' - `host`: your Microsoft Graph host. Defaults to `https://graph.microsoft.com/`.
 #' - `aad_host`: Azure Active Directory host for authentication. Defaults to `https://login.microsoftonline.com/`. Change this if you are using a government or private cloud.
+#' - `scopes`: The Microsoft Graph scopes (permissions) to obtain for this Graph login. Only for `version=2`.
 #' - `token`: Optionally, an OAuth 2.0 token, of class [AzureAuth::AzureToken]. This allows you to reuse the authentication details for an existing session. If supplied, all other arguments will be ignored.
 #'
 #' @section App creation:
@@ -44,7 +46,7 @@
 #' [create_graph_login], [get_graph_login]
 #'
 #' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
-#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
+#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0)
 #'
 #' @examples
 #' \dontrun{
@@ -85,9 +87,9 @@ public=list(
 
     # authenticate and get subscriptions
     initialize=function(tenant="common", app=.az_cli_app_id,
-                        password=NULL, username=NULL, certificate=NULL, auth_type=NULL,
+                        password=NULL, username=NULL, certificate=NULL, auth_type=NULL, version=2,
                         host="https://graph.microsoft.com/", aad_host="https://login.microsoftonline.com/",
-                        token=NULL, ...)
+                        scopes=".default", token=NULL, ...)
     {
         if(is_azure_token(token))
         {
@@ -101,7 +103,10 @@ public=list(
         self$tenant <- normalize_tenant(tenant)
         app <- normalize_guid(app)
 
-        self$token <- get_azure_token(resource=self$host,
+        if(version == 2)
+            host <- c(paste0(host, scopes), "openid", "offline_access")
+
+        self$token <- get_azure_token(resource=host,
             tenant=self$tenant,
             app=app,
             password=password,
@@ -109,6 +114,7 @@ public=list(
             certificate=certificate,
             auth_type=auth_type,
             aad_host=aad_host,
+            version=version,
             ...)
 
         NULL

@@ -1,6 +1,6 @@
 #' User in Azure Active Directory
 #'
-#' Base class representing an AAD user account.
+#' Class representing an AAD user account.
 #'
 #' @docType class
 #' @section Fields:
@@ -16,7 +16,7 @@
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
 #' - `list_group_memberships()`: Return the IDs of all groups this user is a member of.
 #' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this user is a member of.
-#' - `list_direct_memberships(id_only=TRUE)`: List the groups this user is a direct member of. Set `id_only=TRUE` to return only a vector of group IDs (the default), or `id_only=FALSE` to return a list of group objects.
+#' - `list_direct_memberships(id_only=TRUE)`: List the groups and directory roles this user is a direct member of. Set `id_only=TRUE` to return only a vector of IDs (the default), or `id_only=FALSE` to return a list of group objects.
 #' - `list_owned_objects(type=c("user", "group", "application", "servicePrincipal"))`: List directory objects (groups/apps/service principals) owned by this user. Specify the `type` argument to filter the result for specific object type(s).
 #' - `list_created_objects(type=c("user", "group", "application", "servicePrincipal"))`: List directory objects (groups/apps/service principals) created by this user. Specify the `type` argument to filter the result for specific object type(s).
 #' - `list_owned_devices()`: List the devices owned by this user.
@@ -30,7 +30,7 @@
 #' [ms_graph], [az_app], [az_group], [az_device], [az_object]
 #'
 #' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
-#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
+#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0)
 #'
 #' @examples
 #' \dontrun{
@@ -64,6 +64,7 @@ public=list(
     initialize=function(token, tenant=NULL, properties=NULL, password=NULL)
     {
         self$type <- "user"
+        private$api_type <- "users"
         self$password <- password
         super$initialize(token, tenant, properties)
     },
@@ -90,19 +91,19 @@ public=list(
     list_owned_objects=function(type=c("user", "group", "application", "servicePrincipal"))
     {
         res <- private$get_paged_list(self$do_operation("ownedObjects"))
-        private$init_list_objects(private$filter_list(res, type))
+        private$init_list_objects(res, type)
     },
 
     list_created_objects=function(type=c("user", "group", "application", "servicePrincipal"))
     {
         res <- private$get_paged_list(self$do_operation("createdObjects"))
-        private$init_list_objects(private$filter_list(res, type))
+        private$init_list_objects(res, type)
     },
 
     list_owned_devices=function()
     {
         res <- private$get_paged_list(self$do_operation("ownedDevices"))
-        private$init_list_objects(private$filter_list(res))
+        private$init_list_objects(res, "device")
     },
 
     list_direct_memberships=function(id_only=TRUE)
@@ -111,11 +112,7 @@ public=list(
 
         if(id_only)
             sapply(res, function(grp) grp$id)
-        else
-        {
-            names(res) <- sapply(res, function(grp) grp$displayName)
-            lapply(res, function(grp) az_group$new(self$token, self$tenant, grp))
-        }
+        else private$init_list_objects(res)
     },
 
     print=function(...)

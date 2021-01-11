@@ -1,6 +1,6 @@
 #' Service principal in Azure Active Directory
 #'
-#' Base class representing an AAD service principal.
+#' Class representing an AAD service principal.
 #'
 #' @docType class
 #' @section Fields:
@@ -24,7 +24,7 @@
 #' [ms_graph], [az_app], [az_object]
 #'
 #' [Azure Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
-#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
+#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0)
 #'
 #' @format An R6 object of class `az_service_principal`, inheriting from `az_object`.
 #' @export
@@ -35,6 +35,7 @@ public=list(
     initialize=function(token, tenant=NULL, properties=NULL)
     {
         self$type <- "service principal"
+        private$api_type <- "servicePrincipals"
         super$initialize(token, tenant, properties)
     },
 

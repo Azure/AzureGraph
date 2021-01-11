@@ -4,12 +4,11 @@
 \name{az_group}
 \alias{az_group}
 \title{Group in Azure Active Directory}
-\format{An R6 object of class \code{az_group}, inheriting from \code{az_object}.}
-\usage{
-az_group
+\format{
+An R6 object of class \code{az_group}, inheriting from \code{az_object}.
 }
 \description{
-Base class representing an AAD group.
+Class representing an AAD group.
 }
 \section{Fields}{
 
@@ -59,6 +58,5 @@ grp$list_owners()
 \link{ms_graph}, \link{az_app}, \link{az_user}, \link{az_object}
 
 \href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
-\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta}{REST API reference}
+\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0}{REST API reference}
 }
-\keyword{datasets}

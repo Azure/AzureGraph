@@ -4,12 +4,11 @@
 \name{az_user}
 \alias{az_user}
 \title{User in Azure Active Directory}
-\format{An R6 object of class \code{az_user}, inheriting from \code{az_object}.}
-\usage{
-az_user
+\format{
+An R6 object of class \code{az_user}, inheriting from \code{az_object}.
 }
 \description{
-Base class representing an AAD user account.
+Class representing an AAD user account.
 }
 \section{Fields}{
 
@@ -31,7 +30,7 @@ Base class representing an AAD user account.
 \item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
 \item \code{list_group_memberships()}: Return the IDs of all groups this user is a member of.
 \item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this user is a member of.
-\item \code{list_direct_memberships(id_only=TRUE)}: List the groups this user is a direct member of. Set \code{id_only=TRUE} to return only a vector of group IDs (the default), or \code{id_only=FALSE} to return a list of group objects.
+\item \code{list_direct_memberships(id_only=TRUE)}: List the groups and directory roles this user is a direct member of. Set \code{id_only=TRUE} to return only a vector of IDs (the default), or \code{id_only=FALSE} to return a list of group objects.
 \item \code{list_owned_objects(type=c("user", "group", "application", "servicePrincipal"))}: List directory objects (groups/apps/service principals) owned by this user. Specify the \code{type} argument to filter the result for specific object type(s).
 \item \code{list_created_objects(type=c("user", "group", "application", "servicePrincipal"))}: List directory objects (groups/apps/service principals) created by this user. Specify the \code{type} argument to filter the result for specific object type(s).
 \item \code{list_owned_devices()}: List the devices owned by this user.
@@ -71,6 +70,5 @@ usr$list_owned_objects(type=c("application", "servicePrincipal"))
 \link{ms_graph}, \link{az_app}, \link{az_group}, \link{az_device}, \link{az_object}
 
 \href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
-\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta}{REST API reference}
+\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0}{REST API reference}
 }
-\keyword{datasets}

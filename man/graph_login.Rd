@@ -7,13 +7,14 @@
 \alias{list_graph_logins}
 \title{Login to Azure Active Directory Graph}
 \usage{
-create_graph_login(tenant = "common", app = .az_cli_app_id,
-  password = NULL, username = NULL, certificate = NULL,
-  auth_type = NULL, host = "https://graph.microsoft.com/",
-  aad_host = "https://login.microsoftonline.com/", config_file = NULL,
-  token = NULL, ...)
+create_graph_login(tenant = "common", app = NULL, password = NULL,
+  username = NULL, certificate = NULL, auth_type = NULL, version = 2,
+  host = "https://graph.microsoft.com/",
+  aad_host = "https://login.microsoftonline.com/", scopes = ".default",
+  config_file = NULL, token = NULL, ...)
 
-get_graph_login(tenant = "common", selection = NULL, refresh = TRUE)
+get_graph_login(tenant = "common", selection = NULL, app = NULL,
+  scopes = NULL, auth_type = NULL, refresh = TRUE)
 
 delete_graph_login(tenant = "common", confirm = TRUE)
 
@@ -32,11 +33,15 @@ list_graph_logins()
 
 \item{auth_type}{The OAuth authentication method to use, one of "client_credentials", "authorization_code", "device_code" or "resource_owner". If \code{NULL}, this is chosen based on the presence of the \code{username} and \code{password} arguments.}
 
-\item{host}{Your Microsoft Graph host. Defaults to \code{https://graph.microsoft.com/}. Change this if you are using a government or private cloud.}
+\item{version}{The Azure Active Directory version to use for authenticating.}
 
-\item{aad_host}{Azure Active Directory host for authentication. Defaults to \code{https://login.microsoftonline.com/}. Change this if you are using a government or private cloud.}
+\item{host}{Your Microsoft Graph host. Defaults to \verb{https://graph.microsoft.com/}. Change this if you are using a government or private cloud.}
 
-\item{config_file}{Optionally, a JSON file containing any of the arguments listed above. Arguments supplied in this file take priority over those supplied on the command line. You can also use the output from the Azure CLI \code{az ad sp create-for-rbac} command.}
+\item{aad_host}{Azure Active Directory host for authentication. Defaults to \verb{https://login.microsoftonline.com/}. Change this if you are using a government or private cloud.}
+
+\item{scopes}{The Microsoft Graph scopes (permissions) to obtain for this Graph login. Only for \code{version=2}.}
+
+\item{config_file}{Optionally, a JSON file containing any of the arguments listed above. Arguments supplied in this file take priority over those supplied on the command line. You can also use the output from the Azure CLI \verb{az ad sp create-for-rbac} command.}
 
 \item{token}{Optionally, an OAuth 2.0 token, of class \link[AzureAuth:AzureToken]{AzureAuth::AzureToken}. This allows you to reuse the authentication details for an existing session. If supplied, all other arguments to \code{create_graph_login} will be ignored.}
 
@@ -59,7 +64,7 @@ Login to Azure Active Directory Graph
 \details{
 \code{create_graph_login} creates a login client to authenticate with Microsoft Graph, using the supplied arguments. The authentication token is obtained using \link{get_azure_token}, which automatically caches and reuses tokens for subsequent sessions. Note that credentials are only cached if you allowed AzureGraph to create a data directory at package startup.
 
-\code{get_graph_login} returns a login client by retrieving previously saved credentials. It searches for saved credentials according to the supplied tenant; if multiple logins are found, it will prompt for you to choose one.
+\code{get_graph_login} returns a previously created login client. If there are multiple existing clients, you can specify which client to return via the \code{selection}, \code{app}, \code{scopes} and \code{auth_type} arguments. If you don't specify which one to return, it will pop up a menu and ask you to choose one.
 
 One difference between \code{create_graph_login} and \code{get_graph_login} is the former will delete any previously saved credentials that match the arguments it was given. You can use this to force AzureGraph to remove obsolete tokens that may be lying around.
 }
@@ -71,7 +76,7 @@ If you are using a Linux \href{https://azure.microsoft.com/en-us/services/virtua
 \examples{
 \dontrun{
 
-# without any arguments, this will create a client using your AAD credentials
+# without any arguments, this will create a client using your AAD organisational account
 az <- create_graph_login()
 
 # retrieve the login in subsequent sessions
@@ -79,10 +84,18 @@ az <- get_graph_login()
 
 # this will create an Microsoft Graph client for the tenant 'microsoft.onmicrosoft.com',
 # using the client_credentials method
-az <- create_graph_login("microsoft", app="{app_id}", password="{password}")
+az <- create_graph_login("mytenant", app="{app_id}", password="{password}")
 
 # you can also login using credentials in a json file
 az <- create_graph_login(config_file="~/creds.json")
+
+# creating and obtaining a login with specific scopes
+create_graph_login("mytenant", scopes=c("User.Read", "Files.ReadWrite.All"))
+get_graph_login("mytenant", scopes=c("User.Read", "Files.ReadWrite.All"))
+
+# to use your personal account, set the tenant to one of the following
+create_graph_login("9188040d-6c67-4c5b-b112-36a304b66dad")
+create_graph_login("consumers")  # requires AzureAuth 1.2.6
 
 }
 }
@@ -90,5 +103,5 @@ az <- create_graph_login(config_file="~/creds.json")
 \link{ms_graph}, \link[AzureAuth:get_azure_token]{AzureAuth::get_azure_token} for more details on authentication methods
 
 \href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
-\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta}{REST API reference}
+\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0}{REST API reference}
 }

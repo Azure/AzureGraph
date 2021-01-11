@@ -4,8 +4,6 @@
 \.Rproj$
 \.Rxproj$
 ^\.Rproj\.user$
-.travis.yml
 CONTRIBUTING.md
-drat.sh
 ^LICENSE\.md$
 ^\.github$

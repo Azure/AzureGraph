@@ -4,12 +4,11 @@
 \name{az_device}
 \alias{az_device}
 \title{Device in Azure Active Directory}
-\format{An R6 object of class \code{az_device}, inheriting from \code{az_object}.}
-\usage{
-az_device
+\format{
+An R6 object of class \code{az_device}, inheriting from \code{az_object}.
 }
 \description{
-Base class representing a registered device.
+Class representing a registered device.
 }
 \section{Fields}{
 
@@ -43,6 +42,5 @@ Create objects of this class via the \code{list_registered_devices()} and \code{
 \link{ms_graph}, \link{az_user}, \link{az_object}
 
 \href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
-\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta}{REST API reference}
+\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0}{REST API reference}
 }
-\keyword{datasets}

@@ -1,6 +1,6 @@
 #' Device in Azure Active Directory
 #'
-#' Base class representing a registered device.
+#' Class representing a registered device.
 #'
 #' @docType class
 #' @section Fields:
@@ -24,7 +24,7 @@
 #' [ms_graph], [az_user], [az_object]
 #'
 #' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
-#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
+#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0)
 #'
 #' @format An R6 object of class `az_device`, inheriting from `az_object`.
 #' @export
