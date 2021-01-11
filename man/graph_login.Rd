@@ -13,7 +13,8 @@ create_graph_login(tenant = "common", app = NULL, password = NULL,
   aad_host = "https://login.microsoftonline.com/", scopes = ".default",
   config_file = NULL, token = NULL, ...)
 
-get_graph_login(tenant = "common", selection = NULL, refresh = TRUE)
+get_graph_login(tenant = "common", selection = NULL, app = NULL,
+  scopes = NULL, auth_type = NULL, refresh = TRUE)
 
 delete_graph_login(tenant = "common", confirm = TRUE)
 
@@ -63,7 +64,7 @@ Login to Azure Active Directory Graph
 \details{
 \code{create_graph_login} creates a login client to authenticate with Microsoft Graph, using the supplied arguments. The authentication token is obtained using \link{get_azure_token}, which automatically caches and reuses tokens for subsequent sessions. Note that credentials are only cached if you allowed AzureGraph to create a data directory at package startup.
 
-\code{get_graph_login} returns a login client by retrieving previously saved credentials. It searches for saved credentials according to the supplied tenant; if multiple logins are found, it will prompt for you to choose one.
+\code{get_graph_login} returns a previously created login client. If there are multiple existing clients, you can specify which client to return via the \code{selection}, \code{app}, \code{scopes} and \code{auth_type} arguments. If you don't specify which one to return, it will pop up a menu and ask you to choose one.
 
 One difference between \code{create_graph_login} and \code{get_graph_login} is the former will delete any previously saved credentials that match the arguments it was given. You can use this to force AzureGraph to remove obsolete tokens that may be lying around.
 }
@@ -83,11 +84,14 @@ az <- get_graph_login()
 
 # this will create an Microsoft Graph client for the tenant 'microsoft.onmicrosoft.com',
 # using the client_credentials method
-az <- create_graph_login("microsoft", app="{app_id}", password="{password}")
+az <- create_graph_login("mytenant", app="{app_id}", password="{password}")
 
 # you can also login using credentials in a json file
 az <- create_graph_login(config_file="~/creds.json")
 
+# creating and obtaining a login with specific scopes
+create_graph_login("mytenant", scopes=c("User.Read", "Files.ReadWrite.All"))
+get_graph_login("mytenant", scopes=c("User.Read", "Files.ReadWrite.All"))
 
 # to use your personal account, set the tenant to one of the following
 create_graph_login("9188040d-6c67-4c5b-b112-36a304b66dad")

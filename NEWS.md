@@ -1,8 +1,9 @@
-# AzureGraph 1.1.3
+# AzureGraph 1.2.0
 
 - Internal refactoring to support future extensibility, including transferring some utility functions from AzureRMR to here.
 - New "Extending AzureGraph" vignette, showing how to extend this package to represent other object types in Microsoft Graph.
 - Switch to AAD v2.0 as the default for authenticating.
+- Enhance `get_graph_login` to allow specifying scopes.
 
 # AzureGraph 1.1.2
 
