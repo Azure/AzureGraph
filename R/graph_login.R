@@ -247,8 +247,8 @@ format_tenant <- function(tenant)
 
 # algorithm for choosing a token:
 # if given a hash, choose it (error if no match)
-# otherwise if given any of app|scopes|auth_type, use those (error if no match)
-# otherwise if given a number, use it
+# otherwise if given a number, use it (error if out of bounds)
+# otherwise if given any of app|scopes|auth_type, use those (error if no match, ask if multiple matches)
 # otherwise ask
 choose_token <- function(hashes, selection, app, scopes, auth_type)
 {
@@ -259,49 +259,56 @@ choose_token <- function(hashes, selection, app, scopes, auth_type)
         return(load_azure_token(selection))
     }
 
-    if(any(!is.null(app), !is.null(scopes), !is.null(auth_type)))
+    if(is.numeric(selection))
+    {
+        if(selection <= 0 || selection > length(hashes))
+            stop("Invalid numeric selection", call.=FALSE)
+        return(load_azure_token(hashes[selection]))
+    }
+
+    tokens <- lapply(hashes, load_azure_token)
+    ok <- rep(TRUE, length(tokens))
+
+    # filter down list of tokens based on auth criteria
+    if(!is.null(app) || !is.null(scopes) || !is.null(auth_type))
     {
         if(!is.null(scopes))
             scopes <- tolower(scopes)
 
         # look for matching token
-        for(hash in hashes)
+        for(i in seq_along(hashes))
         {
             app_match <- scope_match <- auth_match <- TRUE
-            token <- load_azure_token(hash)
-            if(!is.null(app) && token$client$client_id != hash)
+
+            if(!is.null(app) && tokens[[i]]$client$client_id != app)
                 app_match <- FALSE
             if(!is.null(scopes))
             {
-                # is this an AAD v1.0 token?
-                if(is.null(token$scope))
+                # AAD v1.0 tokens do not have scopes
+                if(is.null(tokens[[i]]$scope))
                     scope_match <- FALSE
                 else
                 {
-                    tok_scopes <- tolower(basename(grep("^.+://", token$scope, value=TRUE)))
+                    tok_scopes <- tolower(basename(grep("^.+://", tokens[[i]]$scope, value=TRUE)))
                     if(!setequal(scopes, tok_scopes))
                         scope_match <- FALSE
                 }
             }
-            if(!is.null(auth_type) && token$auth_type != auth_type)
+            if(!is.null(auth_type) && tokens[[i]]$auth_type != auth_type)
                 auth_match <- FALSE
 
-            if(app_match && scope_match && auth_match)
-                return(token)
+            if(!app_match || !scope_match || !auth_match)
+                ok[i] <- FALSE
         }
-        # if we get here, no tokens match provided criteria
-        stop("Token with selected authentication parameters not found", call.=FALSE)
     }
 
-    if(is.numeric(selection))
-    {
-        if(selection > length(hashes))
-            stop("Invalid numeric selection", call.=FALSE)
-        return(load_azure_token(hashes[selection]))
-    }
+    tokens <- tokens[ok]
+    if(length(tokens) == 0)
+        stop("No tokens found with selected authentication parameters", call.=FALSE)
+    else if(length(tokens) == 1)
+        return(tokens[[1]])
 
     # bring up a menu
-    tokens <- lapply(hashes, load_azure_token)
     tenant <- tokens[[1]]$tenant
     choices <- sapply(tokens, function(token)
     {
@@ -317,7 +324,7 @@ choose_token <- function(hashes, selection, app, scopes, auth_type)
     msg <- paste0("Choose a Microsoft Graph login for ", format_tenant(tenant))
     selection <- utils::menu(choices, title=msg)
     if(selection == 0)
-        NULL
+        invisible(NULL)
     else tokens[[selection]]
 }
 
