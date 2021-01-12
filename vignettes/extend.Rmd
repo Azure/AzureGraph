@@ -14,7 +14,7 @@ As written, AzureGraph provides support for Microsoft Graph objects derived from
 
 AzureGraph provides the `ms_object` class to represent a generic object in Graph. You can extend this to support specific services by adding custom methods and fields.
 
-For example, the [SharePointR](https://github.com/hongooi73/SharePointR) package extends AzureGraph to support SharePoint Online sites and OneDrive filesystems (both personal and business). This is the `ms_site` class from that package, which represents a SharePoint site. To save space, the actual code in the new methods has been elided.
+For example, the [MicrosoftR](https://github.com/Azure/MicrosoftR) package extends AzureGraph to support SharePoint Online sites and OneDrive filesystems (both personal and business). This is the `ms_site` class from that package, which represents a SharePoint site. To save space, the actual code in the new methods has been elided.
 
 ```r
 ms_site <- R6::R6Class("ms_site", inherit=ms_object,
@@ -118,7 +118,7 @@ Once this is done, the object for a SharePoint site can be instantiated as follo
 
 ```r
 library(AzureGraph)
-library(SharePointR)
+library(MicrosoftR)
 
 gr <- get_graph_login()
 
