@@ -9,7 +9,7 @@ if(tenant == "" || pemfile == "")
 if(!interactive())
     skip("App method tests skipped: must be in interactive session")
 
-gr <- get_graph_login(tenant=tenant)
+gr <- create_graph_login(tenant=tenant)
 
 
 test_that("App creation works",

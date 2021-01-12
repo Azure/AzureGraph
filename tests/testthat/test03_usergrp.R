@@ -10,7 +10,7 @@ if(tenant == "" || user == "")
 if(!interactive())
     skip("User method tests skipped: must be in interactive session")
 
-gr <- get_graph_login(tenant=tenant)
+gr <- create_graph_login(tenant=tenant)
 
 
 test_that("User/group read functionality works",

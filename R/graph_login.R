@@ -9,7 +9,7 @@
 #' @param version The Azure Active Directory version to use for authenticating.
 #' @param host Your Microsoft Graph host. Defaults to `https://graph.microsoft.com/`. Change this if you are using a government or private cloud.
 #' @param aad_host Azure Active Directory host for authentication. Defaults to `https://login.microsoftonline.com/`. Change this if you are using a government or private cloud.
-#' @param scopes The Microsoft Graph scopes (permissions) to obtain for this Graph login. Only for `version=2`.
+#' @param scopes The Microsoft Graph scopes (permissions) to obtain for this Graph login. For `create_graph_login`, this is used only for `version=2`. For `get_graph_login`, set this to NA to require an AAD v1.0 token.
 #' @param config_file Optionally, a JSON file containing any of the arguments listed above. Arguments supplied in this file take priority over those supplied on the command line. You can also use the output from the Azure CLI `az ad sp create-for-rbac` command.
 #' @param token Optionally, an OAuth 2.0 token, of class [AzureAuth::AzureToken]. This allows you to reuse the authentication details for an existing session. If supplied, all other arguments to `create_graph_login` will be ignored.
 #' @param refresh For `get_graph_login`, whether to refresh the authentication token on loading the client.
@@ -286,7 +286,7 @@ choose_token <- function(hashes, selection, app, scopes, auth_type)
             {
                 # AAD v1.0 tokens do not have scopes
                 if(is.null(tokens[[i]]$scope))
-                    scope_match <- FALSE
+                    scope_match <- is.na(scopes)
                 else
                 {
                     tok_scopes <- tolower(basename(grep("^.+://", tokens[[i]]$scope, value=TRUE)))
