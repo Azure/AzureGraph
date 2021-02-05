@@ -16,7 +16,8 @@ Base class representing a object in Microsoft Graph. All other Graph object clas
 \item \code{token}: The token used to authenticate with the Graph host.
 \item \code{tenant}: The Azure Active Directory tenant for this object.
 \item \code{type}: The type of object, in a human-readable format.
-\item \code{properties}: The object properties.
+\item \code{properties}: The object properties, as obtained from the Graph host.
+\item \code{extra}: Any additional user-defined parameters.
 }
 }
 
@@ -28,6 +29,25 @@ Base class representing a object in Microsoft Graph. All other Graph object clas
 \item \code{update(...)}: Update the object information in Azure Active Directory.
 \item \code{do_operation(...)}: Carry out an arbitrary operation on the object.
 \item \code{sync_fields()}: Synchronise the R object with the data in Azure Active Directory.
+}
+
+The following methods are private, and are intended for package authors extending AzureGraph to define their own objects.
+\itemize{
+\item \code{get_paged_list(lst, next_link_name, value_name, simplify, n)}: Used to process API calls that return lists of objects. Microsoft Graph returns lists in pages, with each page containing a subset of objects and a link to the next page. This method reconstructs the list, given the first page. Its arguments are:
+\itemize{
+\item \code{lst}: Object containing the initial page of results, generally the result of a call to \code{do_operation}. Should be a list with names corresponding to the arguments \code{next_link_name} and \code{value_name}.
+\item \code{next_link_name}: The name of the component of \code{lst} containing the link to the next page. Defaults to \verb{@odata.nextLink}.
+\item \code{value_name}: The name of the component of \code{lst} containing the first page of results. Defaults to \code{value}.
+\item \code{simplify}: Whether to turn the list of objects into a data frame. This is useful if the list is intended to be a rectangular data structure, eg a SharePoint list or OneDrive file listing. Note that the vctrs package must be installed to return a data frame, if the objects in the list can have varying structures (which will often be the case).
+\item \code{n}: Optionally, limit the list to this many objects.
+}
+\item \code{init_list_objects(lst, type_filter, default_generator, ...)}: \code{get_paged_list} returns a raw list, the result of parsing the JSON response from the Graph host. This function converts the list into actual R6 objects. Its arguments are:
+\itemize{
+\item \code{lst}: The input list.
+\item \code{type_filter}: The possible types of objects that the list contains. The default is NULL.
+\item \code{default_generator}: An R6 class generator object to use, if \code{init_list_objects} is unable to detect the type of an object.
+\item \code{...}: Further arguments to pass to the generator's \code{initialize} method. They will be stored the object's \code{extra} field.
+}
 }
 }
 
