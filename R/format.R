@@ -13,7 +13,7 @@
 format_public_fields <- function(env, exclude=character(0))
 {
     objnames <- ls(env)
-    std_fields <- "token"
+    std_fields <- c("token", "extra")
     objnames <- setdiff(objnames, c(exclude, std_fields))
 
     maxwidth <- as.integer(0.8 * getOption("width"))

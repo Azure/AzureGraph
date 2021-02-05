@@ -39,11 +39,15 @@ public=list(
     # object data from server
     properties=NULL,
 
-    initialize=function(token, tenant=NULL, properties=NULL)
+    # any additional data
+    extra=list(),
+
+    initialize=function(token, tenant=NULL, properties=NULL, ...)
     {
         self$token <- token
         self$tenant <- tenant
         self$properties <- properties
+        self$extra <- list(...)
     },
 
     update=function(...)
@@ -99,30 +103,33 @@ private=list(
     # object type as it appears in REST API path
     api_type=NULL,
 
-    get_paged_list=function(lst, next_link_name="@odata.nextLink", value_name="value", simplify=FALSE)
+    get_paged_list=function(lst, next_link_name="@odata.nextLink", value_name="value", simplify=FALSE, n=Inf)
     {
         bind_fn <- if(requireNamespace("vctrs"))
             vctrs::vec_rbind
         else base::rbind
         res <- lst[[value_name]]
-        while(!is_empty(lst[[next_link_name]]))
+        if(n <= 0) n <- Inf
+        while(!is_empty(lst[[next_link_name]]) && length(res) < n)
         {
             lst <- call_graph_url(self$token, lst[[next_link_name]], simplify=simplify)
             res <- if(simplify)
                 bind_fn(res, lst[[value_name]])  # this assumes all objects have the exact same fields
             else c(res, lst[[value_name]])
         }
-        res
+        if(n < length(res))
+            res[seq_len(n)]
+        else res
     },
 
-    init_list_objects=function(lst, type_filter=NULL, default_generator=ms_object)
+    init_list_objects=function(lst, type_filter=NULL, default_generator=ms_object, ...)
     {
         lst <- lapply(lst, function(obj)
         {
             class_gen <- find_class_generator(obj, type_filter, default_generator)
             if(is.null(class_gen))
                 NULL
-            else class_gen$new(self$token, self$tenant, obj)
+            else class_gen$new(self$token, self$tenant, obj, ...)
         })
         lst[!sapply(lst, is.null)]
     }
