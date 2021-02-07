@@ -8,7 +8,6 @@
 #' - `tenant`: The Azure Active Directory tenant for this object.
 #' - `type`: The type of object, in a human-readable format.
 #' - `properties`: The object properties, as obtained from the Graph host.
-#' - `extra`: Any additional user-defined parameters.
 #' @section Methods:
 #' - `new(...)`: Initialize a new directory object. Do not call this directly; see 'Initialization' below.
 #' - `delete(confirm=TRUE)`: Delete an object. By default, ask for confirmation first.
@@ -27,7 +26,7 @@
 #'   - `lst`: The input list.
 #'   - `type_filter`: The possible types of objects that the list contains. The default is NULL.
 #'   - `default_generator`: An R6 class generator object to use, if `init_list_objects` is unable to detect the type of an object.
-#'   - `...`: Further arguments to pass to the generator's `initialize` method. They will be stored the object's `extra` field.
+#'   - `...`: Further arguments to pass to the generator's `initialize` method.
 #'
 #' @section Initialization:
 #' Objects of this class should not be created directly. Instead, create an object of the appropriate subclass.
@@ -53,15 +52,11 @@ public=list(
     # object data from server
     properties=NULL,
 
-    # any additional data
-    extra=list(),
-
     initialize=function(token, tenant=NULL, properties=NULL, ...)
     {
         self$token <- token
         self$tenant <- tenant
         self$properties <- properties
-        self$extra <- list(...)
     },
 
     update=function(...)
@@ -128,7 +123,7 @@ private=list(
         {
             lst <- call_graph_url(self$token, lst[[next_link_name]], simplify=simplify)
             res <- if(simplify)
-                bind_fn(res, lst[[value_name]])  # this assumes all objects have the exact same fields
+                bind_fn(res, lst[[value_name]])  # base::rbind assumes all objects have the exact same fields
             else c(res, lst[[value_name]])
         }
         if(n < length(res))

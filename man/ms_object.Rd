@@ -17,7 +17,6 @@ Base class representing a object in Microsoft Graph. All other Graph object clas
 \item \code{tenant}: The Azure Active Directory tenant for this object.
 \item \code{type}: The type of object, in a human-readable format.
 \item \code{properties}: The object properties, as obtained from the Graph host.
-\item \code{extra}: Any additional user-defined parameters.
 }
 }
 
@@ -46,7 +45,7 @@ The following methods are private, and are intended for package authors extendin
 \item \code{lst}: The input list.
 \item \code{type_filter}: The possible types of objects that the list contains. The default is NULL.
 \item \code{default_generator}: An R6 class generator object to use, if \code{init_list_objects} is unable to detect the type of an object.
-\item \code{...}: Further arguments to pass to the generator's \code{initialize} method. They will be stored the object's \code{extra} field.
+\item \code{...}: Further arguments to pass to the generator's \code{initialize} method.
 }
 }
 }

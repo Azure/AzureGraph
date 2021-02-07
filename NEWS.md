@@ -1,7 +1,7 @@
 # AzureGraph 1.2.0.9000
 
-- Allow setting an optional limit to the number of objects returned by the internal `ms_object$get_paged_list` method.
-- Add an `extra` field to the base `ms_object` class, to support passing in extra parameters when creating a new object. One use of this is for storing information about the object's parent context, eg SharePoint list objects are defined in the context of a list, which is defined in the context of a site.
+- Allow setting an optional limit to the number of objects returned by the internal `ms_object$get_paged_list()` method.
+- The internal `ms_object$init_list_objects()` method now has a `...` argument to allow passing extra parameters to class constructors.
 
 # AzureGraph 1.2.0
 
