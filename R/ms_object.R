@@ -52,7 +52,7 @@ public=list(
     # object data from server
     properties=NULL,
 
-    initialize=function(token, tenant=NULL, properties=NULL, ...)
+    initialize=function(token, tenant=NULL, properties=NULL)
     {
         self$token <- token
         self$tenant <- tenant
