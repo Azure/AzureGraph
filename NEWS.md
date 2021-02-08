@@ -1,7 +1,8 @@
 # AzureGraph 1.2.0.9000
 
-- Allow setting an optional limit to the number of objects returned by the internal `ms_object$get_paged_list()` method.
-- The internal `ms_object$init_list_objects()` method now has a `...` argument to allow passing extra parameters to class constructors.
+- Allow setting an optional limit to the number of objects returned by the private `ms_object$get_paged_list()` method.
+- The private `ms_object$init_list_objects()` method now has a `...` argument to allow passing extra parameters to class constructors.
+- Add documentation on how to use `get_paged_list` and `init_list_objects`.
 
 # AzureGraph 1.2.0
 

@@ -40,11 +40,11 @@ The following methods are private, and are intended for package authors extendin
 \item \code{simplify}: Whether to turn the list of objects into a data frame. This is useful if the list is intended to be a rectangular data structure, eg a SharePoint list or OneDrive file listing. Note that the vctrs package must be installed to return a data frame, if the objects in the list can have varying structures (which will often be the case).
 \item \code{n}: Optionally, limit the list to this many objects.
 }
-\item \code{init_list_objects(lst, type_filter, default_generator, ...)}: \code{get_paged_list} returns a raw list, the result of parsing the JSON response from the Graph host. This function converts the list into actual R6 objects. Its arguments are:
+\item \code{init_list_objects(lst, type_filter, default_generator, ...)}: \code{get_paged_list} returns a raw list, the result of parsing the JSON response from the Graph host. This method converts the list into actual R6 objects. Its arguments are:
 \itemize{
 \item \code{lst}: The input list.
 \item \code{type_filter}: The possible types of objects that the list contains. The default is NULL.
-\item \code{default_generator}: An R6 class generator object to use, if \code{init_list_objects} is unable to detect the type of an object.
+\item \code{default_generator}: An R6 class generator object to use, if \code{init_list_objects} is unable to detect the type of an object. It's recommended to change this from the default value of \code{ms_object}, if you know that all objects in the list will have the same class.
 \item \code{...}: Further arguments to pass to the generator's \code{initialize} method.
 }
 }
