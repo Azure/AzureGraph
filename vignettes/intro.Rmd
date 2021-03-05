@@ -39,7 +39,7 @@ me <- gr$get_user()
 me2 <- gr$get_user("hongooi@microsoft.com")
 
 # IDs of my groups
-head(me$list_group_memberships)
+head(me$list_group_memberships())
 #> [1] "98326d14-365a-4257-b0f1-5c3ce3104f75" "b21e5600-8ac5-407b-8774-396168150210"
 #> [3] "be42ef66-5c13-48cb-be5c-21e563e333ed" "dd58be5a-1eac-47bd-ab78-08a452a08ea0"
 #> [5] "4c2bfcfe-5012-4136-ab33-f10389f2075c" "a45fbdbe-c365-4478-9366-f6f517027a22"
