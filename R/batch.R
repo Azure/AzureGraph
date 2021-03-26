@@ -49,3 +49,42 @@ public=list(
         req
     }
 ))
+
+
+#' @export
+call_batch_endpoint <- function(token, requests=list(), depends_on=list(),
+                                api_version=getOption("azure_graph_api_version"))
+{
+    for(req in requests)
+        if(!inherits(req, "graph_request"))
+            stop("Must supply a list of request objects", call.=FALSE)
+
+    if(length(requests) > 20)
+        stop("Maximum of 20 requests per batch job", call.=FALSE)
+
+    ids <- as.character(seq_along(requests))
+    id_depends <- names(depends_on)
+    if(!is_empty(id_depends) && !all(id_depends %in% ids))
+        stop("'depends_on' should be a named list identifying dependencies")
+
+    # populate the batch request body
+    reqlst <- lapply(requests, function(req) req$batchify())
+    for(i in seq_along(reqlst))
+        reqlst[[i]]$id <- as.character(i)
+
+    # insert depends_on if required
+    if(!is_empty(depends_on))
+    {
+        if(is_empty(names(depends_on)))
+            names(depends_on) <- seq_along(requests)
+        for(i in seq_along(depends_on))
+        {
+            id <- as.numeric(names(depends_on)[i])
+            reqlst[[id]]$depends_on <- unname(depends_on[i])
+        }
+    }
+
+    body <- list(requests=reqlst)
+    call_graph_endpoint(token, "$graph", body=body, http_verb="POST", api_version=api_version)
+}
+
