@@ -1,3 +1,9 @@
+# AzureGraph 1.2.1.9000
+
+- Add support for batch requests:
+  - Each request is stored in an object of R6 class `graph_request`.
+  - Add `call_batch_endpoint()` function and `ms_graph$call_batch_endpoint()` method for calling the batch endpoint with a list of requests.
+
 # AzureGraph 1.2.1
 
 - Allow setting an optional limit to the number of objects returned by the private `ms_object$get_paged_list()` method.

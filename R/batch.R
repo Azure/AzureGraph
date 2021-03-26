@@ -85,6 +85,6 @@ call_batch_endpoint <- function(token, requests=list(), depends_on=list(),
     }
 
     body <- list(requests=reqlst)
-    call_graph_endpoint(token, "$graph", body=body, http_verb="POST", api_version=api_version)
+    call_graph_endpoint(token, "$batch", body=body, http_verb="POST", api_version=api_version)
 }
 

@@ -271,6 +271,11 @@ public=list(
         call_graph_endpoint(self$token, op, ...)
     },
 
+    call_batch_endpoint=function(requests=list(), ...)
+    {
+        call_batch_endpoint(self$token, requests, ...)
+    },
+
     print=function(...)
     {
         cat("<Microsoft Graph client>\n")
