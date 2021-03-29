@@ -16,6 +16,9 @@ call_batch_endpoint(token, requests = list(), depends_on = list(),
 
 \item{api_version}{The API version to use, which will form part of the URL sent to the host.}
 }
+\value{
+A list containing the responses to each request. Each item has components \code{id} and \code{status} at a minimum. It may also contain \code{headers} and \code{body}, depending on the specifics of the request.
+}
 \description{
 Call the Graph API batch endpoint
 }
@@ -53,4 +56,6 @@ call_batch_endpoint(token, list(req1, req2, req3), depends_on=list("3"=2))
 
 \href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
 \href{https://docs.microsoft.com/en-us/graph/json-batching}{Batch endpoint documentation}
+
+\href{https://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#sec_BatchRequestsandResponses}{OData documentation on batch requests}
 }

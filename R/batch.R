@@ -101,11 +101,15 @@ public=list(
 #' @details
 #' Use this function to combine multiple requests into a single HTTPS call. This can save significant network latency.
 #'
+#' @return
+#' A list containing the responses to each request. Each item has components `id` and `status` at a minimum. It may also contain `headers` and `body`, depending on the specifics of the request.
 #' @seealso
 #' [graph_request], [call_graph_endpoint]
 #'
 #' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
 #' [Batch endpoint documentation](https://docs.microsoft.com/en-us/graph/json-batching)
+#'
+#' [OData documentation on batch requests](https://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#sec_BatchRequestsandResponses)
 #'
 #' @examples
 #' \dontrun{
