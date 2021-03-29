@@ -179,7 +179,7 @@ call_batch_endpoint <- function(token, requests=list(), depends_on=list(),
     if(any(errs))
         stop("Graph batch job encountered errors on requests ", paste(err_msgs[errs], collapse=", "),
              "\nMessages:\n",
-             paste(unlist(errs), collapse="\n"),
+             paste(unlist(err_msgs), collapse="\n"),
              call.=FALSE)
     reslst
 }
