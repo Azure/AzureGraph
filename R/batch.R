@@ -84,8 +84,6 @@ public=list(
             req$headers <- hdrs
         if(!is_empty(self$body))
             req$body <- self$body
-        if(!is_empty(self$content_type))
-            req$content_type <- self$content_type
         req
     }
 ))
