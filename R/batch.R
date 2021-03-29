@@ -165,7 +165,22 @@ call_batch_endpoint <- function(token, requests=list(), depends_on=list(),
         }
     }
 
-    body <- list(requests=reqlst)
-    call_graph_endpoint(token, "$batch", body=body, http_verb="POST", api_version=api_version)
+    reslst <- call_graph_endpoint(token, "$batch", body=list(requests=reqlst),
+        http_verb="POST", api_version=api_version)$responses
+
+    reslst <- reslst[order(sapply(reslst, `[[`, "id"))]
+    err_msgs <- lapply(reslst, function(res)
+    {
+        if(res$status >= 300)
+            error_message(res$body)
+        else NULL
+    })
+    errs <- !sapply(err_msgs, is.null)
+    if(any(errs))
+        stop("Graph batch job encountered errors on requests ", paste(err_msgs[errs], collapse=", "),
+             "\nMessages:\n",
+             paste(unlist(errs), collapse="\n"),
+             call.=FALSE)
+    reslst
 }
 
