@@ -1,8 +1,9 @@
 context("Batch request")
 
 tenant <- Sys.getenv("AZ_TEST_TENANT_ID")
+user <- Sys.getenv("AZ_TEST_USERPRINCIPALNAME")
 
-if(tenant == "")
+if(tenant == "" || user == "")
     skip("Batch tests skipped: login credentials not set")
 
 if(!interactive())
@@ -24,36 +25,34 @@ test_that("Simple batch request works",
         method="GET",
         url="/me"))
 
-    req2 <- graph_request$new("me/drive")
-    req3 <- graph_request$new("me/ownedObjects")
+    req2 <- graph_request$new("me/ownedObjects")
 
-    res <- gr$call_batch_endpoint(list(req1, req2, req3))
+    res <- gr$call_batch_endpoint(list(req1, req2))
     expect_is(res, "list")
     expect_identical(res[[1]]$id, "1")
     expect_identical(res[[2]]$id, "2")
-    expect_identical(res[[3]]$id, "3")
 
     expect_identical(res[[1]]$body$`@odata.context`, "https://graph.microsoft.com/v1.0/$metadata#users/$entity")
-    expect_identical(res[[2]]$body$`@odata.context`, "https://graph.microsoft.com/v1.0/$metadata#drives/$entity")
     expect_identical(res[[2]]$body$`@odata.context`, "https://graph.microsoft.com/v1.0/$metadata#directoryObjects")
 })
 
 
 test_that("Batch request with dependency works",
 {
-    req1 <- graph_request$new("me")
-    req2 <- graph_request$new("me/drive")
-    req3 <- graph_request$new("me/ownedObjects")
+    newname <- paste0(sample(letters, 20, TRUE), collapse="")
+    req_get <- graph_request$new(file.path("users", user))
+    req_update <- graph_request$new(file.path("users", user),
+        body=list(givenName=newname), http_verb="PATCH")
 
-    res <- gr$call_batch_endpoint(list(req1, req2, req3), depends_on=c("3"=2, "1"=3))
+    # deliberately out of order
+    res <- gr$call_batch_endpoint(list(req_update, req_get, req_get), depends_on=c("1"=2, "3"=1))
     expect_is(res, "list")
     expect_identical(res[[1]]$id, "1")
     expect_identical(res[[2]]$id, "2")
     expect_identical(res[[3]]$id, "3")
 
-    expect_identical(res[[1]]$body$`@odata.context`, "https://graph.microsoft.com/v1.0/$metadata#users/$entity")
-    expect_identical(res[[2]]$body$`@odata.context`, "https://graph.microsoft.com/v1.0/$metadata#drives/$entity")
-    expect_identical(res[[2]]$body$`@odata.context`, "https://graph.microsoft.com/v1.0/$metadata#directoryObjects")
+    expect_false(identical(res[[1]]$body$givenName, newname))
+    expect_identical(res[[3]]$body$givenName, newname)
 })
 
 
