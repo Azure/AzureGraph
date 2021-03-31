@@ -1,4 +1,4 @@
-#' Azure Active Directory Graph
+#' Microsoft Graph
 #'
 #' Base class for interacting with Microsoft Graph API.
 #'
@@ -18,6 +18,7 @@
 #' - `get_group(group_id)`: Retrieves an existing group.
 #' - `delete_group(group_id, confirm=TRUE)`: Deletes a group.
 #' - `call_graph_endpoint(op="", ...)`: Calls the Microsoft Graph API using this object's token and tenant as authentication arguments. See [call_graph_endpoint].
+#' - `call_batch_endpoint(requests=list(), ...)`: Calls the batch endpoint with a list of individual requests. See [call_batch_endpoint].
 #'
 #' @section Authentication:
 #' The recommended way to authenticate with Microsoft Graph is via the [create_graph_login] function, which creates a new instance of this class.
@@ -269,6 +270,11 @@ public=list(
     call_graph_endpoint=function(op="", ...)
     {
         call_graph_endpoint(self$token, op, ...)
+    },
+
+    call_batch_endpoint=function(requests=list(), ...)
+    {
+        call_batch_endpoint(self$token, requests, ...)
     },
 
     print=function(...)
