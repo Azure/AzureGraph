@@ -4,7 +4,7 @@
 \alias{call_batch_endpoint}
 \title{Call the Graph API batch endpoint}
 \usage{
-call_batch_endpoint(token, requests = list(), depends_on = list(),
+call_batch_endpoint(token, requests = list(), depends_on = NULL,
   api_version = getOption("azure_graph_api_version"))
 }
 \arguments{
@@ -12,7 +12,7 @@ call_batch_endpoint(token, requests = list(), depends_on = list(),
 
 \item{requests}{A list of \link{graph_request} objects, representing individual requests to the Graph API.}
 
-\item{depends_on}{An optional named list indicating which requests have dependencies. See the examples below.}
+\item{depends_on}{An optional named vector, or TRUE. See below.}
 
 \item{api_version}{The API version to use, which will form part of the URL sent to the host.}
 }
@@ -24,6 +24,16 @@ Call the Graph API batch endpoint
 }
 \details{
 Use this function to combine multiple requests into a single HTTPS call. This can save significant network latency.
+
+The \code{depends_on} argument specifies the dependencies that may exist between requests. The default is to treat the requests as independent, which allows them to be executed in parallel. If \code{depends_on} is TRUE, each request is specified as depending on the immediately preceding request. Otherwise, this should be a named vector or list that gives the dependency or dependencies for each request.
+
+There are 2 restrictions on \code{depends_on}:
+\itemize{
+\item If one request has a dependency, then all requests must have dependencies specified
+\item A request can only depend on previous requests in the list, not on later ones.
+}
+
+A request list that has dependencies will be executed serially.
 }
 \examples{
 \dontrun{
@@ -31,7 +41,7 @@ Use this function to combine multiple requests into a single HTTPS call. This ca
 req1 <- graph_request$new("me")
 
 # a new email message in Outlook
-req2 <- graph_request$new("me/messages",
+req_create <- graph_request$new("me/messages",
     body=list(
         body=list(
             content="Hello from R",
@@ -44,10 +54,13 @@ req2 <- graph_request$new("me/messages",
 )
 
 # messages in drafts
-req3 <- graph_request$new("me/mailFolders/drafts/messages")
+req_get <- graph_request$new("me/mailFolders/drafts/messages")
 
-# depends_on signifies that request 3 depends on request 2
-call_batch_endpoint(token, list(req1, req2, req3), depends_on=list("3"=2))
+# requests are dependent: 2nd list of drafts will include just-created message
+call_batch_endpoint(token, list(req_get, req_create, req_get), depends_on=TRUE)
+
+# alternate way: enumerate all requests
+call_batch_endpoint(token, list(req_get, req_create, req_get), depends_on=c("2"=1, "3"=2))
 
 }
 }

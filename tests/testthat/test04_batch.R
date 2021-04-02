@@ -46,8 +46,7 @@ test_that("Batch request with dependency works",
     req_update <- graph_request$new(file.path("users", user),
         body=list(givenName=newname), http_verb="PATCH")
 
-    # deliberately out of order
-    res <- gr$call_batch_endpoint(list(req_update, req_get, req_get), depends_on=c("1"=2, "3"=1))
+    res <- gr$call_batch_endpoint(list(req_get, req_update, req_get), depends_on=c("2"=1, "3"=2))
     expect_is(res, "list")
     expect_identical(res[[1]]$id, "1")
     expect_identical(res[[2]]$id, "2")
@@ -55,6 +54,14 @@ test_that("Batch request with dependency works",
 
     expect_false(identical(res[[1]]$body$givenName, newname))
     expect_identical(res[[3]]$body$givenName, newname)
+
+    # auto-generated depends_on
+    newname2 <- paste0(sample(letters, 20, TRUE), collapse="")
+    req_update2 <- graph_request$new(file.path("users", user),
+        body=list(givenName=newname2), http_verb="PATCH")
+    res2 <- gr$call_batch_endpoint(list(req_get, req_update2, req_get), depends_on=TRUE)
+    expect_false(identical(res2[[1]]$body$givenName, newname2))
+    expect_identical(res2[[3]]$body$givenName, newname2)
 })
 
 
