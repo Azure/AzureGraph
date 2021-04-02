@@ -52,15 +52,15 @@ call_graph_url <- function(token, url, ..., body=NULL, encode="json",
         encode <- "raw"
     }
 
-    # do actual API call, checking for throttling (max 20 retries)
-    for(i in 1:20)
+    # do actual API call, checking for throttling (max 10 retries)
+    for(i in 1:10)
     {
         headers <- process_headers(token, url, auto_refresh)
         res <- httr::VERB(match.arg(http_verb), url, headers, ..., body=body, encode=encode)
         if(httr::status_code(res) == 429)
         {
             delay <- httr::headers(res)$`Retry-After`
-            Sys.sleep(if(!is.null(delay)) as.numeric(delay) else i)
+            Sys.sleep(if(!is.null(delay)) as.numeric(delay) else i^1.5)
         }
         else break
     }
