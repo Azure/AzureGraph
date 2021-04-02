@@ -12,6 +12,7 @@ if(!interactive())
 
 scopes <- c("https://graph.microsoft.com/.default", "openid", "offline_access")
 
+suppressWarnings(dir.create(AzureR_dir(), recursive=TRUE))
 clean_token_directory(confirm=FALSE)
 suppressWarnings(file.remove(file.path(AzureR_dir(), "graph_logins.json")))
 
