@@ -44,8 +44,6 @@ call_graph_url <- function(token, url, ..., body=NULL, encode="json",
                            http_status_handler=c("stop", "warn", "message", "pass"),
                            simplify=FALSE, auto_refresh=TRUE)
 {
-    headers <- process_headers(token, url, auto_refresh)
-
     # if content-type is json, serialize it manually to ensure proper handling of nulls
     if(encode == "json" && !is_empty(body))
     {
@@ -54,8 +52,18 @@ call_graph_url <- function(token, url, ..., body=NULL, encode="json",
         encode <- "raw"
     }
 
-    # do actual API call
-    res <- httr::VERB(match.arg(http_verb), url, headers, ..., body=body, encode=encode)
+    # do actual API call, checking for throttling (max 20 retries)
+    for(i in 1:20)
+    {
+        headers <- process_headers(token, url, auto_refresh)
+        res <- httr::VERB(match.arg(http_verb), url, headers, ..., body=body, encode=encode)
+        if(httr::status_code(res) == 429)
+        {
+            delay <- httr::headers(res)$`Retry-After`
+            Sys.sleep(if(!is.null(delay)) as.numeric(delay) else i)
+        }
+        else break
+    }
 
     process_response(res, match.arg(http_status_handler), simplify)
 }
