@@ -9,7 +9,9 @@ if(tenant == "" || user == "")
 if(!interactive())
     skip("Batch tests skipped: must be in interactive session")
 
-gr <- create_graph_login(tenant=tenant)
+scopes <- c("https://graph.microsoft.com/.default", "openid", "offline_access")
+token <- AzureAuth::get_azure_token(scopes, tenant, .az_cli_app_id, version=2)
+gr <- ms_graph$new(token=token)
 
 
 test_that("Simple batch request works",
