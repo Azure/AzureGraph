@@ -1,4 +1,4 @@
-# AzureGraph 1.2.1.9000
+# AzureGraph 1.2.2
 
 - Add support for batch requests:
   - Each individual request is stored in an object of R6 class `graph_request`.
