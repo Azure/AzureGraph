@@ -198,4 +198,3 @@ See the following links on Microsoft Docs for more information.
 
 - [Microsoft Graph](https://docs.microsoft.com/en-us/graph/overview)
 - [Graph REST API (beta)](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
-- [Azure Active Directory Graph API (deprecated)](https://docs.microsoft.com/en-au/azure/active-directory/develop/active-directory-graph-api)

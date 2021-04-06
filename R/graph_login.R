@@ -18,14 +18,17 @@
 #' @param ... Other arguments passed to `ms_graph$new()`.
 #'
 #' @details
-#' `create_graph_login` creates a login client to authenticate with Microsoft Graph, using the supplied arguments. The authentication token is obtained using [get_azure_token], which automatically caches and reuses tokens for subsequent sessions. Note that credentials are only cached if you allowed AzureGraph to create a data directory at package startup.
+#' `create_graph_login` creates a login client to authenticate with Microsoft Graph, using the supplied arguments. The authentication token is obtained using [get_azure_token], which automatically caches and reuses tokens for subsequent sessions.
+#'
+#' For interactive use, you would normally _not_ supply the `username` and `password` arguments. Omitting them will prompt `create_graph_login` to authenticate you with AAD using your browser, which is the recommended method. If you don't have a browser available to your R session, for example if you're using RStudio Server or Azure Databricks, you can specify `auth_type="device_code`".
+#'
+#' For non-interactive use, for example if you're calling AzureGraph in a deployment pipeline, the recommended authentication method is via client credentials. For this method, you supply _only_ the `password` argument, which should contain the client secret for your app registration. You must also specify your own app registration ID, in the `app` argument.
+#'
+#' The AzureAuth package has a [vignette](https://cran.r-project.org/package=AzureAuth/vignettes/scenarios.html) that goes into more detail on these authentication scenarios.
 #'
 #' `get_graph_login` returns a previously created login client. If there are multiple existing clients, you can specify which client to return via the `selection`, `app`, `scopes` and `auth_type` arguments. If you don't specify which one to return, it will pop up a menu and ask you to choose one.
 #'
 #' One difference between `create_graph_login` and `get_graph_login` is the former will delete any previously saved credentials that match the arguments it was given. You can use this to force AzureGraph to remove obsolete tokens that may be lying around.
-#'
-#' @section Linux DSVM note:
-#' If you are using a Linux [Data Science Virtual Machine](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) in Azure, you may have problems running `create_graph_login()` (ie, without any arguments). In this case, try `create_graph_login(auth_type="device_code")`.
 #'
 #' @return
 #' For `get_graph_login` and `create_graph_login`, an object of class `ms_graph`, representing the login client. For `list_graph_logins`, a (possibly nested) list of such objects.
@@ -34,6 +37,8 @@
 #'
 #' @seealso
 #' [ms_graph], [AzureAuth::get_azure_token] for more details on authentication methods
+#'
+#' [AzureAuth vignette on authentication scenarios](https://cran.r-project.org/package=AzureAuth/vignettes/scenarios.html)
 #'
 #' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
 #' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0)
@@ -47,7 +52,7 @@
 #' # retrieve the login in subsequent sessions
 #' az <- get_graph_login()
 #'
-#' # this will create an Microsoft Graph client for the tenant 'microsoft.onmicrosoft.com',
+#' # this will create an Microsoft Graph client for the tenant 'mytenant.onmicrosoft.com',
 #' # using the client_credentials method
 #' az <- create_graph_login("mytenant", app="{app_id}", password="{password}")
 #'
@@ -60,7 +65,7 @@
 #'
 #' # to use your personal account, set the tenant to one of the following
 #' create_graph_login("9188040d-6c67-4c5b-b112-36a304b66dad")
-#' create_graph_login("consumers")  # requires AzureAuth 1.2.6
+#' create_graph_login("consumers")  # requires AzureAuth 1.3.0
 #'
 #' }
 #' @rdname graph_login
