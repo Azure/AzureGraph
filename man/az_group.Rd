@@ -47,7 +47,7 @@ gr <- get_graph_login()
 usr <- gr$get_user("myname@aadtenant.com")
 
 grps <- usr$list_direct_memberships()
-grp <- grp[[1]]
+grp <- gr$get_group(grps[1])
 
 grp$list_members()
 grp$list_owners()
