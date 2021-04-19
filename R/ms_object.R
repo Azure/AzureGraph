@@ -112,6 +112,11 @@ private=list(
     # object type as it appears in REST API path
     api_type=NULL,
 
+    get_pager=function(lst, next_link_name="@odata.nextLink", value_name="value", output="list", type_filter=NULL, ...)
+    {
+        ms_graph_pager$new(self$token, lst, next_link_name, value_name, simplify, ...)
+    },
+
     get_paged_list=function(lst, next_link_name="@odata.nextLink", value_name="value", simplify=FALSE, n=Inf)
     {
         bind_fn <- if(requireNamespace("vctrs", quietly=TRUE))
