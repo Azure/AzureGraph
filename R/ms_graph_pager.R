@@ -1,3 +1,4 @@
+#' @export
 ms_graph_pager <- R6::R6Class("ms_graph_pager",
 
 public=list(
@@ -37,9 +38,9 @@ active=list(
         if(is.null(self$next_link))
             return(NULL)
 
-        lst <- call_graph_url(self$token, self$next_link, simplify=(self$output == "data.frame"))
-        self$next_link <- lst[[self$next_link_name]]
-        private$make_objects(lst[[self$value_name]])
+        page <- call_graph_url(self$token, self$next_link, simplify=(self$output == "data.frame"))
+        self$next_link <- page[[self$next_link_name]]
+        private$make_objects(page[[self$value_name]])
     }
 ),
 
@@ -47,18 +48,18 @@ private=list(
 
     first_value=NULL,
 
-    make_objects=function(lst)
+    make_objects=function(page)
     {
         if(self$output != "object")
-            return(lst)
+            return(page)
 
-        lst <- lapply(lst, function(obj)
+        page <- lapply(page, function(obj)
         {
             class_gen <- find_class_generator(obj, self$type_filter)
             if(is.null(class_gen))
                 NULL
             else do.call(class_gen$new, c(list(self$token, self$tenant, obj), self$init_args))
         })
-        lst[!sapply(lst, is.null)]
+        page[!sapply(page, is.null)]
     }
 ))
