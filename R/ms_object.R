@@ -97,6 +97,37 @@ public=list(
         call_graph_endpoint(self$token, op, ...)
     },
 
+    get_pager=function(lst, next_link_name="@odata.nextLink", value_name="value", output="list", type_filter=NULL, ...)
+    {
+        ms_graph_pager$new(self$token, lst, next_link_name, value_name, output, type_filter, ...)
+    },
+
+    get_list=function(lst, next_link_name="@odata.nextLink", value_name="value", output="list", type_filter=NULL, n=Inf,
+                      ...)
+    {
+        pager <- ms_graph_pager$new(self$token, lst, next_link_name, value_name, output, type_filter, ...)
+        bind_fn <- if(output != "data.frame")
+            base::c
+        else if(requireNamespace("vctrs", quietly=TRUE))
+            vctrs::vec_rbind
+        else base::rbind
+        res <- NULL
+        repeat
+        {
+            value <- pager$value
+            res <- bind_fn(res, value)
+            if(NROW(res) >= n || is.null(value))
+                break
+        }
+        if(NROW(res) > n)
+        {
+            if(inherits(res, "data.frame"))
+                res[seq_len(n), ]
+            else res[seq_len(n)]
+        }
+        else res
+    },
+
     print=function(...)
     {
         cat("<Graph directory object '", self$properties$displayName, "'>\n", sep="")
@@ -111,11 +142,6 @@ private=list(
 
     # object type as it appears in REST API path
     api_type=NULL,
-
-    get_pager=function(lst, next_link_name="@odata.nextLink", value_name="value", output="list", type_filter=NULL, ...)
-    {
-        ms_graph_pager$new(self$token, lst, next_link_name, value_name, simplify, ...)
-    },
 
     get_paged_list=function(lst, next_link_name="@odata.nextLink", value_name="value", simplify=FALSE, n=Inf)
     {
