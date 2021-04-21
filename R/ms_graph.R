@@ -12,8 +12,8 @@
 #' - `get_service_principal()`: Retrieves an existing service principal.
 #' - `delete_service_principal()`: Deletes an existing service principal.
 #' - `create_user(name, email, enabled=TRUE, ..., password=NULL, force_password_change=TRUE)`: Creates a new user account. By default this will be a work account (not social or local) in the current tenant, and will have a randomly generated password that must be changed at next login.
-#' - `get_user(user_id)`: Retrieves an existing user account.
-#' - `delete_user(user_id, confirm=TRUE)`: Deletes a user account.
+#' - `get_user(user_id, email, name)`: Retrieves an existing user account. You can supply either the user ID, email address, or display name. The default is to return the logged-in user.
+#' - `delete_user(user_id, email, name, confirm=TRUE)`: Deletes a user account.
 #' - `create_group(name, email, ...)`: Creates a new group. Note that only security groups can be created via the Microsoft Graph API.
 #' - `get_group(group_id)`: Retrieves an existing group.
 #' - `delete_group(group_id, confirm=TRUE)`: Deletes a group.
@@ -75,6 +75,14 @@
 #' # create an app with authentication via a certificate
 #' cert <- readLines("mycert.cer")
 #' gr$create_app("mycertapp", password=FALSE, certificate=cert)
+#'
+#' # retrieving your own user details
+#' gr$get_user()
+#'
+#' # retrieving another user's details
+#' gr$get_user("username@myaadtenant.onmicrosoft.com")
+#' gr$get_user(email="firstname.lastname@mycompany.com")
+#' gr$get_user(name="Hong Ooi")
 #'
 #' }
 #' @format An R6 object of class `ms_graph`.
@@ -226,18 +234,32 @@ public=list(
         )
     },
 
-    get_user=function(user_id="me")
+    get_user=function(user_id=NULL, email=NULL, name=NULL)
     {
-        op <- if(user_id == "me")
+        has_id <- !is.null(user_id)
+        has_email <- !is.null(email)
+        has_name <- !is.null(name)
+        if(has_id + has_email + has_name > 1)
+            stop("Supply one of user ID, email or display name", call.=FALSE)
+
+        if(has_email || has_name)
+        {
+            filter <- if(has_email) sprintf("mail eq '%s'", email) else sprintf("displayName eq '%s'", name)
+            res <- self$call_graph_endpoint("users", options=list(`$filter`=filter))
+            if(length(res$value) != 1)
+                stop("Invalid user email or name", call.=FALSE)
+            return(az_user$new(self$token, self$tenant, res$value[[1]]))
+        }
+
+        op <- if(!has_id)
             "me"
         else file.path("users", curl::curl_escape(user_id))
-
         az_user$new(self$token, self$tenant, self$call_graph_endpoint(op))
     },
 
-    delete_user=function(user_id, confirm=TRUE)
+    delete_user=function(user_id=NULL, email=NULL, name=NULL, confirm=TRUE)
     {
-        self$get_user(user_id)$delete(confirm=confirm)
+        self$get_user(user_id, email, name)$delete(confirm=confirm)
     },
 
     create_group=function(name, email, ...)
@@ -289,3 +311,11 @@ public=list(
     }
 ))
 
+
+assert_one_arg <- function(..., msg)
+{
+    arglst <- list(...)
+    nulls <- sapply(arglst, is.null)
+    if(sum(!nulls) != 1)
+        stop(msg, call.=FALSE)
+}
