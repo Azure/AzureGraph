@@ -1,6 +1,7 @@
 # AzureGraph 1.2.2.9000
 
 - The `ms_graph$get_user()` method can now get a user by email or display name.
+- Fix a bug in retrieving a paged list of values as a data frame, when `n` (the maximum number of rows) is supplied.
 
 # AzureGraph 1.2.2
 

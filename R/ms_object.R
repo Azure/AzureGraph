@@ -150,15 +150,19 @@ private=list(
         else base::rbind
         res <- lst[[value_name]]
         if(n <= 0) n <- Inf
-        while(!is_empty(lst[[next_link_name]]) && length(res) < n)
+        while(!is_empty(lst[[next_link_name]]) && NROW(res) < n)
         {
             lst <- call_graph_url(self$token, lst[[next_link_name]], simplify=simplify)
             res <- if(simplify)
                 bind_fn(res, lst[[value_name]])  # base::rbind assumes all objects have the exact same fields
             else c(res, lst[[value_name]])
         }
-        if(n < length(res))
-            res[seq_len(n)]
+        if(n < NROW(res))
+        {
+            if(inherits(res, "data.frame"))
+                res[seq_len(n), ]
+            else res[seq_len(n)]
+        }
         else res
     },
 
