@@ -1,3 +1,7 @@
+# AzureGraph 1.2.2.9000
+
+- The `ms_graph$get_user()` method can now get a user by email or display name.
+
 # AzureGraph 1.2.2
 
 - Add support for batch requests:

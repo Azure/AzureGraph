@@ -21,8 +21,8 @@ Base class for interacting with Microsoft Graph API.
 \item \code{get_service_principal()}: Retrieves an existing service principal.
 \item \code{delete_service_principal()}: Deletes an existing service principal.
 \item \code{create_user(name, email, enabled=TRUE, ..., password=NULL, force_password_change=TRUE)}: Creates a new user account. By default this will be a work account (not social or local) in the current tenant, and will have a randomly generated password that must be changed at next login.
-\item \code{get_user(user_id)}: Retrieves an existing user account.
-\item \code{delete_user(user_id, confirm=TRUE)}: Deletes a user account.
+\item \code{get_user(user_id, email, name)}: Retrieves an existing user account. You can supply either the user ID, email address, or display name. The default is to return the logged-in user.
+\item \code{delete_user(user_id, email, name, confirm=TRUE)}: Deletes a user account.
 \item \code{create_group(name, email, ...)}: Creates a new group. Note that only security groups can be created via the Microsoft Graph API.
 \item \code{get_group(group_id)}: Retrieves an existing group.
 \item \code{delete_group(group_id, confirm=TRUE)}: Deletes a group.
@@ -86,6 +86,14 @@ app$delete()
 # create an app with authentication via a certificate
 cert <- readLines("mycert.cer")
 gr$create_app("mycertapp", password=FALSE, certificate=cert)
+
+# retrieving your own user details
+gr$get_user()
+
+# retrieving another user's details
+gr$get_user("username@myaadtenant.onmicrosoft.com")
+gr$get_user(email="firstname.lastname@mycompany.com")
+gr$get_user(name="Hong Ooi")
 
 }
 }
