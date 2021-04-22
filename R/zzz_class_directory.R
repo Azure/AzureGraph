@@ -55,7 +55,7 @@ register_graph_class("device", az_device,
 register_graph_class("directoryRole", az_directory_role,
     function(props) !is.null(props$roleTemplateId))
 
-find_class_generator <- function(props, type_filter, default_generator)
+find_class_generator <- function(props, type_filter, default_generator=ms_object)
 {
     # use ODATA metadata if available
     if(!is.null(props$`@odata.type`))
