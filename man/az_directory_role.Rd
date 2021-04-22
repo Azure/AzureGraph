@@ -28,6 +28,7 @@ Class representing a role in Azure Active Directory.
 \item \code{update(...)}: Update the item's properties in Microsoft Graph.
 \item \code{do_operation(...)}: Carry out an arbitrary operation on the item.
 \item \code{sync_fields()}: Synchronise the R object with the item metadata in Microsoft Graph.
+\item \code{list_members(n=Inf)}: Return a list of all members of this group. \code{n} is the number of results to return; set this to NULL to return the \code{ms_graph_pager} iterator object for the result set.
 }
 }
 
