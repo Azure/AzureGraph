@@ -3,7 +3,7 @@
 \docType{class}
 \name{ms_object}
 \alias{ms_object}
-\title{Azure Active Directory object}
+\title{Microsoft Graph object}
 \format{
 An R6 object of class \code{ms_object}.
 }

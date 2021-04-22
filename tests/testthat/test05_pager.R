@@ -21,19 +21,23 @@ test_that("Paging works",
     expect_silent(p <- me$get_list_pager(lst, generate_objects=FALSE))
     expect_is(p, "ms_graph_pager")
 
-    # assume returned list fits in 1 page
+    # assume result fits on 1 page
+    expect_true(p$has_data())
     out <- p$value
     expect_is(out, "list")
     expect_null(p$value)
+    expect_false(p$has_data())
 
     # return lists
     lst1 <- me$do_operation("memberOf", options=list(`$top`=1))
     p1 <- me$get_list_pager(lst1, generate_objects=FALSE)
     expect_is(p1, "ms_graph_pager")
+    expect_true(p1$has_data())
 
     for(i in seq_along(out))
         expect_identical(out[i], p1$value)
     expect_null(p1$value)
+    expect_false(p1$has_data())
 })
 
 
@@ -43,14 +47,17 @@ test_that("Page result as data frame works",
     expect_silent(pdf <- me$get_list_pager(lstdf))
     expect_is(pdf, "ms_graph_pager")
 
+    expect_true(pdf$has_data())
     outdf <- pdf$value
     expect_is(outdf, "data.frame")
     expect_null(pdf$value)
+    expect_false(pdf$has_data())
 
     # return data frames
     lstdf1 <- me$do_operation("memberOf", options=list(`$top`=1), simplify=TRUE)
     pdf1 <- me$get_list_pager(lstdf1)
     expect_is(pdf1, "ms_graph_pager")
+    expect_true(pdf1$has_data())
 
     outdf1 <- list()
     for(i in seq_len(nrow(outdf)))
@@ -58,6 +65,7 @@ test_that("Page result as data frame works",
     outdf1 <- do.call(vctrs::vec_rbind, outdf1)
     expect_identical(outdf, outdf1)
     expect_null(pdf1$value)
+    expect_false(pdf1$has_data())
 })
 
 
@@ -67,16 +75,63 @@ test_that("Page result as object works",
     expect_silent(pobj <- me$get_list_pager(lstobj, generate_objects=TRUE))
     expect_is(pobj, "ms_graph_pager")
 
+    expect_true(pobj$has_data())
     outobj <- pobj$value
     expect_is(outobj, "list")
     expect_true(all(sapply(outobj, inherits, "ms_object")))
+    expect_false(pobj$has_data())
 
     lstobj1 <- me$do_operation("memberOf", options=list(`$top`=1))
     pobj1 <- me$get_list_pager(lstobj1, generate_objects=TRUE)
     expect_is(pobj1, "ms_graph_pager")
+    expect_true(pobj1$has_data())
 
     outobj1 <- list()
     for(i in seq_along(outobj))
         expect_equal(outobj[i], pobj1$value)
     expect_null(pobj1$value)
+    expect_false(pobj1$has_data())
+})
+
+
+test_that("extract_list_values works",
+{
+    # assume result fits on 1 page
+    lst <- me$do_operation("memberOf")
+    p <- me$get_list_pager(lst, generate_objects=FALSE)
+    out <- p$value
+
+    lst1 <- me$do_operation("memberOf", options=list(`$top`=1))
+    p1 <- me$get_list_pager(lst1, generate_objects=FALSE)
+    out1 <- extract_list_values(p1)
+
+    expect_identical(out, out1)
+})
+
+
+test_that("extract_list_values works for data frame",
+{
+    lst <- me$do_operation("memberOf", simplify=TRUE)
+    p <- me$get_list_pager(lst, generate_objects=FALSE)
+    out <- p$value
+
+    lst1 <- me$do_operation("memberOf", options=list(`$top`=1), simplify=TRUE)
+    p1 <- me$get_list_pager(lst1, generate_objects=FALSE)
+    out1 <- extract_list_values(p1)
+
+    expect_identical(out, out1)
+})
+
+
+test_that("extract_list_values works for objects",
+{
+    lst <- me$do_operation("memberOf", simplify=FALSE)
+    p <- me$get_list_pager(lst, generate_objects=TRUE)
+    out <- p$value
+
+    lst1 <- me$do_operation("memberOf", options=list(`$top`=1), simplify=FALSE)
+    p1 <- me$get_list_pager(lst1, generate_objects=TRUE)
+    out1 <- extract_list_values(p1)
+
+    expect_equal(out, out1)
 })

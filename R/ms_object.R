@@ -14,6 +14,7 @@
 #' - `update(...)`: Update the object information in Azure Active Directory.
 #' - `do_operation(...)`: Carry out an arbitrary operation on the object.
 #' - `sync_fields()`: Synchronise the R object with the data in Azure Active Directory.
+#' - `get_list_pager(...)`: Returns a pager object, which is an _iterator_ for a set of paged query results.
 #'
 #' The following methods are private, and are intended for package authors extending AzureGraph to define their own objects.
 #' - `get_paged_list(lst, next_link_name, value_name, simplify, n)`: Used to process API calls that return lists of objects. Microsoft Graph returns lists in pages, with each page containing a subset of objects and a link to the next page. This method reconstructs the list, given the first page. Its arguments are:
@@ -32,7 +33,7 @@
 #' Objects of this class should not be created directly. Instead, create an object of the appropriate subclass.
 #'
 #' @seealso
-#' [ms_graph], [az_object]
+#' [ms_graph], [az_object], [ms_graph_pager]
 #'
 #' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
 #' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0)
