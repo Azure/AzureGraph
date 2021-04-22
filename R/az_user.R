@@ -88,31 +88,28 @@ public=list(
         password
     },
 
-    list_owned_objects=function(type=c("user", "group", "application", "servicePrincipal"))
+    list_owned_objects=function(type=c("user", "group", "application", "servicePrincipal"), n=Inf)
     {
-        res <- private$get_paged_list(self$do_operation("ownedObjects"))
-        private$init_list_objects(res, type)
+        pager <- self$get_list_pager(self$do_operation("ownedObjects"), type_filter=type)
+        get_list_values(pager, n)
     },
 
-    list_created_objects=function(type=c("user", "group", "application", "servicePrincipal"))
+    list_created_objects=function(type=c("user", "group", "application", "servicePrincipal"), n=Inf)
     {
-        res <- private$get_paged_list(self$do_operation("createdObjects"))
-        private$init_list_objects(res, type)
+        pager <- self$get_list_pager(self$do_operation("createdObjects"), type_filter=type)
+        get_list_values(pager, n)
     },
 
-    list_owned_devices=function()
+    list_owned_devices=function(n=Inf)
     {
-        res <- private$get_paged_list(self$do_operation("ownedDevices"))
-        private$init_list_objects(res, "device")
+        pager <- self$get_list_pager(self$do_operation("ownedDevices"))
+        get_list_values(pager, n)
     },
 
-    list_direct_memberships=function(id_only=TRUE)
+    list_direct_memberships=function(n=Inf)
     {
-        res <- private$get_paged_list(self$do_operation("memberOf"))
-
-        if(id_only)
-            sapply(res, function(grp) grp$id)
-        else private$init_list_objects(res)
+        pager <- self$get_list_pager(self$do_operation("memberOf"))
+        get_list_values(pager, n)
     },
 
     print=function(...)

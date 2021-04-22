@@ -37,10 +37,10 @@ public=list(
         super$initialize(token, tenant, properties)
     },
 
-    list_members=function()
+    list_members=function(n=Inf)
     {
-        res <- private$get_paged_list(self$do_operation("members"))
-        private$init_list_objects(res)
+        pager <- self$get_list_pager(self$do_operation("members"))
+        get_list_values(pager, n)
     },
 
     print=function(...)

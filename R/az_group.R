@@ -54,16 +54,16 @@ public=list(
         super$initialize(token, tenant, properties)
     },
 
-    list_members=function(type=c("user", "group", "application", "servicePrincipal"))
+    list_members=function(type=c("user", "group", "application", "servicePrincipal"), n=Inf)
     {
-        res <- private$get_paged_list(self$do_operation("members"))
-        private$init_list_objects(res, type)
+        pager <- self$get_list_pager(self$do_operation("members"), type_filter=type)
+        get_list_values(pager, n)
     },
 
-    list_owners=function(type=c("user", "group", "application", "servicePrincipal"))
+    list_owners=function(type=c("user", "group", "application", "servicePrincipal"), n=Inf)
     {
-        res <- private$get_paged_list(self$do_operation("owners"))
-        private$init_list_objects(res, type)
+        pager <- self$get_list_pager(self$do_operation("owners"), type_filter=type)
+        get_list_values(pager, n)
     },
 
     print=function(...)

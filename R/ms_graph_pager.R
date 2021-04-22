@@ -72,3 +72,25 @@ private=list(
         page[!sapply(page, is.null)]
     }
 ))
+
+
+#' @export
+get_list_values <- function(pager, n=Inf)
+{
+    if(is.null(n))
+        return(pager)
+
+    bind_fn <- if(pager$output != "data.frame")
+        base::c
+    else if(requireNamespace("vctrs", quietly=TRUE))
+        vctrs::vec_rbind
+    else base::rbind
+
+    res <- NULL
+    while(pager$has_data() && NROW(res) < n)  # not nrow()
+        res <- bind_fn(res, pager$value)
+
+    if(NROW(res) > n)
+        utils::head(res, n)
+    else res
+}

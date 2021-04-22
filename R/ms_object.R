@@ -103,25 +103,6 @@ public=list(
         ms_graph_pager$new(self$token, lst, next_link_name, value_name, generate_objects, type_filter, ...)
     },
 
-    get_list_values=function(lst, next_link_name="@odata.nextLink", value_name="value", generate_objects=TRUE,
-                             type_filter=NULL, n=Inf, ...)
-    {
-        pager <- ms_graph_pager$new(self$token, lst, next_link_name, value_name, generate_objects, type_filter, ...)
-        bind_fn <- if(!is.data.frame(lst[[value_name]]))
-            base::c
-        else if(requireNamespace("vctrs", quietly=TRUE))
-            vctrs::vec_rbind
-        else base::rbind
-
-        res <- NULL
-        while(pager$has_data() && NROW(res) < n)
-            res <- bind_fn(res, pager$value)
-
-        if(NROW(res) > n)  # not nrow()
-            utils::head(res, n)
-        else res
-    },
-
     print=function(...)
     {
         cat("<Graph directory object '", self$properties$displayName, "'>\n", sep="")
