@@ -35,7 +35,7 @@ Class representing an \emph{iterator} for a set of paged query results.
 
 \section{Initialization}{
 
-The recommended way to create objects of this class is via the \code{ms_object$get_list_pager()} method, but it can also be initialized directly. The arguments to the new() method are:
+The recommended way to create objects of this class is via the \code{ms_object$get_list_pager()} method, but it can also be initialized directly. The arguments to the \code{new()} method are:
 \itemize{
 \item \code{token}: The token used to authenticate with the Graph host.
 \item \code{first_page}: A list containing the first page of results, generally from a call to \code{call_graph_endpoint()} or the \code{do_operation()} method of an AzureGraph R6 object.
@@ -87,8 +87,8 @@ while(pager$has_data())
 }
 }
 \seealso{
-\link{ms_object}, \link{extract_page_values}
+\link{ms_object}, \link{extract_list_values}
 
 \href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
-\href{https://docs.microsoft.com/en-us/graph/paging?context=graph%2Fapi%2F1.0&view=graph-rest-1.0}{Paging documentation}
+\href{https://docs.microsoft.com/en-us/graph/paging}{Paging documentation}
 }

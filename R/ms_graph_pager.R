@@ -13,7 +13,7 @@
 #' - `value`: The returned value on each iteration of the pager.
 #'
 #' @section Initialization:
-#' The recommended way to create objects of this class is via the `ms_object$get_list_pager()` method, but it can also be initialized directly. The arguments to the new() method are:
+#' The recommended way to create objects of this class is via the `ms_object$get_list_pager()` method, but it can also be initialized directly. The arguments to the `new()` method are:
 #' - `token`: The token used to authenticate with the Graph host.
 #' - `first_page`: A list containing the first page of results, generally from a call to `call_graph_endpoint()` or the `do_operation()` method of an AzureGraph R6 object.
 #' - `next_link_name,value_name`: The names of the components of `first_page` containing the link to the next page, and the set of values for the page respectively. The default values are `@odata.nextLink` and `value`.
@@ -29,10 +29,10 @@
 #' If the first page of results is a list, the `generate_objects` argument sets whether to convert the items in each page into R6 objects defined by the AzureGraph class framework. If `generate_objects` is TRUE, the `output` field is set to "object", and if `generate_objects` is FALSE, the `output` field is set to "list".
 #'
 #' @seealso
-#' [ms_object], [extract_page_values]
+#' [ms_object], [extract_list_values]
 #'
 #' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
-#' [Paging documentation](https://docs.microsoft.com/en-us/graph/paging?context=graph%2Fapi%2F1.0&view=graph-rest-1.0)
+#' [Paging documentation](https://docs.microsoft.com/en-us/graph/paging)
 #'
 #' @examples
 #' \dontrun{
