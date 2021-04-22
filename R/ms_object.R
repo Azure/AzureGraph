@@ -119,7 +119,7 @@ public=list(
 
         if(NROW(res) > n)
         {
-            if(inherits(res, "data.frame"))
+            if(is.data.frame(res))
                 res[seq_len(n), ]
             else res[seq_len(n)]
         }
