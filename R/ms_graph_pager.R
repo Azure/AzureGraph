@@ -6,22 +6,30 @@ public=list(
     token=NULL,
     value_name=NULL,
     next_link_name=NULL,
-    next_link=NULL,
-    output=NULL,
     type_filter=NULL,
     init_args=NULL,
+    output=NULL,
 
     initialize=function(token, first_page, next_link_name="@odata.nextLink", value_name="value",
-                        output=c("list", "data.frame", "object"), type_filter=NULL, ...)
+                        generate_objects=TRUE, type_filter=NULL, ...)
     {
         self$token <- token
         self$value_name <- value_name
         self$next_link_name <- next_link_name
-        self$next_link <- first_page[[next_link_name]]
-        private$first_value <- first_page[[value_name]]
-        self$output <- match.arg(output)
         self$type_filter <- type_filter
         self$init_args <- list(...)
+        self$output <- if(is.data.frame(first_page$value))
+            "data.frame"
+        else if(generate_objects)
+            "object"
+        else "list"
+        private$next_link <- first_page[[next_link_name]]
+        private$next_value <- first_page[[value_name]]
+    },
+
+    has_data=function()
+    {
+        !is_empty(private$next_value)
     }
 ),
 
@@ -29,29 +37,30 @@ active=list(
 
     value=function()
     {
-        if(!is.null(private$first_value))
+        val <- private$next_value
+        private$next_value <- if(!is.null(private$next_link))
         {
-            first_value <- private$first_value
-            private$first_value <- NULL
-            return(private$make_objects(first_value))
+            page <- call_graph_url(self$token, private$next_link, simplify=(self$output == "data.frame"))
+            private$next_link <- page[[self$next_link_name]]
+            page[[self$value_name]]
         }
-        if(is.null(self$next_link))
-            return(NULL)
+        else NULL
 
-        page <- call_graph_url(self$token, self$next_link, simplify=(self$output == "data.frame"))
-        self$next_link <- page[[self$next_link_name]]
-        private$make_objects(page[[self$value_name]])
+        if(self$output == "object")
+            private$make_objects(val)
+        else val
     }
 ),
 
 private=list(
 
-    first_value=NULL,
+    next_link=NULL,
+    next_value=NULL,
 
     make_objects=function(page)
     {
-        if(self$output != "object")
-            return(page)
+        if(is_empty(page))
+            return(NULL)
 
         page <- lapply(page, function(obj)
         {

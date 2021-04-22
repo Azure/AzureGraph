@@ -97,28 +97,26 @@ public=list(
         call_graph_endpoint(self$token, op, ...)
     },
 
-    get_pager=function(lst, next_link_name="@odata.nextLink", value_name="value", output="list", type_filter=NULL, ...)
+    get_list_pager=function(lst, next_link_name="@odata.nextLink", value_name="value", generate_objects=TRUE,
+                            type_filter=NULL, ...)
     {
-        ms_graph_pager$new(self$token, lst, next_link_name, value_name, output, type_filter, ...)
+        ms_graph_pager$new(self$token, lst, next_link_name, value_name, generate_objects, type_filter, ...)
     },
 
-    get_list=function(lst, next_link_name="@odata.nextLink", value_name="value", output="list", type_filter=NULL, n=Inf,
-                      ...)
+    get_list_values=function(lst, next_link_name="@odata.nextLink", value_name="value", generate_objects=TRUE,
+                             type_filter=NULL, n=Inf, ...)
     {
-        pager <- ms_graph_pager$new(self$token, lst, next_link_name, value_name, output, type_filter, ...)
-        bind_fn <- if(output != "data.frame")
+        pager <- ms_graph_pager$new(self$token, lst, next_link_name, value_name, generate_objects, type_filter, ...)
+        bind_fn <- if(!is.data.frame(lst[[value_name]]))
             base::c
         else if(requireNamespace("vctrs", quietly=TRUE))
             vctrs::vec_rbind
         else base::rbind
+
         res <- NULL
-        repeat
-        {
-            value <- pager$value
-            res <- bind_fn(res, value)
-            if(NROW(res) >= n || is.null(value))
-                break
-        }
+        while(pager$has_data() && NROW(res) < n)
+            res <- bind_fn(res, pager$value)
+
         if(NROW(res) > n)
         {
             if(inherits(res, "data.frame"))
