@@ -89,7 +89,7 @@ test_that("Page result as object works",
     outobj1 <- list()
     for(i in seq_along(outobj))
         expect_equal(outobj[i], pobj1$value)
-    expect_null(pobj1$value)
+    expect_true(is_empty(pobj1$value))
     expect_false(pobj1$has_data())
 })
 

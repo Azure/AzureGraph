@@ -127,7 +127,7 @@ private=list(
     make_objects=function(page)
     {
         if(is_empty(page))
-            return(NULL)
+            return(list())
 
         page <- lapply(page, function(obj)
         {
