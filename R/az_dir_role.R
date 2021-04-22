@@ -40,7 +40,7 @@ public=list(
     list_members=function(n=Inf)
     {
         pager <- self$get_list_pager(self$do_operation("members"))
-        get_list_values(pager, n)
+        extract_list_values(pager, n)
     },
 
     print=function(...)

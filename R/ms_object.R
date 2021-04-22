@@ -1,4 +1,4 @@
-#' Azure Active Directory object
+#' Microsoft Graph object
 #'
 #' Base class representing a object in Microsoft Graph. All other Graph object classes ultimately inherit from this class.
 #'

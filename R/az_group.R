@@ -57,13 +57,13 @@ public=list(
     list_members=function(type=c("user", "group", "application", "servicePrincipal"), n=Inf)
     {
         pager <- self$get_list_pager(self$do_operation("members"), type_filter=type)
-        get_list_values(pager, n)
+        extract_list_values(pager, n)
     },
 
     list_owners=function(type=c("user", "group", "application", "servicePrincipal"), n=Inf)
     {
         pager <- self$get_list_pager(self$do_operation("owners"), type_filter=type)
-        get_list_values(pager, n)
+        extract_list_values(pager, n)
     },
 
     print=function(...)

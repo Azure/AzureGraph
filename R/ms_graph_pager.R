@@ -1,3 +1,22 @@
+#' Pager object for Graph list results
+#'
+#' Class representing an _iterator_ for a set of paged query results.
+#'
+#' @docType class
+#' @section Fields:
+#' - `token`: The token used to authenticate with the Graph host.
+#' - `value_name, next_link_name`: The names of the REST API response components containing the set of values for the page, and the link to the next page. The default values are `value` and `@odata.nextLink` respectively.
+#' - `output`: What the pager should yield on each iteration. Either "list", meaning a (nested) list with one component for each individual item in the page; "data.frame", meaning the list output is transformed into a tabular format; or "object", meaning a list of R6 objects as defined by the AzureGraph class framework.
+#' - `type_filter`: An optional vector of Graph object types to filter the results on. Only used if `output` is "object".
+#' - `init_args`: Any extra arguments required to initialise the returned objects. Only used if `output` is "object".
+#' @section Methods:
+#' - `new(...)`: Initialize a new user object. See 'Initialization' below.
+#' - `has_data()`: Returns TRUE if there are pages remaining in the iterator, or FALSE otherwise.
+#' @section Active bindings:
+#' - `value`: The returned value on each iteration of the pager.
+#'
+#' @section Initialization:
+#' The recommended way to create objects of this class is via the `ms_object$get_
 #' @export
 ms_graph_pager <- R6::R6Class("ms_graph_pager",
 
@@ -6,9 +25,9 @@ public=list(
     token=NULL,
     value_name=NULL,
     next_link_name=NULL,
+    output=NULL,
     type_filter=NULL,
     init_args=NULL,
-    output=NULL,
 
     initialize=function(token, first_page, next_link_name="@odata.nextLink", value_name="value",
                         generate_objects=TRUE, type_filter=NULL, ...)
@@ -75,10 +94,13 @@ private=list(
 
 
 #' @export
-get_list_values <- function(pager, n=Inf)
+extract_list_values <- function(pager, n=Inf)
 {
     if(is.null(n))
         return(pager)
+
+    if(!pager$has_data())
+        stop("Pager is empty", call.=FALSE)
 
     bind_fn <- if(pager$output != "data.frame")
         base::c

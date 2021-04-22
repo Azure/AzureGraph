@@ -91,25 +91,25 @@ public=list(
     list_owned_objects=function(type=c("user", "group", "application", "servicePrincipal"), n=Inf)
     {
         pager <- self$get_list_pager(self$do_operation("ownedObjects"), type_filter=type)
-        get_list_values(pager, n)
+        extract_list_values(pager, n)
     },
 
     list_created_objects=function(type=c("user", "group", "application", "servicePrincipal"), n=Inf)
     {
         pager <- self$get_list_pager(self$do_operation("createdObjects"), type_filter=type)
-        get_list_values(pager, n)
+        extract_list_values(pager, n)
     },
 
     list_owned_devices=function(n=Inf)
     {
         pager <- self$get_list_pager(self$do_operation("ownedDevices"))
-        get_list_values(pager, n)
+        extract_list_values(pager, n)
     },
 
     list_direct_memberships=function(n=Inf)
     {
         pager <- self$get_list_pager(self$do_operation("memberOf"))
-        get_list_values(pager, n)
+        extract_list_values(pager, n)
     },
 
     print=function(...)
