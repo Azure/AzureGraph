@@ -117,12 +117,8 @@ public=list(
         while(pager$has_data() && NROW(res) < n)
             res <- bind_fn(res, pager$value)
 
-        if(NROW(res) > n)
-        {
-            if(is.data.frame(res))
-                res[seq_len(n), ]
-            else res[seq_len(n)]
-        }
+        if(NROW(res) > n)  # not nrow()
+            utils::head(res, n)
         else res
     },
 
