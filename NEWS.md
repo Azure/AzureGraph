@@ -1,10 +1,10 @@
 # AzureGraph 1.2.2.9000
 
 - New API for working with paged result sets:
-  - New `ms_graph_pager` R6 class, which is an _iterator_ for the pages in the result
-  - The `ms_object` base class now has a `get_list_pager()` method which returns an object of class `ms_graph_pager`
-  - New `extract_list_values()` function to get all or part of the results from a paged result set
-- The current (private) `ms_object$get_paged_list()` and `ms_object$init_list_objects()` methods are deprecated.
+  - New `ms_graph_pager` R6 class, which is an _iterator_ for the pages in the result.
+  - The `ms_object` base class now has a `get_list_pager()` method which returns an object of class `ms_graph_pager`.
+  - New `extract_list_values()` function to get all or part of the results from a paged result set.
+- The current (private) `ms_object$get_paged_list()` and `ms_object$init_list_objects()` methods are retained for backward compatibility, but are otherwise deprecated.
 - The `ms_graph$get_user()` method can now get a user by email or display name.
 - Fix a bug in retrieving a paged list of values as a data frame, when `n` (the maximum number of rows) is supplied.
 

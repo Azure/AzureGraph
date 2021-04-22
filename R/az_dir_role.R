@@ -14,6 +14,7 @@
 #' - `update(...)`: Update the item's properties in Microsoft Graph.
 #' - `do_operation(...)`: Carry out an arbitrary operation on the item.
 #' - `sync_fields()`: Synchronise the R object with the item metadata in Microsoft Graph.
+#' - `list_members(n=Inf)`: Return a list of all members of this group. `n` is the number of results to return; set this to NULL to return the `ms_graph_pager` iterator object for the result set.
 #'
 #' @section Initialization:
 #' Currently support for directory roles is limited. Objects of this class should not be initialized directly.

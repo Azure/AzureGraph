@@ -16,8 +16,8 @@
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
 #' - `list_group_memberships()`: Return the IDs of all groups this group is a member of.
 #' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this group is a member of.
-#' - `list_members(type=c("user", "group", "application", "servicePrincipal"))`: Return a list of all members of this group. Specify the `type` argument to filter the result for specific object type(s).
-#' - `list_owners(type=c("user", "group", "application", "servicePrincipal"))`: Return a list of all owners of this group. Specify the `type` argument to filter the result for specific object type(s).
+#' - `list_members(type=c("user", "group", "application", "servicePrincipal"), n=Inf)`: Return a list of all members of this group. Specify the `type` argument to filter the result for specific object type(s). `n` is the number of results to return; set this to NULL to return the `ms_graph_pager` iterator object for the result set.
+#' - `list_owners(type=c("user", "group", "application", "servicePrincipal"), n=Inf)`: Return a list of all owners of this group. Specify the `type` argument to filter the result for specific object type(s).
 #'
 #' @section Initialization:
 #' Creating new objects of this class should be done via the `create_group` and `get_group` methods of the [ms_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual group.

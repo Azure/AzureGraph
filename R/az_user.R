@@ -16,9 +16,9 @@
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
 #' - `list_group_memberships()`: Return the IDs of all groups this user is a member of.
 #' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this user is a member of.
-#' - `list_direct_memberships(id_only=TRUE)`: List the groups and directory roles this user is a direct member of. Set `id_only=TRUE` to return only a vector of IDs (the default), or `id_only=FALSE` to return a list of group objects.
-#' - `list_owned_objects(type=c("user", "group", "application", "servicePrincipal"))`: List directory objects (groups/apps/service principals) owned by this user. Specify the `type` argument to filter the result for specific object type(s).
-#' - `list_created_objects(type=c("user", "group", "application", "servicePrincipal"))`: List directory objects (groups/apps/service principals) created by this user. Specify the `type` argument to filter the result for specific object type(s).
+#' - `list_direct_memberships(n=Inf)`: List the groups and directory roles this user is a direct member of. `n` is the number of results to return; set this to NULL to return the `ms_graph_pager` iterator object for the result set.
+#' - `list_owned_objects(type=c("user", "group", "application", "servicePrincipal"), n=Inf)`: List directory objects (groups/apps/service principals) owned by this user. Specify the `type` argument to filter the result for specific object type(s).
+#' - `list_created_objects(type=c("user", "group", "application", "servicePrincipal"), n=Inf)`: List directory objects (groups/apps/service principals) created by this user. Specify the `type` argument to filter the result for specific object type(s).
 #' - `list_owned_devices()`: List the devices owned by this user.
 #' - `list_registered_devices()`: List the devices registered by this user.
 #' - `reset_password(password=NULL, force_password_change=TRUE)`: Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
@@ -51,6 +51,13 @@
 #'
 #' # owned apps and service principals
 #' usr$list_owned_objects(type=c("application", "servicePrincipal"))
+#'
+#' # first 5 objects
+#' usr$list_owned_objects(n=5)
+#'
+#' # get the pager object
+#' pager <- usr$list_owned_objects(n=NULL)
+#' pager$value
 #'
 #' }
 #' @format An R6 object of class `az_user`, inheriting from `az_object`.
