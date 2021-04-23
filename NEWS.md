@@ -8,7 +8,7 @@
 - The `ms_graph$get_user()` method can now get a user by email or display name.
 - Fix a bug in retrieving a paged list of values as a data frame, when `n` (the maximum number of rows) is supplied.
 - New `ms_graph$get_aad_object()` method to retrieve an Azure Active Directory object by ID. Mostly intended for use with the `list_object_memberships()` and `list_group_memberships()` methods, which return only IDs and not full object information.
-- All `list_*` methods now have an `n` argument to set a cap on the number of results; the default value is `n=Inf`. If this is set to NULL, the `ms_graph_pager` iterator object is returned instead to allow manual iteration over the results.
+- All `list_*` R6 methods now have `filter` and `n` arguments to filter the result set and cap the number of results. The default values are `filter=NULL` and `n=Inf`. If `n=NULL`, the `ms_graph_pager` iterator object is returned instead to allow manual iteration over the results.
 - Export the `find_class_generator()` function.
 - New "Batching and paging" vignette describing these APIs.
 

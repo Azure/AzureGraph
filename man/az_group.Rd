@@ -28,14 +28,19 @@ Class representing an AAD group.
 \item \code{update(...)}: Update the group information in Azure Active Directory.
 \item \code{do_operation(...)}: Carry out an arbitrary operation on the group.
 \item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
-\item \code{list_members(type=c("user", "group", "application", "servicePrincipal"), n=Inf)}: Return a list of all members of this group. Specify the \code{type} argument to filter the result for specific object type(s). \code{n} is the number of results to return; set this to NULL to return the \code{ms_graph_pager} iterator object for the result set.
-\item \code{list_owners(type=c("user", "group", "application", "servicePrincipal"), n=Inf)}: Return a list of all owners of this group. Specify the \code{type} argument to filter the result for specific object type(s).
+\item \code{list_members(type=c("user", "group", "application", "servicePrincipal"), filter=NULL, n=Inf)}: Return a list of all members of this group. Specify the \code{type} argument to limit the result to specific object type(s).
+\item \code{list_owners(type=c("user", "group", "application", "servicePrincipal"), filter=NULL, n=Inf)}: Return a list of all owners of this group. Specify the \code{type} argument to limit the result to specific object type(s).
 }
 }
 
 \section{Initialization}{
 
 Creating new objects of this class should be done via the \code{create_group} and \code{get_group} methods of the \link{ms_graph} and \link{az_app} classes. Calling the \code{new()} method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual group.
+}
+
+\section{List methods}{
+
+All \verb{list_*} methods have \code{filter} and \code{n} arguments to limit the number of results. The former should be an OData expression as a string to filter the result set on. The latter should be a number setting the maximum number of (filtered) results to return. The default values are \code{filter=NULL} and \code{n=Inf}. If \code{n=NULL}, the \code{ms_graph_pager} iterator object is returned instead to allow manual iteration over the results.
 }
 
 \examples{
