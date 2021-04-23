@@ -19,6 +19,7 @@
 #' - `delete_group(group_id, confirm=TRUE)`: Deletes a group.
 #' - `call_graph_endpoint(op="", ...)`: Calls the Microsoft Graph API using this object's token and tenant as authentication arguments. See [call_graph_endpoint].
 #' - `call_batch_endpoint(requests=list(), ...)`: Calls the batch endpoint with a list of individual requests. See [call_batch_endpoint].
+#' - `get_aad_object(id)`: Retrieves an arbitrary Azure Active Directory object by ID.
 #'
 #' @section Authentication:
 #' The recommended way to authenticate with Microsoft Graph is via the [create_graph_login] function, which creates a new instance of this class.
@@ -297,6 +298,13 @@ public=list(
     call_batch_endpoint=function(requests=list(), ...)
     {
         call_batch_endpoint(self$token, requests, ...)
+    },
+
+    get_aad_object=function(id)
+    {
+        res <- self$call_graph_endpoint(file.path("directoryObjects", id))
+        gen <- find_class_generator(res, type_filter=NULL)
+        gen$new(self$token, self$tenant, res)
     },
 
     print=function(...)

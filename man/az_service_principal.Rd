@@ -28,8 +28,6 @@ Class representing an AAD service principal.
 \item \code{update(...)}: Update the service principal information in Azure Active Directory.
 \item \code{do_operation(...)}: Carry out an arbitrary operation on the service principal.
 \item \code{sync_fields()}: Synchronise the R object with the service principal data in Azure Active Directory.
-\item \code{list_group_memberships()}: Return the IDs of all groups this service principal is a member of.
-\item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this service principal is a member of.
 }
 }
 

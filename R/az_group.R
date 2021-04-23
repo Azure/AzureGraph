@@ -14,8 +14,6 @@
 #' - `update(...)`: Update the group information in Azure Active Directory.
 #' - `do_operation(...)`: Carry out an arbitrary operation on the group.
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
-#' - `list_group_memberships()`: Return the IDs of all groups this group is a member of.
-#' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this group is a member of.
 #' - `list_members(type=c("user", "group", "application", "servicePrincipal"), n=Inf)`: Return a list of all members of this group. Specify the `type` argument to filter the result for specific object type(s). `n` is the number of results to return; set this to NULL to return the `ms_graph_pager` iterator object for the result set.
 #' - `list_owners(type=c("user", "group", "application", "servicePrincipal"), n=Inf)`: Return a list of all owners of this group. Specify the `type` argument to filter the result for specific object type(s).
 #'

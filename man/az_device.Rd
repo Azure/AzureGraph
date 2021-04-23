@@ -28,8 +28,6 @@ Class representing a registered device.
 \item \code{update(...)}: Update the device information in Azure Active Directory.
 \item \code{do_operation(...)}: Carry out an arbitrary operation on the device.
 \item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
-\item \code{list_group_memberships()}: Return the IDs of all groups this device is a member of.
-\item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this device is a member of.
 }
 }
 

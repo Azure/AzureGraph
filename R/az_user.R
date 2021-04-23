@@ -14,13 +14,11 @@
 #' - `update(...)`: Update the user information in Azure Active Directory.
 #' - `do_operation(...)`: Carry out an arbitrary operation on the user account.
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
-#' - `list_group_memberships()`: Return the IDs of all groups this user is a member of.
-#' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this user is a member of.
 #' - `list_direct_memberships(n=Inf)`: List the groups and directory roles this user is a direct member of. `n` is the number of results to return; set this to NULL to return the `ms_graph_pager` iterator object for the result set.
 #' - `list_owned_objects(type=c("user", "group", "application", "servicePrincipal"), n=Inf)`: List directory objects (groups/apps/service principals) owned by this user. Specify the `type` argument to filter the result for specific object type(s).
 #' - `list_created_objects(type=c("user", "group", "application", "servicePrincipal"), n=Inf)`: List directory objects (groups/apps/service principals) created by this user. Specify the `type` argument to filter the result for specific object type(s).
-#' - `list_owned_devices()`: List the devices owned by this user.
-#' - `list_registered_devices()`: List the devices registered by this user.
+#' - `list_owned_devices(n=Inf)`: List the devices owned by this user.
+#' - `list_registered_devices(n=Inf)`: List the devices registered by this user.
 #' - `reset_password(password=NULL, force_password_change=TRUE)`: Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
 #'
 #' @section Initialization:

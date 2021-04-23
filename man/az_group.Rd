@@ -28,8 +28,6 @@ Class representing an AAD group.
 \item \code{update(...)}: Update the group information in Azure Active Directory.
 \item \code{do_operation(...)}: Carry out an arbitrary operation on the group.
 \item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
-\item \code{list_group_memberships()}: Return the IDs of all groups this group is a member of.
-\item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this group is a member of.
 \item \code{list_members(type=c("user", "group", "application", "servicePrincipal"), n=Inf)}: Return a list of all members of this group. Specify the \code{type} argument to filter the result for specific object type(s). \code{n} is the number of results to return; set this to NULL to return the \code{ms_graph_pager} iterator object for the result set.
 \item \code{list_owners(type=c("user", "group", "application", "servicePrincipal"), n=Inf)}: Return a list of all owners of this group. Specify the \code{type} argument to filter the result for specific object type(s).
 }

@@ -15,8 +15,6 @@
 #' - `update(...)`: Update the app data in Azure Active Directory. For what properties can be updated, consult the REST API documentation link below.
 #' - `do_operation(...)`: Carry out an arbitrary operation on the app.
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
-#' - `list_group_memberships()`: Return the IDs of all groups this app is a member of.
-#' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this app is a member of.
 #' - `list_owners(type=c("user", "group", "application", "servicePrincipal"), n=Inf)`: Return a list of all owners of this app. Specify the `type` argument to filter the result for specific object type(s). `n` is the number of results to return; set this to NULL to return the `ms_graph_pager` iterator object for the result set.
 #' - `create_service_principal(...)`: Create a service principal for this app, by default in the current tenant.
 #' - `get_service_principal()`: Get the service principal for this app.
