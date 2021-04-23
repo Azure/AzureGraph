@@ -55,7 +55,18 @@ register_graph_class("device", az_device,
 register_graph_class("directoryRole", az_directory_role,
     function(props) !is.null(props$roleTemplateId))
 
-find_class_generator <- function(props, type_filter, default_generator=ms_object)
+
+#' Find the R6 class for a Graph object
+#'
+#' @param props A list of object properties, generally the result of a Graph API call.
+#' @param type_filter An optional vector of types by which to filter the result.
+#' @param default_generator The default class generator to use, if a match couldn't be found.
+#' @details
+#' This function maps Graph objects to AzureGraph classes.
+#' @return
+#' An R6 class generator for the appropriate AzureGraph class. If no matching R6 class could be found, the default generator is returned. If `type_filter` is provided, but the matching R6 class isn't in the filter, NULL is returned.
+#' @export
+find_class_generator <- function(props, type_filter=NULL, default_generator=ms_object)
 {
     # use ODATA metadata if available
     if(!is.null(props$`@odata.type`))

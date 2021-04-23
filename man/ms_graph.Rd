@@ -65,7 +65,7 @@ A new app will also have a service principal created for it by default. To disab
 \dontrun{
 
 # start a new Graph session
-gr <- ms_graph$new(tenant="myaadtenant.onmicrosoft.com", app="app_id", password="password")
+gr <- ms_graph$new(tenant="myaadtenant.onmicrosoft.com")
 
 # authenticate with credentials in a file
 gr <- ms_graph$new(config_file="creds.json")
@@ -88,7 +88,7 @@ app$delete()
 cert <- readLines("mycert.cer")
 gr$create_app("mycertapp", password=FALSE, certificate=cert)
 
-# retrieving your own user details
+# retrieving your own user details (assuming interactive authentication)
 gr$get_user()
 
 # retrieving another user's details
