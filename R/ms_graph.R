@@ -54,7 +54,7 @@
 #' \dontrun{
 #'
 #' # start a new Graph session
-#' gr <- ms_graph$new(tenant="myaadtenant.onmicrosoft.com", app="app_id", password="password")
+#' gr <- ms_graph$new(tenant="myaadtenant.onmicrosoft.com")
 #'
 #' # authenticate with credentials in a file
 #' gr <- ms_graph$new(config_file="creds.json")
@@ -77,13 +77,17 @@
 #' cert <- readLines("mycert.cer")
 #' gr$create_app("mycertapp", password=FALSE, certificate=cert)
 #'
-#' # retrieving your own user details
+#' # retrieving your own user details (assuming interactive authentication)
 #' gr$get_user()
 #'
 #' # retrieving another user's details
 #' gr$get_user("username@myaadtenant.onmicrosoft.com")
 #' gr$get_user(email="firstname.lastname@mycompany.com")
 #' gr$get_user(name="Hong Ooi")
+#'
+#' # get an AAD object (a group)
+#' id <- gr$get_user()$list_group_memberships()[1]
+#' gr$get_aad_object(id)
 #'
 #' }
 #' @format An R6 object of class `ms_graph`.

@@ -32,11 +32,18 @@
 #' gr <- get_graph_login()
 #' usr <- gr$get_user("myname@aadtenant.com")
 #'
-#' grps <- usr$list_direct_memberships()
+#' grps <- usr$list_group_memberships()
 #' grp <- gr$get_group(grps[1])
 #'
 #' grp$list_members()
 #' grp$list_owners()
+#'
+#' # capping the number of results
+#' grp$list_members(n=10)
+#'
+#' # get the pager object for a listing method
+#' pager <- grp$list_members(n=NULL)
+#' pager$value
 #'
 #' }
 #' @format An R6 object of class `az_group`, inheriting from `az_object`.

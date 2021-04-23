@@ -44,11 +44,18 @@ Creating new objects of this class should be done via the \code{create_group} an
 gr <- get_graph_login()
 usr <- gr$get_user("myname@aadtenant.com")
 
-grps <- usr$list_direct_memberships()
+grps <- usr$list_group_memberships()
 grp <- gr$get_group(grps[1])
 
 grp$list_members()
 grp$list_owners()
+
+# capping the number of results
+grp$list_members(n=10)
+
+# get the pager object for a listing method
+pager <- grp$list_members(n=NULL)
+pager$value
 
 }
 }

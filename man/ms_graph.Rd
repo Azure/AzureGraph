@@ -96,6 +96,10 @@ gr$get_user("username@myaadtenant.onmicrosoft.com")
 gr$get_user(email="firstname.lastname@mycompany.com")
 gr$get_user(name="Hong Ooi")
 
+# get an AAD object (a group)
+id <- gr$get_user()$list_group_memberships()[1]
+gr$get_aad_object(id)
+
 }
 }
 \seealso{
