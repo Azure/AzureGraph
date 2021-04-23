@@ -28,8 +28,8 @@ Base class representing an Azure Active Directory object in Microsoft Graph.
 \item \code{update(...)}: Update the object information in Azure Active Directory.
 \item \code{do_operation(...)}: Carry out an arbitrary operation on the object.
 \item \code{sync_fields()}: Synchronise the R object with the data in Azure Active Directory.
-\item \code{list_group_memberships()}: Return the IDs of all groups this object is a member of.
-\item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this object is a member of.
+\item \code{list_group_memberships(security_only=FALSE, n=Inf)}: Return the IDs of all groups this object is a member of. If \code{security_only} is TRUE, only security group IDs are returned. \code{n} is the number of results to return; set this to NULL to return the \code{ms_graph_pager} iterator object for the result set.
+\item \code{list_object_memberships(security_only=FALSE, n=Inf)}: Return the IDs of all groups, administrative units and directory roles this object is a member of.
 }
 }
 

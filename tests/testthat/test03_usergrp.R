@@ -29,10 +29,7 @@ test_that("User/group read functionality works",
     grps1 <- me$list_group_memberships()
     expect_true(is.character(grps1))
 
-    grps2 <- me$list_direct_memberships(id_only=TRUE)
-    expect_true(is.character(grps2))
-
-    grps3 <- me$list_direct_memberships(id_only=FALSE)
+    grps3 <- me$list_direct_memberships()
     expect_true(all(sapply(grps3, function(x) is_group(x) || is_directory_role(x))))
     expect_true(all(sapply(grps3, function(g) !is.null(g$properties$id))))
 

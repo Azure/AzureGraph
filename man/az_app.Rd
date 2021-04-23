@@ -29,9 +29,7 @@ Base class representing an AAD app.
 \item \code{update(...)}: Update the app data in Azure Active Directory. For what properties can be updated, consult the REST API documentation link below.
 \item \code{do_operation(...)}: Carry out an arbitrary operation on the app.
 \item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
-\item \code{list_group_memberships()}: Return the IDs of all groups this app is a member of.
-\item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this app is a member of.
-\item \code{list_owners(type=c("user", "group", "application", "servicePrincipal"))}: Return a list of all owners of this app. Specify the \code{type} argument to filter the result for specific object type(s).
+\item \code{list_owners(type=c("user", "group", "application", "servicePrincipal"), n=Inf)}: Return a list of all owners of this app. Specify the \code{type} argument to filter the result for specific object type(s). \code{n} is the number of results to return; set this to NULL to return the \code{ms_graph_pager} iterator object for the result set.
 \item \code{create_service_principal(...)}: Create a service principal for this app, by default in the current tenant.
 \item \code{get_service_principal()}: Get the service principal for this app.
 \item \code{delete_service_principal(confirm=TRUE)}: Delete the service principal for this app. By default, ask for confirmation first.

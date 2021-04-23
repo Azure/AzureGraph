@@ -3,7 +3,7 @@
 \docType{class}
 \name{ms_object}
 \alias{ms_object}
-\title{Azure Active Directory object}
+\title{Microsoft Graph object}
 \format{
 An R6 object of class \code{ms_object}.
 }
@@ -28,25 +28,7 @@ Base class representing a object in Microsoft Graph. All other Graph object clas
 \item \code{update(...)}: Update the object information in Azure Active Directory.
 \item \code{do_operation(...)}: Carry out an arbitrary operation on the object.
 \item \code{sync_fields()}: Synchronise the R object with the data in Azure Active Directory.
-}
-
-The following methods are private, and are intended for package authors extending AzureGraph to define their own objects.
-\itemize{
-\item \code{get_paged_list(lst, next_link_name, value_name, simplify, n)}: Used to process API calls that return lists of objects. Microsoft Graph returns lists in pages, with each page containing a subset of objects and a link to the next page. This method reconstructs the list, given the first page. Its arguments are:
-\itemize{
-\item \code{lst}: Object containing the initial page of results, generally the result of a call to \code{do_operation}. Should be a list with names corresponding to the arguments \code{next_link_name} and \code{value_name}.
-\item \code{next_link_name}: The name of the component of \code{lst} containing the link to the next page. Defaults to \verb{@odata.nextLink}.
-\item \code{value_name}: The name of the component of \code{lst} containing the first page of results. Defaults to \code{value}.
-\item \code{simplify}: Whether to turn the list of objects into a data frame. This is useful if the list is intended to be a rectangular data structure, eg a SharePoint list or OneDrive file listing. Note that the vctrs package must be installed to return a data frame, if the objects in the list can have varying structures (which will often be the case).
-\item \code{n}: Optionally, limit the list to this many objects.
-}
-\item \code{init_list_objects(lst, type_filter, default_generator, ...)}: \code{get_paged_list} returns a raw list, the result of parsing the JSON response from the Graph host. This method converts the list into actual R6 objects. Its arguments are:
-\itemize{
-\item \code{lst}: The input list.
-\item \code{type_filter}: The possible types of objects that the list contains. The default is NULL.
-\item \code{default_generator}: An R6 class generator object to use, if \code{init_list_objects} is unable to detect the type of an object. It's recommended to change this from the default value of \code{ms_object}, if you know that all objects in the list will have the same class.
-\item \code{...}: Further arguments to pass to the generator's \code{initialize} method.
-}
+\item \code{get_list_pager(...)}: Returns a pager object, which is an \emph{iterator} for a set of paged query results. See 'Paged results' below.
 }
 }
 
@@ -55,8 +37,41 @@ The following methods are private, and are intended for package authors extendin
 Objects of this class should not be created directly. Instead, create an object of the appropriate subclass.
 }
 
+\section{Paged results}{
+
+Microsoft Graph returns lists in pages, with each page containing a subset of objects and a link to the next page. AzureGraph provides an iterator-based API that lets you access each page individually, or collect them all into a single object.
+
+To create a new pager object, call the \code{get_list_pager()} method with the following arguments:
+\itemize{
+\item \code{lst}: A list containing the first page of results, generally from a call to the \code{do_operation()} method.
+\item \verb{next_link_name,value_name}: The names of the components of \code{first_page} containing the link to the next page, and the set of values for the page respectively. The default values are \verb{@odata.nextLink} and \code{value}.
+\item \code{generate_objects}: Whether the iterator should return a list containing the parsed JSON for the page values, or convert it into a list of R6 objects.
+\item \code{type_filter}: Any extra arguments required to initialise the returned objects. Only used if \code{generate_objects} is TRUE.
+\item \code{...}: Any extra arguments required to initialise the returned objects. Only used if \code{generate_objects} is TRUE.
+}
+
+This returns an object of class \link{ms_graph_pager}, which is an \emph{iterator} for the set of paged results. Each call to the object's \code{value} active binding yields the next page. When all pages have been returned, \code{value} contains NULL.
+
+The format of the returned values can take one of 3 forms, based on the initial format of the first page and the \code{generate_objects} argument.
+
+If the first page of results is a data frame (each item has been converted into a row), then the pager will return results as data frames. In this case, the \code{output} field is automatically set to "data.frame" and the \code{generate_objects} initialization argument is ignored. Usually this will be the case when the results are meant to represent external data, eg items in a SharePoint list.
+
+If the first page of results is a list, the \code{generate_objects} argument sets whether to convert the items in each page into R6 objects defined by the AzureGraph class framework. If \code{generate_objects} is TRUE, the \code{output} field is set to "object", and if \code{generate_objects} is FALSE, the \code{output} field is set to "list".
+
+You can also call the \code{extract_list_values()} function to get all or some of the values from a pager, without having to manually combine the pages together.
+}
+
+\section{Deprecated methods}{
+
+The following methods are private and \strong{deprecated}, and form the older AzureGraph API for accessing paged results. They will eventually be removed.
+\itemize{
+\item \code{get_paged_list(lst, next_link_name, value_name, simplify, n)}: This method reconstructs the list, given the first page.
+\item \code{init_list_objects(lst, type_filter, default_generator, ...)}: \code{get_paged_list} returns a raw list, the result of parsing the JSON response from the Graph host. This method converts the list into actual R6 objects.
+}
+}
+
 \seealso{
-\link{ms_graph}, \link{az_object}
+\link{ms_graph}, \link{az_object}, \link{ms_graph_pager}, \link{extract_list_values}
 
 \href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
 \href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0}{REST API reference}

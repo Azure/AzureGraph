@@ -14,8 +14,6 @@
 #' - `update(...)`: Update the device information in Azure Active Directory.
 #' - `do_operation(...)`: Carry out an arbitrary operation on the device.
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
-#' - `list_group_memberships()`: Return the IDs of all groups this device is a member of.
-#' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this device is a member of.
 #'
 #' @section Initialization:
 #' Create objects of this class via the `list_registered_devices()` and `list_owned_devices()` methods of the `az_user` class.

@@ -1,0 +1,118 @@
+---
+title: "Batching and paging"
+author: Hong Ooi
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Batching and Paging}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{utf8}
+---
+
+This vignette describes a couple of special interfaces that are available in Microsoft Graph, and how to use them in AzureGraph.
+
+## Batching
+
+The batch API allows you to combine multiple requests into a single batch call, potentially resulting in significant performance improvements. If all the requests are independent, they can be executed in parallel, so that they only take the same time as a single request. If the requests depend on each other, they must be executed serially, but even in this case you benefit by not having to make multiple HTTP requests with the associated network overhead.
+
+For example, let's say you want to get the object information for all the Azure Active Directory groups, directory roles and admin units you're a member of. The `az_object$list_object_memberships()` method returns the IDs for these objects, but to get the remaining object properties, you have to call the `directoryObjects` API endpoint for each individual ID. Rather than making separate calls for every ID, let's combine them into a single batch request.
+
+```r
+gr <- get_graph_login()
+me <- gr$get_user()
+
+# get the AAD object IDs
+obj_ids <- me$list_object_memberships(security_only=FALSE)
+```
+
+AzureGraph represents a single request with the `graph_request` R6 class. To create a new request object, call `graph_request$new()` with the following arguments:
+
+- `op`: The operation to carry out, eg `/me/drives`.
+- `body`: The body of the HTTPS request, if it is a PUT, POST or PATCH.
+- `options`: A list containing the query parameters for the URL, for example OData parameters.
+- `headers`: Any optional HTTP headers for the request.
+- `encode`: If a request body is present, how it should be encoded when sending it to the endpoint. The default is `json`, meaning it will be sent as JSON text; an alternative is `raw`, for binary data.
+- `http_verb`: One of "GET" (the default), "DELETE", "PUT", "POST", "HEAD", or "PATCH".
+
+For this example, only `op` is required.
+
+```r
+obj_reqs <- lapply(obj_ids, function(id)
+{
+    op <- file.path("directoryObjects", id)
+    graph_request$new(op)
+})
+```
+
+To make a request to the batch endpoint, use the `call_batch_endpoint()` function, or the `ms_graph$call_batch_endpoint()` method. This takes as arguments a list of individual requests, as well as an optional named vector of dependencies. The result of the call is a list of the responses from the requests; each response will have components named `id` and `status`, and usually `body` as well.
+
+In this case, there are no dependencies between the individual requests, so the code is very simple. Simply use the `call_batch_endpoint()` method with the request list; then run the `find_class_generator()` function to get the appropriate class generator for each list of object properties, and instantiate a new object.
+
+```r
+objs <- gr$call_batch_endpoint(obj_reqs)
+lapply(objs, function(obj)
+{
+    cls <- find_class_generator(obj)
+    cls$new(gr$token, gr$tenant, obj$body)
+})
+```
+
+## Paging
+
+Some Microsoft Graph calls return multiple results. In AzureGraph, these calls are generally those represented by methods starting with `list_*`, eg the `list_object_memberships` method used previously. Graph handles result sets by breaking them into _pages_, with each page containing several results.
+
+The built-in AzureGraph methods will generally handle paging automatically, without you needing to be aware of the details. If necessary however, you can also carry out a paged request and handle the results manually.
+
+The starting point for a paged request is a regular Graph call to an endpoint that returns a paged response. For example, let's take the `memberOf` endpoint, which returns the groups of which a user is a member. Calling this endpoint returns the first page of results, along with a link to the next page.
+
+```r
+res <- me$do_operation("memberOf")
+```
+
+Once you have the first page, you can use that to instantiate a new object of class `ms_graph_pager`. This is an _iterator_ object: each time you access data from it, you retrieve a new page of results. If you have used other programming languages such as Python, Java or C#, the concept of iterators should be familiar. If you're a user of the foreach package, you'll also have used iterators: foreach depends on the iterators package, which implements the same concept using S3 classes.
+
+The easiest way to instantiate a new pager object is via the `get_list_pager()` method. Once instantiated, you access the `value` active binding to retrieve each page of results, starting from the first page.
+
+```r
+pager <- me$get_list_pager(res)
+pager$value
+# [[1]]
+# <Security group 'secgroup'>
+#   directory id: cd806a5f-9d19-426c-b34b-3a3ec662ecf2 
+#   description: test security group
+# ---
+#   Methods:
+#     delete, do_operation, get_list_pager, list_group_memberships,
+#     list_members, list_object_memberships, list_owners, sync_fields,
+#     update
+
+# [[2]]
+# <Azure Active Directory role 'Global Administrator'>
+#   directory id: df643f93-3d9d-497f-8f2e-9cfd4c275e41
+#   description: Can manage all aspects of Azure AD and Microsoft services that use Azure 
+# AD identities.
+# ---
+#   Methods:
+#     delete, do_operation, get_list_pager, list_group_memberships,
+#     list_members, list_object_memberships, sync_fields, update
+```
+Once there are no more pages, calling `value` returns an empty result.
+
+```r
+pager$value
+# list()
+```
+
+By default, as shown above, the pager object will create new AzureGraph R6 objects from the properties for each item in the results. You can customise the output in the following ways:
+
+- If the first page of results consists of a data frame, rather than a list of items, the pager will continue to output data frames. This is most useful when the results are meant to represent external, tabular data, eg items in a SharePoint list or files in a OneDrive folder. Some AzureGraph methods will automatically request data frame output; if you want this from a manual REST API call, specify `simplify=TRUE` in the `do_operation()` call.
+
+- You can suppress the conversion of the item properties into an R6 object by specifying `generate_objects=FALSE` in the `get_list_pager()` call. In this case, the pager will return raw lists.
+
+AzureGraph also provides the `extract_list_values()` function to perform the common task of getting all or some of the values from a paged result set. Rather than reading `pager$value` repeatedly until there is no data left, you can simply call:
+
+```r
+extract_list_values(pager)
+```
+
+To restrict the output to only the first N items, call `extract_list_values(pager, n=N)`. However, note that the result set from a paged query usually isn't ordered in any way, so the items you get will be arbitrary.
+

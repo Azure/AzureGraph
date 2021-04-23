@@ -28,13 +28,11 @@ Class representing an AAD user account.
 \item \code{update(...)}: Update the user information in Azure Active Directory.
 \item \code{do_operation(...)}: Carry out an arbitrary operation on the user account.
 \item \code{sync_fields()}: Synchronise the R object with the app data in Azure Active Directory.
-\item \code{list_group_memberships()}: Return the IDs of all groups this user is a member of.
-\item \code{list_object_memberships()}: Return the IDs of all groups, administrative units and directory roles this user is a member of.
-\item \code{list_direct_memberships(id_only=TRUE)}: List the groups and directory roles this user is a direct member of. Set \code{id_only=TRUE} to return only a vector of IDs (the default), or \code{id_only=FALSE} to return a list of group objects.
-\item \code{list_owned_objects(type=c("user", "group", "application", "servicePrincipal"))}: List directory objects (groups/apps/service principals) owned by this user. Specify the \code{type} argument to filter the result for specific object type(s).
-\item \code{list_created_objects(type=c("user", "group", "application", "servicePrincipal"))}: List directory objects (groups/apps/service principals) created by this user. Specify the \code{type} argument to filter the result for specific object type(s).
-\item \code{list_owned_devices()}: List the devices owned by this user.
-\item \code{list_registered_devices()}: List the devices registered by this user.
+\item \code{list_direct_memberships(n=Inf)}: List the groups and directory roles this user is a direct member of. \code{n} is the number of results to return; set this to NULL to return the \code{ms_graph_pager} iterator object for the result set.
+\item \code{list_owned_objects(type=c("user", "group", "application", "servicePrincipal"), n=Inf)}: List directory objects (groups/apps/service principals) owned by this user. Specify the \code{type} argument to filter the result for specific object type(s).
+\item \code{list_created_objects(type=c("user", "group", "application", "servicePrincipal"), n=Inf)}: List directory objects (groups/apps/service principals) created by this user. Specify the \code{type} argument to filter the result for specific object type(s).
+\item \code{list_owned_devices(n=Inf)}: List the devices owned by this user.
+\item \code{list_registered_devices(n=Inf)}: List the devices registered by this user.
 \item \code{reset_password(password=NULL, force_password_change=TRUE)}: Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
 }
 }
@@ -63,6 +61,13 @@ usr$list_owned_objects()
 
 # owned apps and service principals
 usr$list_owned_objects(type=c("application", "servicePrincipal"))
+
+# first 5 objects
+usr$list_owned_objects(n=5)
+
+# get the pager object
+pager <- usr$list_owned_objects(n=NULL)
+pager$value
 
 }
 }

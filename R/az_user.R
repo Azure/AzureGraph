@@ -14,13 +14,11 @@
 #' - `update(...)`: Update the user information in Azure Active Directory.
 #' - `do_operation(...)`: Carry out an arbitrary operation on the user account.
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
-#' - `list_group_memberships()`: Return the IDs of all groups this user is a member of.
-#' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this user is a member of.
-#' - `list_direct_memberships(id_only=TRUE)`: List the groups and directory roles this user is a direct member of. Set `id_only=TRUE` to return only a vector of IDs (the default), or `id_only=FALSE` to return a list of group objects.
-#' - `list_owned_objects(type=c("user", "group", "application", "servicePrincipal"))`: List directory objects (groups/apps/service principals) owned by this user. Specify the `type` argument to filter the result for specific object type(s).
-#' - `list_created_objects(type=c("user", "group", "application", "servicePrincipal"))`: List directory objects (groups/apps/service principals) created by this user. Specify the `type` argument to filter the result for specific object type(s).
-#' - `list_owned_devices()`: List the devices owned by this user.
-#' - `list_registered_devices()`: List the devices registered by this user.
+#' - `list_direct_memberships(n=Inf)`: List the groups and directory roles this user is a direct member of. `n` is the number of results to return; set this to NULL to return the `ms_graph_pager` iterator object for the result set.
+#' - `list_owned_objects(type=c("user", "group", "application", "servicePrincipal"), n=Inf)`: List directory objects (groups/apps/service principals) owned by this user. Specify the `type` argument to filter the result for specific object type(s).
+#' - `list_created_objects(type=c("user", "group", "application", "servicePrincipal"), n=Inf)`: List directory objects (groups/apps/service principals) created by this user. Specify the `type` argument to filter the result for specific object type(s).
+#' - `list_owned_devices(n=Inf)`: List the devices owned by this user.
+#' - `list_registered_devices(n=Inf)`: List the devices registered by this user.
 #' - `reset_password(password=NULL, force_password_change=TRUE)`: Resets a user password. By default the new password will be randomly generated, and must be changed at next login.
 #'
 #' @section Initialization:
@@ -51,6 +49,13 @@
 #'
 #' # owned apps and service principals
 #' usr$list_owned_objects(type=c("application", "servicePrincipal"))
+#'
+#' # first 5 objects
+#' usr$list_owned_objects(n=5)
+#'
+#' # get the pager object
+#' pager <- usr$list_owned_objects(n=NULL)
+#' pager$value
 #'
 #' }
 #' @format An R6 object of class `az_user`, inheriting from `az_object`.
@@ -88,31 +93,28 @@ public=list(
         password
     },
 
-    list_owned_objects=function(type=c("user", "group", "application", "servicePrincipal"))
+    list_owned_objects=function(type=c("user", "group", "application", "servicePrincipal"), n=Inf)
     {
-        res <- private$get_paged_list(self$do_operation("ownedObjects"))
-        private$init_list_objects(res, type)
+        pager <- self$get_list_pager(self$do_operation("ownedObjects"), type_filter=type)
+        extract_list_values(pager, n)
     },
 
-    list_created_objects=function(type=c("user", "group", "application", "servicePrincipal"))
+    list_created_objects=function(type=c("user", "group", "application", "servicePrincipal"), n=Inf)
     {
-        res <- private$get_paged_list(self$do_operation("createdObjects"))
-        private$init_list_objects(res, type)
+        pager <- self$get_list_pager(self$do_operation("createdObjects"), type_filter=type)
+        extract_list_values(pager, n)
     },
 
-    list_owned_devices=function()
+    list_owned_devices=function(n=Inf)
     {
-        res <- private$get_paged_list(self$do_operation("ownedDevices"))
-        private$init_list_objects(res, "device")
+        pager <- self$get_list_pager(self$do_operation("ownedDevices"))
+        extract_list_values(pager, n)
     },
 
-    list_direct_memberships=function(id_only=TRUE)
+    list_direct_memberships=function(n=Inf)
     {
-        res <- private$get_paged_list(self$do_operation("memberOf"))
-
-        if(id_only)
-            sapply(res, function(grp) grp$id)
-        else private$init_list_objects(res)
+        pager <- self$get_list_pager(self$do_operation("memberOf"))
+        extract_list_values(pager, n)
     },
 
     print=function(...)

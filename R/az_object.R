@@ -14,8 +14,8 @@
 #' - `update(...)`: Update the object information in Azure Active Directory.
 #' - `do_operation(...)`: Carry out an arbitrary operation on the object.
 #' - `sync_fields()`: Synchronise the R object with the data in Azure Active Directory.
-#' - `list_group_memberships()`: Return the IDs of all groups this object is a member of.
-#' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this object is a member of.
+#' - `list_group_memberships(security_only=FALSE, n=Inf)`: Return the IDs of all groups this object is a member of. If `security_only` is TRUE, only security group IDs are returned. `n` is the number of results to return; set this to NULL to return the `ms_graph_pager` iterator object for the result set.
+#' - `list_object_memberships(security_only=FALSE, n=Inf)`: Return the IDs of all groups, administrative units and directory roles this object is a member of.
 #'
 #' @section Initialization:
 #' Objects of this class should not be created directly. Instead, create an object of the appropriate subclass: [az_app], [az_service_principal], [az_user], [az_group].
@@ -32,20 +32,20 @@ az_object <- R6::R6Class("az_object", inherit=ms_object,
 
 public=list(
 
-    list_object_memberships=function()
+    list_object_memberships=function(security_only=FALSE, n=Inf)
     {
-        lst <- self$do_operation("getMemberObjects", body=list(securityEnabledOnly=TRUE),
-            encode="json", http_verb="POST")
-
-        unlist(private$get_paged_list(lst))
+        body <- list(securityEnabledOnly=security_only)
+        pager <- self$get_list_pager(self$do_operation("getMemberObjects", body=body, http_verb="POST"),
+            generate_objects=FALSE)
+        unlist(extract_list_values(pager, n))
     },
 
-    list_group_memberships=function()
+    list_group_memberships=function(security_only=FALSE, n=Inf)
     {
-        lst <- self$do_operation("getMemberGroups", body=list(securityEnabledOnly=TRUE),
-            encode="json", http_verb="POST")
-
-        unlist(private$get_paged_list(lst))
+        body <- list(securityEnabledOnly=security_only)
+        pager <- self$get_list_pager(self$do_operation("getMemberGroups", body=body, http_verb="POST"),
+            generate_objects=FALSE)
+        unlist(extract_list_values(pager, n))
     },
 
     print=function(...)

@@ -14,10 +14,8 @@
 #' - `update(...)`: Update the group information in Azure Active Directory.
 #' - `do_operation(...)`: Carry out an arbitrary operation on the group.
 #' - `sync_fields()`: Synchronise the R object with the app data in Azure Active Directory.
-#' - `list_group_memberships()`: Return the IDs of all groups this group is a member of.
-#' - `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this group is a member of.
-#' - `list_members(type=c("user", "group", "application", "servicePrincipal"))`: Return a list of all members of this group. Specify the `type` argument to filter the result for specific object type(s).
-#' - `list_owners(type=c("user", "group", "application", "servicePrincipal"))`: Return a list of all owners of this group. Specify the `type` argument to filter the result for specific object type(s).
+#' - `list_members(type=c("user", "group", "application", "servicePrincipal"), n=Inf)`: Return a list of all members of this group. Specify the `type` argument to filter the result for specific object type(s). `n` is the number of results to return; set this to NULL to return the `ms_graph_pager` iterator object for the result set.
+#' - `list_owners(type=c("user", "group", "application", "servicePrincipal"), n=Inf)`: Return a list of all owners of this group. Specify the `type` argument to filter the result for specific object type(s).
 #'
 #' @section Initialization:
 #' Creating new objects of this class should be done via the `create_group` and `get_group` methods of the [ms_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual group.
@@ -34,11 +32,18 @@
 #' gr <- get_graph_login()
 #' usr <- gr$get_user("myname@aadtenant.com")
 #'
-#' grps <- usr$list_direct_memberships()
+#' grps <- usr$list_group_memberships()
 #' grp <- gr$get_group(grps[1])
 #'
 #' grp$list_members()
 #' grp$list_owners()
+#'
+#' # capping the number of results
+#' grp$list_members(n=10)
+#'
+#' # get the pager object for a listing method
+#' pager <- grp$list_members(n=NULL)
+#' pager$value
 #'
 #' }
 #' @format An R6 object of class `az_group`, inheriting from `az_object`.
@@ -54,16 +59,16 @@ public=list(
         super$initialize(token, tenant, properties)
     },
 
-    list_members=function(type=c("user", "group", "application", "servicePrincipal"))
+    list_members=function(type=c("user", "group", "application", "servicePrincipal"), n=Inf)
     {
-        res <- private$get_paged_list(self$do_operation("members"))
-        private$init_list_objects(res, type)
+        pager <- self$get_list_pager(self$do_operation("members"), type_filter=type)
+        extract_list_values(pager, n)
     },
 
-    list_owners=function(type=c("user", "group", "application", "servicePrincipal"))
+    list_owners=function(type=c("user", "group", "application", "servicePrincipal"), n=Inf)
     {
-        res <- private$get_paged_list(self$do_operation("owners"))
-        private$init_list_objects(res, type)
+        pager <- self$get_list_pager(self$do_operation("owners"), type_filter=type)
+        extract_list_values(pager, n)
     },
 
     print=function(...)
