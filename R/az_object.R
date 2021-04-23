@@ -35,17 +35,17 @@ public=list(
     list_object_memberships=function(security_only=FALSE, n=Inf)
     {
         body <- list(securityEnabledOnly=security_only)
-        pager <- self$get_list_pager(self$do_operation("getMemberObjects", body=body, http_verb="POST", simplify=TRUE),
+        pager <- self$get_list_pager(self$do_operation("getMemberObjects", body=body, http_verb="POST"),
             generate_objects=FALSE)
-        extract_list_values(pager, n)
+        unlist(extract_list_values(pager, n))
     },
 
     list_group_memberships=function(security_only=FALSE, n=Inf)
     {
         body <- list(securityEnabledOnly=security_only)
-        pager <- self$get_list_pager(self$do_operation("getMemberGroups", body=body, http_verb="POST", simplify=TRUE),
+        pager <- self$get_list_pager(self$do_operation("getMemberGroups", body=body, http_verb="POST"),
             generate_objects=FALSE)
-        extract_list_values(pager, n)
+        unlist(extract_list_values(pager, n))
     },
 
     print=function(...)
