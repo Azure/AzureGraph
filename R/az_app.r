@@ -157,9 +157,9 @@ public=list(
         self$update(keyCredentials=creds[-idx])
     },
 
-    list_owners=function(type=c("user", "group", "application", "servicePrincipal"), n=Inf)
+    list_owners=function(type=c("user", "group", "application", "servicePrincipal"), filter=NULL, n=Inf)
     {
-        pager <- self$get_list_pager(self$do_operation("owners"), type_filter=type)
+        pager <- self$get_list_pager(self$do_operation("owners", options=list(`$filter`=filter)), type_filter=type)
         extract_list_values(pager, n)
     },
 

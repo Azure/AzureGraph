@@ -59,15 +59,15 @@ public=list(
         super$initialize(token, tenant, properties)
     },
 
-    list_members=function(type=c("user", "group", "application", "servicePrincipal"), n=Inf)
+    list_members=function(type=c("user", "group", "application", "servicePrincipal"), filter=NULL, n=Inf)
     {
-        pager <- self$get_list_pager(self$do_operation("members"), type_filter=type)
+        pager <- self$get_list_pager(self$do_operation("members", options=list(`$filter`=filter)), type_filter=type)
         extract_list_values(pager, n)
     },
 
-    list_owners=function(type=c("user", "group", "application", "servicePrincipal"), n=Inf)
+    list_owners=function(type=c("user", "group", "application", "servicePrincipal"), filter=NULL, n=Inf)
     {
-        pager <- self$get_list_pager(self$do_operation("owners"), type_filter=type)
+        pager <- self$get_list_pager(self$do_operation("owners", options=list(`$filter`=filter)), type_filter=type)
         extract_list_values(pager, n)
     },
 

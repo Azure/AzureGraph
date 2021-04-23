@@ -93,27 +93,29 @@ public=list(
         password
     },
 
-    list_owned_objects=function(type=c("user", "group", "application", "servicePrincipal"), n=Inf)
+    list_owned_objects=function(type=c("user", "group", "application", "servicePrincipal"), filter=NULL, n=Inf)
     {
-        pager <- self$get_list_pager(self$do_operation("ownedObjects"), type_filter=type)
+        pager <- self$get_list_pager(self$do_operation("ownedObjects", options=list(`$filter`=filter)),
+            type_filter=type)
         extract_list_values(pager, n)
     },
 
-    list_created_objects=function(type=c("user", "group", "application", "servicePrincipal"), n=Inf)
+    list_created_objects=function(type=c("user", "group", "application", "servicePrincipal"), filter=NULL, n=Inf)
     {
-        pager <- self$get_list_pager(self$do_operation("createdObjects"), type_filter=type)
+        pager <- self$get_list_pager(self$do_operation("createdObjects", options=list(`$filter`=filter)),
+            type_filter=type)
         extract_list_values(pager, n)
     },
 
-    list_owned_devices=function(n=Inf)
+    list_owned_devices=function(filter=NULL, n=Inf)
     {
-        pager <- self$get_list_pager(self$do_operation("ownedDevices"))
+        pager <- self$get_list_pager(self$do_operation("ownedDevices", options=list(`$filter`=filter)))
         extract_list_values(pager, n)
     },
 
-    list_direct_memberships=function(n=Inf)
+    list_direct_memberships=function(filter=NULL, n=Inf)
     {
-        pager <- self$get_list_pager(self$do_operation("memberOf"))
+        pager <- self$get_list_pager(self$do_operation("memberOf", options=list(`$filter`=filter)))
         extract_list_values(pager, n)
     },
 

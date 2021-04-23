@@ -38,9 +38,9 @@ public=list(
         super$initialize(token, tenant, properties)
     },
 
-    list_members=function(n=Inf)
+    list_members=function(filter=NULL, n=Inf)
     {
-        pager <- self$get_list_pager(self$do_operation("members"))
+        pager <- self$get_list_pager(self$do_operation("members", options=list(`$filter`=filter)))
         extract_list_values(pager, n)
     },
 
