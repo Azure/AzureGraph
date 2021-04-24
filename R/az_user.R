@@ -25,7 +25,9 @@
 #' Creating new objects of this class should be done via the `create_user` and `get_user` methods of the [ms_graph] and [az_app] classes. Calling the `new()` method for this class only constructs the R object; it does not call the Microsoft Graph API to create the actual user account.
 #'
 #' @section List methods:
-#' All `list_*` methods have `filter` and `n` arguments to limit the number of results. The former should be an OData expression as a string to filter the result set on. The latter should be a number setting the maximum number of (filtered) results to return. The default values are `filter=NULL` and `n=Inf`. If `n=NULL`, the `ms_graph_pager` iterator object is returned instead to allow manual iteration over the results.
+#' All `list_*` methods have `filter` and `n` arguments to limit the number of results. The former should be an [OData expression](https://docs.microsoft.com/en-us/graph/query-parameters#filter-parameter) as a string to filter the result set on. The latter should be a number setting the maximum number of (filtered) results to return. The default values are `filter=NULL` and `n=Inf`. If `n=NULL`, the `ms_graph_pager` iterator object is returned instead to allow manual iteration over the results.
+#'
+#' Support in the underlying Graph API for OData queries is patchy. Not all endpoints that return lists of objects support filtering, and if they do, they may not allow all of the defined operators. If your filtering expression results in an error, you can carry out the operation without filtering and then filter the results on the client side.
 #' @seealso
 #' [ms_graph], [az_app], [az_group], [az_device], [az_object]
 #'
@@ -97,27 +99,33 @@ public=list(
 
     list_owned_objects=function(type=c("user", "group", "application", "servicePrincipal"), filter=NULL, n=Inf)
     {
-        pager <- self$get_list_pager(self$do_operation("ownedObjects", options=list(`$filter`=filter)),
-            type_filter=type)
+        opts <- list(`$filter`=filter, `$count`=if(!is.null(filter)) "true")
+        hdrs <- if(!is.null(filter)) httr::add_headers(consistencyLevel="eventual")
+        pager <- self$get_list_pager(self$do_operation("ownedObjects", options=opts, hdrs), type_filter=type)
         extract_list_values(pager, n)
     },
 
     list_created_objects=function(type=c("user", "group", "application", "servicePrincipal"), filter=NULL, n=Inf)
     {
-        pager <- self$get_list_pager(self$do_operation("createdObjects", options=list(`$filter`=filter)),
-            type_filter=type)
+        opts <- list(`$filter`=filter, `$count`=if(!is.null(filter)) "true")
+        hdrs <- if(!is.null(filter)) httr::add_headers(consistencyLevel="eventual")
+        pager <- self$get_list_pager(self$do_operation("createdObjects", options=opts, hdrs), type_filter=type)
         extract_list_values(pager, n)
     },
 
     list_owned_devices=function(filter=NULL, n=Inf)
     {
-        pager <- self$get_list_pager(self$do_operation("ownedDevices", options=list(`$filter`=filter)))
+        opts <- list(`$filter`=filter, `$count`=if(!is.null(filter)) "true")
+        hdrs <- if(!is.null(filter)) httr::add_headers(consistencyLevel="eventual")
+        pager <- self$get_list_pager(self$do_operation("ownedDevices", options=opts, hdrs))
         extract_list_values(pager, n)
     },
 
     list_direct_memberships=function(filter=NULL, n=Inf)
     {
-        pager <- self$get_list_pager(self$do_operation("memberOf", options=list(`$filter`=filter)))
+        opts <- list(`$filter`=filter, `$count`=if(!is.null(filter)) "true")
+        hdrs <- if(!is.null(filter)) httr::add_headers(consistencyLevel="eventual")
+        pager <- self$get_list_pager(self$do_operation("memberOf", options=opts, hdrs))
         extract_list_values(pager, n)
     },
 
