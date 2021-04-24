@@ -28,13 +28,20 @@ Class representing a role in Azure Active Directory.
 \item \code{update(...)}: Update the item's properties in Microsoft Graph.
 \item \code{do_operation(...)}: Carry out an arbitrary operation on the item.
 \item \code{sync_fields()}: Synchronise the R object with the item metadata in Microsoft Graph.
-\item \code{list_members(n=Inf)}: Return a list of all members of this group. \code{n} is the number of results to return; set this to NULL to return the \code{ms_graph_pager} iterator object for the result set.
+\item \code{list_members(filter=NULL, n=Inf)}: Return a list of all members of this group.
 }
 }
 
 \section{Initialization}{
 
 Currently support for directory roles is limited. Objects of this class should not be initialized directly.
+}
+
+\section{List methods}{
+
+All \verb{list_*} methods have \code{filter} and \code{n} arguments to limit the number of results. The former should be an \href{https://docs.microsoft.com/en-us/graph/query-parameters#filter-parameter}{OData expression} as a string to filter the result set on. The latter should be a number setting the maximum number of (filtered) results to return. The default values are \code{filter=NULL} and \code{n=Inf}. If \code{n=NULL}, the \code{ms_graph_pager} iterator object is returned instead to allow manual iteration over the results.
+
+Support in the underlying Graph API for OData queries is patchy. Not all endpoints that return lists of objects support filtering, and if they do, they may not allow all of the defined operators. If your filtering expression results in an error, you can carry out the operation without filtering and then filter the results on the client side.
 }
 
 \seealso{

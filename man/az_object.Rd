@@ -28,14 +28,21 @@ Base class representing an Azure Active Directory object in Microsoft Graph.
 \item \code{update(...)}: Update the object information in Azure Active Directory.
 \item \code{do_operation(...)}: Carry out an arbitrary operation on the object.
 \item \code{sync_fields()}: Synchronise the R object with the data in Azure Active Directory.
-\item \code{list_group_memberships(security_only=FALSE, n=Inf)}: Return the IDs of all groups this object is a member of. If \code{security_only} is TRUE, only security group IDs are returned. \code{n} is the number of results to return; set this to NULL to return the \code{ms_graph_pager} iterator object for the result set.
-\item \code{list_object_memberships(security_only=FALSE, n=Inf)}: Return the IDs of all groups, administrative units and directory roles this object is a member of.
+\item \code{list_group_memberships(security_only=FALSE, filter=NULL, n=Inf)}: Return the IDs of all groups this object is a member of. If \code{security_only} is TRUE, only security group IDs are returned.
+\item \code{list_object_memberships(security_only=FALSE, filter=NULL, n=Inf)}: Return the IDs of all groups, administrative units and directory roles this object is a member of.
 }
 }
 
 \section{Initialization}{
 
 Objects of this class should not be created directly. Instead, create an object of the appropriate subclass: \link{az_app}, \link{az_service_principal}, \link{az_user}, \link{az_group}.
+}
+
+\section{List methods}{
+
+All \verb{list_*} methods have \code{filter} and \code{n} arguments to limit the number of results. The former should be an \href{https://docs.microsoft.com/en-us/graph/query-parameters#filter-parameter}{OData expression} as a string to filter the result set on. The latter should be a number setting the maximum number of (filtered) results to return. The default values are \code{filter=NULL} and \code{n=Inf}. If \code{n=NULL}, the \code{ms_graph_pager} iterator object is returned instead to allow manual iteration over the results.
+
+Support in the underlying Graph API for OData queries is patchy. Not all endpoints that return lists of objects support filtering, and if they do, they may not allow all of the defined operators. If your filtering expression results in an error, you can carry out the operation without filtering and then filter the results on the client side.
 }
 
 \seealso{
