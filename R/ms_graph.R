@@ -18,9 +18,9 @@
 #' - `list_users(filter=NULL, n=Inf)`: Lists the users in the current tenant.
 #' - `delete_user(user_id, email, name, confirm=TRUE)`: Deletes a user account.
 #' - `create_group(name, email, ...)`: Creates a new group. Note that only security groups can be created via the Microsoft Graph API.
-#' - `get_group(group_id)`: Retrieves an existing group.
+#' - `get_group(group_id, name)`: Retrieves an existing group.
 #' - `list_groups(filter=NULL, n=Inf)`: Lists the groups in the current tenant.
-#' - `delete_group(group_id, confirm=TRUE)`: Deletes a group.
+#' - `delete_group(group_id, name, confirm=TRUE)`: Deletes a group.
 #' - `call_graph_endpoint(op="", ...)`: Calls the Microsoft Graph API using this object's token and tenant as authentication arguments. See [call_graph_endpoint].
 #' - `call_batch_endpoint(requests=list(), ...)`: Calls the batch endpoint with a list of individual requests. See [call_batch_endpoint].
 #' - `get_aad_object(id)`: Retrieves an arbitrary Azure Active Directory object by ID.
@@ -273,21 +273,21 @@ public=list(
         )
     },
 
-    get_user=function(user_id=NULL, email=NULL, name=NULL)
+    get_user=function(user_id=NULL, name=NULL, email=NULL)
     {
         has_id <- !is.null(user_id)
-        has_email <- !is.null(email)
         has_name <- !is.null(name)
+        has_email <- !is.null(email)
         if(has_id + has_email + has_name > 1)
             stop("Supply one of user ID, email or display name", call.=FALSE)
 
         if(has_email || has_name)
         {
             filter <- if(has_email) sprintf("mail eq '%s'", email) else sprintf("displayName eq '%s'", name)
-            res <- self$call_graph_endpoint("users", options=list(`$filter`=filter))
-            if(length(res$value) != 1)
+            users <- self$list_users(filter=filter)
+            if(length(users) != 1)
                 stop("Invalid user email or name", call.=FALSE)
-            return(az_user$new(self$token, self$tenant, res$value[[1]]))
+            return(users[[1]])
         }
 
         op <- if(!has_id)
@@ -296,7 +296,7 @@ public=list(
         az_user$new(self$token, self$tenant, self$call_graph_endpoint(op))
     },
 
-    delete_user=function(user_id=NULL, email=NULL, name=NULL, confirm=TRUE)
+    delete_user=function(user_id=NULL, name=NULL, email=NULL, confirm=TRUE)
     {
         self$get_user(user_id, email, name)$delete(confirm=confirm)
     },
@@ -325,15 +325,29 @@ public=list(
         )
     },
 
-    get_group=function(group_id)
+    get_group=function(group_id=NULL, name=NULL)
     {
+        has_id <- !is.null(group_id)
+        has_name <- !is.null(name)
+        if(has_id + has_name != 1)
+            stop("Supply one of group ID or display name", call.=FALSE)
+
+        if(has_name)
+        {
+            filter <- sprintf("displayName eq '%s'", name)
+            grps <- self$list_groups(filter=filter)
+            if(length(grps) != 1)
+                stop("Invalid group name", call.=FALSE)
+            return(grps[[1]])
+        }
+
         op <- file.path("groups", group_id)
         az_group$new(self$token, self$tenant, self$call_graph_endpoint(op))
     },
 
-    delete_group=function(group_id, confirm=TRUE)
+    delete_group=function(group_id=NULL, name=NULL, confirm=TRUE)
     {
-        self$get_group(group_id)$delete(confirm=confirm)
+        self$get_group(group_id, name)$delete(confirm=confirm)
     },
 
     list_groups=function(filter=NULL, n=Inf)
