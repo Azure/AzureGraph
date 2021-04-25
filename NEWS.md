@@ -11,6 +11,7 @@
 - All `list_*` R6 methods now have `filter` and `n` arguments to filter the result set and cap the number of results. The default values are `filter=NULL` and `n=Inf`. If `n=NULL`, the `ms_graph_pager` iterator object is returned instead to allow manual iteration over the results.
 - Export the `find_class_generator()` function.
 - New "Batching and paging" vignette describing these APIs.
+- Add `list_users()`, `list_groups()`, `list_apps()` and `list_service_principals()` methods to the main `ms_graph` client class.
 
 # AzureGraph 1.2.2
 
