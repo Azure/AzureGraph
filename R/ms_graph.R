@@ -183,6 +183,14 @@ public=list(
         self$get_app(app_id, object_id)$delete(confirm=confirm)
     },
 
+    list_apps=function(filter=NULL, n=Inf)
+    {
+        opts <- list(`$filter`=filter, `$count`=if(!is.null(filter)) "true")
+        hdrs <- if(!is.null(filter)) httr::add_headers(consistencyLevel="eventual")
+        pager <- self$get_list_pager(self$do_operation("applications", options=opts, hdrs))
+        extract_list_values(pager, n)
+    },
+
     create_service_principal=function(app_id, ...)
     {
         self$get_app(app_id)$create_service_principal(...)
@@ -206,6 +214,14 @@ public=list(
     delete_service_principal=function(app_id=NULL, object_id=NULL, confirm=TRUE)
     {
         self$get_service_principal(app_id, object_id)$delete(confirm=confirm)
+    },
+
+    list_service_principals=function(filter=NULL, n=Inf)
+    {
+        opts <- list(`$filter`=filter, `$count`=if(!is.null(filter)) "true")
+        hdrs <- if(!is.null(filter)) httr::add_headers(consistencyLevel="eventual")
+        pager <- self$get_list_pager(self$do_operation("servicePrincipals", options=opts, hdrs))
+        extract_list_values(pager, n)
     },
 
     create_user=function(name, email, enabled=TRUE, ..., password=NULL, force_password_change=TRUE)
@@ -267,6 +283,14 @@ public=list(
         self$get_user(user_id, email, name)$delete(confirm=confirm)
     },
 
+    list_users=function(filter=NULL, n=Inf)
+    {
+        opts <- list(`$filter`=filter, `$count`=if(!is.null(filter)) "true")
+        hdrs <- if(!is.null(filter)) httr::add_headers(consistencyLevel="eventual")
+        pager <- self$get_list_pager(self$do_operation("users", options=opts, hdrs))
+        extract_list_values(pager, n)
+    },
+
     create_group=function(name, email, ...)
     {
         properties <- list(
@@ -292,6 +316,14 @@ public=list(
     delete_group=function(group_id, confirm=TRUE)
     {
         self$get_group(group_id)$delete(confirm=confirm)
+    },
+
+    list_groups=function(filter=NULL, n=Inf)
+    {
+        opts <- list(`$filter`=filter, `$count`=if(!is.null(filter)) "true")
+        hdrs <- if(!is.null(filter)) httr::add_headers(consistencyLevel="eventual")
+        pager <- self$get_list_pager(self$do_operation("groups", options=opts, hdrs))
+        extract_list_values(pager, n)
     },
 
     call_graph_endpoint=function(op="", ...)
