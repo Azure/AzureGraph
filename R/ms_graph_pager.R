@@ -150,7 +150,7 @@ private=list(
 #' This is a convenience function to perform the common task of extracting all or some of the items from a paged response.
 #'
 #' @return
-#' If `n` is `Inf` or a number, the items from the paged query results. The format of the returned value depends on the pager settings. This will either be a raw list containing the properties for each of the items; a list of R6 objects; or a data frame. If the pager is empty, the returned value will be NULL.
+#' If `n` is `Inf` or a number, the items from the paged query results. The format of the returned value depends on the pager settings. This will either be a nested list containing the properties for each of the items; a list of R6 objects; or a data frame. If the pager is empty, an error is thrown.
 #'
 #' If `n` is NULL, the pager itself is returned.
 #'
@@ -164,8 +164,8 @@ private=list(
 #' pager <- ms_graph_pager$new(token, firstpage)
 #' extract_list_values(pager)
 #'
-#' # trying to extract values a 2nd time returns NULL
-#' is.null(extract_list_values(pager))
+#' # trying to extract values a 2nd time will fail
+#' try(extract_list_values(pager))
 #'
 #' }
 #' @export

@@ -12,7 +12,7 @@ extract_list_values(pager, n = Inf)
 \item{n}{The number of items from the list to return. Note this is \emph{not} the number of \emph{pages} (each page will usually contain multiple items). The default value of \code{Inf} extracts all the values from the list, leaving the pager empty. If this is NULL, the pager itself is returned.}
 }
 \value{
-If \code{n} is \code{Inf} or a number, the items from the paged query results. The format of the returned value depends on the pager settings. This will either be a raw list containing the properties for each of the items; a list of R6 objects; or a data frame. If the pager is empty, the returned value will be NULL.
+If \code{n} is \code{Inf} or a number, the items from the paged query results. The format of the returned value depends on the pager settings. This will either be a nested list containing the properties for each of the items; a list of R6 objects; or a data frame. If the pager is empty, an error is thrown.
 
 If \code{n} is NULL, the pager itself is returned.
 }
@@ -29,8 +29,8 @@ firstpage <- call_graph_endpoint(token, "me/memberOf")
 pager <- ms_graph_pager$new(token, firstpage)
 extract_list_values(pager)
 
-# trying to extract values a 2nd time returns NULL
-is.null(extract_list_values(pager))
+# trying to extract values a 2nd time will fail
+try(extract_list_values(pager))
 
 }
 }

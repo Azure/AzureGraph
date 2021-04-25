@@ -106,6 +106,7 @@ test_that("extract_list_values works",
     out1 <- extract_list_values(p1)
 
     expect_identical(out, out1)
+    expect_error(extract_list_values(p1))
 })
 
 
@@ -120,6 +121,7 @@ test_that("extract_list_values works for data frame",
     out1 <- extract_list_values(p1)
 
     expect_identical(out, out1)
+    expect_error(extract_list_values(p1))
 })
 
 
@@ -134,4 +136,5 @@ test_that("extract_list_values works for objects",
     out1 <- extract_list_values(p1)
 
     expect_equal(out, out1)
+    expect_error(extract_list_values(p1))
 })
