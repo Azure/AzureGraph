@@ -29,14 +29,18 @@ gr <- create_graph_login()
 
 ## Users and groups
 
-The basic classes for interacting with user accounts and groups are `az_user` and `az_group`. To instantiate these, call the `get_user` and `get_group` methods of the login client object.
+The basic classes for interacting with user accounts and groups are `az_user` and `az_group`. To instantiate these, call the `get_user` and `get_group` methods of the login client object. You can also list the users and groups with the `list_users` and `list_groups` methods.
 
 ```r
 # account of the logged-in user (if you authenticated via the default method)
 me <- gr$get_user()
 
-# alternative: supply an email address or GUID
-me2 <- gr$get_user("hongooi@microsoft.com")
+# alternative: supply a GUID, name or email address
+me2 <- gr$get_user(email="hongooi@microsoft.com")
+
+# lists of users and groups (may be large!)
+gr$list_users()
+gr$list_groups()
 
 # IDs of my groups
 head(me$list_group_memberships())
@@ -77,6 +81,15 @@ names(grp$properties)
 #> [10] "mail"                          "mailEnabled"                   "mailNickname"
 #> [13] "membershipRule"                "membershipRuleProcessingState" "onPremisesLastSyncDateTime"
 #> ...
+```
+
+You can apply a filter to the `list_users` and `list_groups` methods, to cut down on the number of results. The filter should be a supported [OData expression](https://docs.microsoft.com/en-us/graph/query-parameters#filter-parameter). For example, this will filter the list of users down to your own account:
+
+```r
+# get my own name
+my_name <- me$properties$displayName
+
+gr$list_users(filter=sprintf("displayName eq '%s'", my_name))
 ```
 
 You can also view any directory objects that you own and/or created, via the `list_owned_objects` and `list_registered_objects` methods of the user object. These accept a `type` argument to filter the list of objects by the specified type(s).
@@ -176,20 +189,27 @@ newapp$remove_certificate(cert_id)
 
 ## Common methods
 
-The classes described above inherit from a base `az_object` class, which represents an arbitrary object in Azure Active Directory. This has the following methods:
+The classes described above inherit from the `az_object` class, which represents an arbitrary object in Azure Active Directory. This has the following methods:
+
+- `list_group_memberships()`: Return the IDs of all groups this object is a member of.
+- `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this object is a member of.
+
+In turn, the `az_object` class inherits from `ms_object`, which is a base class to represent any object (not just an AAD object) in Microsoft Graph. This has the following methods:
 
 - `delete(confirm=TRUE)`: Delete an object. By default, ask for confirmation first.
 - `update(...)`: Update the object information in Azure Active Directory (mentioned above when updating an app).
 - `do_operation(...)`: Carry out an arbitrary operation on the object.
 - `sync_fields()`: Synchronise the R object with the data in Azure Active Directory.
-- `list_group_memberships()`: Return the IDs of all groups this object is a member of.
-- `list_object_memberships()`: Return the IDs of all groups, administrative units and directory roles this object is 
+- `get_list_pager()`: Returns a pager object for iterating through the items in a list of results. See the "Batching and paging" vignette for more information on this topic.
 
-For efficiency the `list_group_memberships` and `list_object_memberships` methods return only the IDs of the groups/objects, since these lists can be rather long.
+In particular, the `do_operation` method allows you to call the Graph REST endpoint directly. This means that even if AzureGraph doesn't support the operation you want to perform, you can do it manually. For example, if you want to retrieve information on your OneDrive:
 
 ```r
 # get my OneDrive
 me$do_operation("drive")
+
+# list the files in my OneDrive root folder
+me$do_operation("drive/root/children")
 ```
 
 ## See also
