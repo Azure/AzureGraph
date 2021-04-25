@@ -23,6 +23,17 @@ test_that("User/group read functionality works",
     me2 <- gr$get_user(user)
     expect_equal(me2$properties$userPrincipalName, user)
 
+    email <- me2$properties$mail
+    me3 <- gr$get_user(email=email)
+    expect_equal(me3$properties$userPrincipalName, user)
+
+    name <- me2$properties$displayName
+    me4 <- gr$get_user(name=name)
+    expect_equal(me4$properties$userPrincipalName, user)
+
+    users <- gr$list_users()
+    expect_true(is.list(users) && all(sapply(users, is_user)))
+
     objs <- me$list_object_memberships()
     expect_true(is.character(objs))
 
@@ -35,6 +46,9 @@ test_that("User/group read functionality works",
 
     grp <- gr$get_group(grps1[1])
     expect_true(is_group(grp) && !is.null(grp$properties$id))
+
+    grps <- gr$list_groups()
+    expect_true(is.list(grps) && all(sapply(grps, is_group)))
 
     owned <- me$list_owned_objects()
     expect_true(is.list(owned) && all(sapply(owned, inherits, "az_object")))

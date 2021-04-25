@@ -30,6 +30,12 @@ library(AzureGraph)
 # - on subsequent logins, call get_graph_login()
 gr <- create_graph_login()
 
+# list all users in this tenant
+gr$list_users()
+
+# list all app registrations
+gr$list_apps()
+
 # my user information
 me <- gr$get_user("me")
 
@@ -39,7 +45,7 @@ head(me$list_group_memberships())
 # my registered apps
 me$list_owned_objects(type="application")
 
-# create an app
+# register a new app
 # by default, this will have a randomly generated strong password with duration 2 years
 app <- gr$create_app("AzureR_newapp")
 
