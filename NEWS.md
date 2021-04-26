@@ -1,4 +1,4 @@
-# AzureGraph 1.2.2.9000
+# AzureGraph 1.3.0
 
 - New API for working with paged result sets:
   - New `ms_graph_pager` R6 class, which is an _iterator_ for the pages in the result.
