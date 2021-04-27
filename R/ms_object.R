@@ -32,6 +32,7 @@
 #' - `next_link_name,value_name`: The names of the components of `first_page` containing the link to the next page, and the set of values for the page respectively. The default values are `@odata.nextLink` and `value`.
 #' - `generate_objects`: Whether the iterator should return a list containing the parsed JSON for the page values, or convert it into a list of R6 objects.
 #' - `type_filter`: Any extra arguments required to initialise the returned objects. Only used if `generate_objects` is TRUE.
+#' - `default_generator`: The default generator object to use when converting a list of properties into an R6 object, if the class can't be detected. Defaults to `ms_object`. Only used if `generate_objects` is TRUE.
 #' - `...`: Any extra arguments required to initialise the returned objects. Only used if `generate_objects` is TRUE.
 #'
 #' This returns an object of class [ms_graph_pager], which is an _iterator_ for the set of paged results. Each call to the object's `value` active binding yields the next page. When all pages have been returned, `value` contains NULL.
@@ -116,7 +117,7 @@ public=list(
     },
 
     get_list_pager=function(lst, next_link_name="@odata.nextLink", value_name="value", generate_objects=TRUE,
-                            type_filter=NULL, ...)
+                            type_filter=NULL, default_generator=ms_object, ...)
     {
         ms_graph_pager$new(self$token, lst, next_link_name, value_name, generate_objects, type_filter, ...)
     },

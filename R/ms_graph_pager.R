@@ -19,6 +19,7 @@
 #' - `next_link_name,value_name`: The names of the components of `first_page` containing the link to the next page, and the set of values for the page respectively. The default values are `@odata.nextLink` and `value`.
 #' - `generate_objects`: Whether the iterator should return a list containing the parsed JSON for the page values, or convert it into a list of R6 objects. See 'Value' below.
 #' - `type_filter`: Any extra arguments required to initialise the returned objects. Only used if `generate_objects` is TRUE.
+#' - `default_generator`: The default generator object to use when converting a list of properties into an R6 object, if the class can't be detected. Defaults to `ms_object`. Only used if `generate_objects` is TRUE.
 #' - `...`: Any extra arguments required to initialise the returned objects. Only used if `generate_objects` is TRUE.
 #'
 #' @section Value:
@@ -74,12 +75,13 @@ public=list(
     output=NULL,
 
     initialize=function(token, first_page, next_link_name="@odata.nextLink", value_name="value",
-                        generate_objects=TRUE, type_filter=NULL, ...)
+                        generate_objects=TRUE, type_filter=NULL, default_generator=ms_object, ...)
     {
         self$token <- token
         private$value_name <- value_name
         private$next_link_name <- next_link_name
         private$type_filter <- type_filter
+        private$default_generator <- default_generator
         private$init_args <- list(...)
         self$output <- if(is.data.frame(first_page$value))
             "data.frame"
@@ -122,6 +124,7 @@ private=list(
     next_link=NULL,
     next_value=NULL,
     type_filter=NULL,
+    default_generator=NULL,
     init_args=NULL,
 
     make_objects=function(page)
@@ -131,7 +134,7 @@ private=list(
 
         page <- lapply(page, function(obj)
         {
-            class_gen <- find_class_generator(obj, private$type_filter)
+            class_gen <- find_class_generator(obj, private$type_filter, private$default_generator)
             if(is.null(class_gen))
                 NULL
             else do.call(class_gen$new, c(list(self$token, self$tenant, obj), private$init_args))

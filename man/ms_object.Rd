@@ -54,6 +54,7 @@ To create a new pager object, call the \code{get_list_pager()} method with the f
 \item \verb{next_link_name,value_name}: The names of the components of \code{first_page} containing the link to the next page, and the set of values for the page respectively. The default values are \verb{@odata.nextLink} and \code{value}.
 \item \code{generate_objects}: Whether the iterator should return a list containing the parsed JSON for the page values, or convert it into a list of R6 objects.
 \item \code{type_filter}: Any extra arguments required to initialise the returned objects. Only used if \code{generate_objects} is TRUE.
+\item \code{default_generator}: The default generator object to use when converting a list of properties into an R6 object, if the class can't be detected. Defaults to \code{ms_object}. Only used if \code{generate_objects} is TRUE.
 \item \code{...}: Any extra arguments required to initialise the returned objects. Only used if \code{generate_objects} is TRUE.
 }
 

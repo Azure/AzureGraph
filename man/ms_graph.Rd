@@ -27,9 +27,9 @@ Base class for interacting with Microsoft Graph API.
 \item \code{list_users(filter=NULL, n=Inf)}: Lists the users in the current tenant.
 \item \code{delete_user(user_id, email, name, confirm=TRUE)}: Deletes a user account.
 \item \code{create_group(name, email, ...)}: Creates a new group. Note that only security groups can be created via the Microsoft Graph API.
-\item \code{get_group(group_id)}: Retrieves an existing group.
+\item \code{get_group(group_id, name)}: Retrieves an existing group.
 \item \code{list_groups(filter=NULL, n=Inf)}: Lists the groups in the current tenant.
-\item \code{delete_group(group_id, confirm=TRUE)}: Deletes a group.
+\item \code{delete_group(group_id, name, confirm=TRUE)}: Deletes a group.
 \item \code{call_graph_endpoint(op="", ...)}: Calls the Microsoft Graph API using this object's token and tenant as authentication arguments. See \link{call_graph_endpoint}.
 \item \code{call_batch_endpoint(requests=list(), ...)}: Calls the batch endpoint with a list of individual requests. See \link{call_batch_endpoint}.
 \item \code{get_aad_object(id)}: Retrieves an arbitrary Azure Active Directory object by ID.
