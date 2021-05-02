@@ -138,3 +138,43 @@ test_that("extract_list_values works for objects",
     expect_equal(out, out1)
     expect_error(extract_list_values(p1))
 })
+
+
+test_that("Extra arguments work",
+{
+    testclass <- R6::R6Class("testclass",
+    public=list(
+        initialize=function(token, tenant, properties, arg1=NULL)
+        {
+            if(is.null(arg1)) stop("arg1 must not be NULL", call.=FALSE)
+        }
+    ))
+
+    lst <- list(
+        nextlink=NULL,
+        valuelist=list(
+            list(x=1),
+            list(x=2),
+            list(x=3)
+        )
+    )
+
+    pager <- me$get_list_pager(lst, next_link_name="nextlink", value_name="valuelist", generate_objects=TRUE,
+            default_generator=testclass, arg1=42)
+
+    expect_is(pager, "ms_graph_pager")
+    expect_true(pager$has_data())
+    vals <- pager$value
+    expect_is(vals, "list")
+    expect_true(all(sapply(vals, inherits, "testclass")))
+
+    register_graph_class("testclass", testclass, function(props) !is.null(props$x))
+    pager2 <- me$get_list_pager(lst, next_link_name="nextlink", value_name="valuelist", generate_objects=TRUE,
+            type_filter="testclass", arg1=42)
+
+    expect_is(pager2, "ms_graph_pager")
+    expect_true(pager2$has_data())
+    vals2 <- pager2$value
+    expect_is(vals2, "list")
+    expect_true(all(sapply(vals2, inherits, "testclass")))
+})

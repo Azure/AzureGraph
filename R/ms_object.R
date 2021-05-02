@@ -119,7 +119,8 @@ public=list(
     get_list_pager=function(lst, next_link_name="@odata.nextLink", value_name="value", generate_objects=TRUE,
                             type_filter=NULL, default_generator=ms_object, ...)
     {
-        ms_graph_pager$new(self$token, lst, next_link_name, value_name, generate_objects, type_filter, ...)
+        ms_graph_pager$new(self$token, lst, next_link_name, value_name,
+            generate_objects, type_filter, default_generator, ...)
     },
 
     print=function(...)

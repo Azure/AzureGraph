@@ -1,3 +1,7 @@
+# AzureGraph 1.3.0.9000
+
+- Fix bug in `ms_object$get_list_pager()` where the `default_generator` argument wasn't being used.
+
 # AzureGraph 1.3.0
 
 - New API for working with paged result sets:
