@@ -95,6 +95,14 @@ public=list(
     has_data=function()
     {
         !is.null(private$next_value)
+    },
+
+    print=function(...)
+    {
+        cat("<Graph pager object>\n", sep="")
+        cat("  output:", self$output, "\n")
+        cat("  has data:", self$has_data(), "\n")
+        invisible(self)
     }
 ),
 
