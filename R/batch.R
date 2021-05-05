@@ -85,6 +85,16 @@ public=list(
         if(!is_empty(self$body))
             req$body <- self$body
         req
+    },
+
+    print=function(...)
+    {
+        path <- httr::parse_url(self$op)
+        path$query <- self$options
+        path <- sub("^://", "", httr::build_url(path))
+        cat("<Microsoft Graph request object>\n")
+        cat("  path:", self$method, path, "\n")
+        invisible(self)
     }
 ))
 
