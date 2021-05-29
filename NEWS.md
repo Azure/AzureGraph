@@ -1,6 +1,7 @@
-# AzureGraph 1.3.0.9000
+# AzureGraph 1.3.1
 
-- Fix bug in `ms_object$get_list_pager()` where the `default_generator` argument wasn't being used.
+- Fix a bug in `ms_object$get_list_pager()` where the `default_generator` argument wasn't being used.
+- Add basic print methods for the `ms_graph_pager` and `graph_request` R6 classes.
 
 # AzureGraph 1.3.0
 
