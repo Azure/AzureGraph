@@ -13,10 +13,9 @@ The primary repo for this package is at https://github.com/Azure/AzureGraph; ple
 
 ## Authentication
 
-AzureGraph uses the same authentication procedure as AzureRMR and the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/?view=azure-cli-latest). The first time you authenticate with a given Azure Active Directory tenant, you call `create_graph_login()` and supply your credentials. R will prompt you for permission to create a special data directory in which to save the obtained authentication token and AD Graph login. Once this information is saved on your machine, it can be retrieved in subsequent R sessions with `get_graph_login()`. Your credentials will be automatically refreshed so you don't have to reauthenticate.
+The first time you authenticate with a given Azure Active Directory tenant, you call `create_graph_login()` and supply your credentials. R will prompt you for permission to create a special data directory in which to save the obtained authentication token and AD Graph login. Once this information is saved on your machine, it can be retrieved in subsequent R sessions with `get_graph_login()`. Your credentials will be automatically refreshed so you don't have to reauthenticate.
 
-**Linux DSVM note** If you are using a Linux Data Science Virtual Machine in Azure, you may have problems running `create_graph_login()` (ie, without arguments). In this case, try `create_graph_login(auth_type="device_code")`.
-
+See the "Authentication basics" vignette for more details on how to authenticate with AzureGraph.
 
 ## Sample workflow
 

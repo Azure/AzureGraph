@@ -1,0 +1,98 @@
+---
+title: "Authentication basics"
+author: Hong Ooi
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Authentication}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{utf8}
+---
+
+There are a number of ways to authenticate to the Microsoft Graph API with AzureGraph. This vignette goes through the most common scenarios.
+
+## Interactive authentication
+
+This is the scenario where you're using R interactively, such as in your local desktop or laptop, or in a hosted RStudio Server, Jupyter notebook or ssh session. The first time you authenticate with AzureGraph, you run `create_graph_login()`:
+
+```r
+# on first use
+library(AzureGraph)
+gr <- create_graph_login()
+```
+
+Notice that you _don't_ enter your username and password.
+
+AzureGraph will attempt to detect which authentication flow to use, based on your session details. In most cases, it will bring up the Azure Active Directory (AAD) login page in your browser, which is where you enter your user credentials. This is also known as the "authorization code" flow.
+
+There are some complications to be aware of:
+
+- If you are running R in a hosted session, trying to start a browser will usually fail. In this case, specify the device code authentication flow, with the `auth_type` argument:
+
+  ```r
+  gr <- create_graph_login(auth_type="device_code")
+  ```
+
+- If you have a personal account that is also a guest in an organisational tenant, you may have to specify your tenant explicitly:
+
+  ```r
+  gr <- create_graph_login(tenant="yourtenant")
+  ```
+
+- By default, AzureGraph identifies itself using the Azure CLI app registration ID. This is meant for working with the AAD part of the Graph API, so it has permissions which are relevant for this purpose. If you are using Graph for other purposes (eg to interact with Microsoft 365 services), you'll need to supply your own app ID that has the correct permissions. On the client side, you supply the app ID via the `app` argument; see later for creating the app registration on the server side.
+
+  ```r
+  gr <- create_graph_login(app="yourappid")
+  ```
+
+All of the above arguments can be combined, eg this will authenticate using the device code flow, with an explicit tenant name, and a custom app ID:
+
+```r
+gr <- create_graph_login(tenant="yourtenant", app="yourappid", auth_type="device_code")
+```
+
+If needed, you can also supply other arguments that will be passed to `AzureAuth::get_azure_token()`.
+
+Having created the login, in subsequent sessions you run `get_graph_login()`. This will load your previous authentication details, saving you from having to login again. If you specified the tenant in the `create_graph_login()` call, you'll also need to specify it for `get_graph_login()`; the other arguments don't have to be repeated.
+
+```r
+gr <- get_graph_login()
+
+# if you specified the tenant in create_graph_login
+gr <- get_graph_login(tenant="yourtenant")
+```
+
+## Non-interactive authentication
+
+This is the scenario where you want to use AzureGraph as part of an automated script or unattended session, for example in a deployment pipeline. The appropriate authentication flow in this case is the client credentials flow.
+
+For this scenario, you must have a custom app ID and client secret. On the client side, these are supplied in the `app` and `password` arguments; see later for creating the app registration on the server side.
+
+  ```r
+  gr <- create_graph_login(app="yourccappid", password="client_secret")
+  ```
+
+In the non-interactive scenario, you don't use `get_graph_login()`; instead, you simply call `create_graph_login()` as part of your script.
+
+## Creating a custom app registration
+
+This part is meant mostly for Azure tenant administrators, or users who have the appropriate rights to create AAD app registrations.
+
+You can create a new app registration using any of the usual methods. For example to create an app registration in the Azure Portal (`https://portal.azure.com/`), click on "Azure Active Directory" in the menu bar down the left, go to "App registrations" and click on "New registration". Name the app something suitable, eg "AzureGraph custom app".
+
+- If you want your users to be able to login with the authorization code flow, you must add a **public client/native redirect URI** of `http://localhost:1410`. This is appropriate if your users will be running R on their local PCs, with an Internet browser available.
+- If you want your users to be able to login with the device code flow, you must **enable the "Allow public client flows" setting** for your app. In the Portal, you can find this setting in the "Authentication" pane once the app registration is complete. This is appropriate if your users are running R in a remote session.
+- If the app is meant for non-interactive use, you must give the app a **client secret**, which is much the same as a password (and should similarly be kept secure). In the Portal, you can set this in the "Certificates and Secrets" pane for your app registration.
+
+Once the app registration has been created, note the app ID and, if applicable, the client secret. The latter can't be viewed after app creation, so make sure you note its value now.
+
+It's also possible to authenticate with a **client certificate (public key)**, but this is more complex and we won't go into it here. For more details, see the [Azure Active Directory documentation](https://docs.microsoft.com/en-au/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) and the [AzureAuth intro vignette](https://cran.r-project.org/package=AzureAuth/vignettes/token.html).
+
+### Set the app permissions
+
+For your app to be useful, you must give it the appropriate permisssions for the Microsoft Graph API. You can set this by going to the "API permissions" pane for your app registration, then clicking on "Add a permission". Choose the Microsoft Graph API, and then enable the permissions that you need.
+
+- For interactive use, make sure that you enable the _delegated_ permissions. These apply when a logged-in user is present. [See the documentation](https://docs.microsoft.com/en-us/graph/auth/auth-concepts#microsoft-graph-permissions) for how permissions and user roles interact; essentially, if a user wants to use AzureGraph to do an action, they must have the correct role _and_ the app registration must have the correct permission.
+  - It's highly recommended to enable the "offline_access" permission for an interactive app, as this is necessary to obtain refresh tokens. Without these, a user must reauthenticate each time their access token expires, which by default is after one hour.
+- For non-interactive use, enable the _application_ permissions. These are more powerful since there is no user role that can moderate what AzureGraph can do, so assign application permissions with caution.
+
+
