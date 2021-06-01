@@ -2,6 +2,7 @@
 
 - Fix a bug in `ms_object$get_list_pager()` where the `default_generator` argument wasn't being used.
 - Add basic print methods for the `ms_graph_pager` and `graph_request` R6 classes.
+- Add "Authentication basics" vignette providing more information on this topic.
 
 # AzureGraph 1.3.0
 
