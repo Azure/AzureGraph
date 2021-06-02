@@ -65,10 +65,10 @@ gr <- get_graph_login(tenant="yourtenant")
 
 This is the scenario where you want to use AzureGraph as part of an automated script or unattended session, for example in a deployment pipeline. The appropriate authentication flow in this case is the client credentials flow.
 
-For this scenario, you must have a custom app ID and client secret. On the client side, these are supplied in the `app` and `password` arguments; see later for creating the app registration on the server side.
+For this scenario, you must have a custom app ID and client secret. On the client side, these are supplied in the `app` and `password` arguments; see later for creating the app registration on the server side. You must also specify your tenant as AAD won't be able to detect it from a user's credentials.
 
   ```r
-  gr <- create_graph_login(app="yourccappid", password="client_secret")
+  gr <- create_graph_login(tenant="yourtenant", app="yourccappid", password="client_secret")
   ```
 
 In the non-interactive scenario, you don't use `get_graph_login()`; instead, you simply call `create_graph_login()` as part of your script.
