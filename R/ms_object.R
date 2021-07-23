@@ -58,119 +58,158 @@
 #'
 #' @format An R6 object of class `ms_object`.
 #' @export
-ms_object <- R6::R6Class("ms_object",
+ms_object <- R6::R6Class(
+    "ms_object",
+    
+    #shrinking the memory profile of an R6 object down
+    portable = FALSE,
+    cloneable = FALSE,
 
-public=list(
-
-    token=NULL,
-    tenant=NULL,
-
-    # user-readable object type
-    type=NULL,
-
-    # object data from server
-    properties=NULL,
-
-    initialize=function(token, tenant=NULL, properties=NULL)
-    {
-        self$token <- token
-        self$tenant <- tenant
-        self$properties <- properties
-    },
-
-    update=function(...)
-    {
-        self$do_operation(body=list(...), encode="json", http_verb="PATCH")
-        self$properties <- self$do_operation()
-        self
-    },
-
-    sync_fields=function()
-    {
-        self$properties <- self$do_operation()
-        invisible(self)
-    },
-
-    delete=function(confirm=TRUE)
-    {
-        if(confirm && interactive())
+    public = list(
+        token = NULL,
+        tenant = NULL,
+        
+        # user-readable object type
+        type = NULL,
+        
+        # object data from server
+        properties = NULL,
+        
+        initialize = function(token,
+                              tenant = NULL,
+                              properties = NULL)
         {
-            name <- self$properties$displayName
-            if(is.null(name))
-                name <- self$properties$name
-            if(is.null(name))
-                name <- self$properties$id
-            msg <- sprintf("Do you really want to delete the %s '%s'?",
-                           self$type, name)
-            if(!get_confirmation(msg, FALSE))
-                return(invisible(NULL))
+            self$token <- token
+            self$tenant <- tenant
+            self$properties <- properties
+        },
+        
+        update = function(...)
+        {
+            self$do_operation(body = list(...),
+                              encode = "json",
+                              http_verb = "PATCH")
+            self$properties <- self$do_operation()
+            self
+        },
+        
+        sync_fields = function()
+        {
+            self$properties <- self$do_operation()
+            invisible(self)
+        },
+        
+        delete = function(confirm = TRUE)
+        {
+            if (confirm && interactive())
+            {
+                name <- self$properties$displayName
+                if (is.null(name))
+                    name <- self$properties$name
+                if (is.null(name))
+                    name <- self$properties$id
+                msg <-
+                    sprintf("Do you really want to delete the %s '%s'?",
+                            self$type, name)
+                if (!get_confirmation(msg, FALSE))
+                    return(invisible(NULL))
+            }
+            
+            self$do_operation(http_verb = "DELETE")
+            invisible(NULL)
+        },
+        
+        do_operation = function(op = "", ...)
+        {
+            op <- construct_path(private$api_type, self$properties$id, op)
+            call_graph_endpoint(self$token, op, ...)
+        },
+        
+        get_list_pager = function(lst,
+                                  next_link_name = "@odata.nextLink",
+                                  value_name = "value",
+                                  generate_objects = TRUE,
+                                  type_filter = NULL,
+                                  default_generator = ms_object,
+                                  ...)
+        {
+            ms_graph_pager$new(
+                self$token,
+                lst,
+                next_link_name,
+                value_name,
+                generate_objects,
+                type_filter,
+                default_generator,
+                ...
+            )
+        },
+        
+        print = function(...)
+        {
+            cat("<Graph directory object '",
+                self$properties$displayName,
+                "'>\n",
+                sep = "")
+            cat("  directory id:", self$properties$id, "\n")
+            cat("---\n")
+            cat(format_public_methods(self))
+            invisible(self)
         }
-
-        self$do_operation(http_verb="DELETE")
-        invisible(NULL)
-    },
-
-    do_operation=function(op="", ...)
-    {
-        op <- construct_path(private$api_type, self$properties$id, op)
-        call_graph_endpoint(self$token, op, ...)
-    },
-
-    get_list_pager=function(lst, next_link_name="@odata.nextLink", value_name="value", generate_objects=TRUE,
-                            type_filter=NULL, default_generator=ms_object, ...)
-    {
-        ms_graph_pager$new(self$token, lst, next_link_name, value_name,
-            generate_objects, type_filter, default_generator, ...)
-    },
-
-    print=function(...)
-    {
-        cat("<Graph directory object '", self$properties$displayName, "'>\n", sep="")
-        cat("  directory id:", self$properties$id, "\n")
-        cat("---\n")
-        cat(format_public_methods(self))
-        invisible(self)
-    }
-),
-
-private=list(
-
-    # object type as it appears in REST API path
-    api_type=NULL,
-
-    get_paged_list=function(lst, next_link_name="@odata.nextLink", value_name="value", simplify=FALSE, n=Inf)
-    {
-        bind_fn <- if(requireNamespace("vctrs", quietly=TRUE))
-            vctrs::vec_rbind
-        else base::rbind
-        res <- lst[[value_name]]
-        if(n <= 0) n <- Inf
-        while(!is_empty(lst[[next_link_name]]) && NROW(res) < n)
+    ),
+    
+    private = list(
+        # object type as it appears in REST API path
+        api_type = NULL,
+        
+        get_paged_list = function(lst,
+                                  next_link_name = "@odata.nextLink",
+                                  value_name = "value",
+                                  simplify = FALSE,
+                                  n = Inf)
         {
-            lst <- call_graph_url(self$token, lst[[next_link_name]], simplify=simplify)
-            res <- if(simplify)
-                bind_fn(res, lst[[value_name]])  # base::rbind assumes all objects have the exact same fields
-            else c(res, lst[[value_name]])
+            bind_fn <- if (requireNamespace("vctrs", quietly = TRUE))
+                vctrs::vec_rbind
+            else
+                base::rbind
+            res <- lst[[value_name]]
+            if (n <= 0)
+                n <- Inf
+            while (!is_empty(lst[[next_link_name]]) && NROW(res) < n)
+            {
+                lst <-
+                    call_graph_url(self$token, lst[[next_link_name]], simplify = simplify)
+                res <- if (simplify)
+                    bind_fn(res, lst[[value_name]])  # base::rbind assumes all objects have the exact same fields
+                else
+                    c(res, lst[[value_name]])
+            }
+            if (n < NROW(res))
+            {
+                if (inherits(res, "data.frame"))
+                    res[seq_len(n),]
+                else
+                    res[seq_len(n)]
+            }
+            else
+                res
+        },
+        
+        init_list_objects = function(lst,
+                                     type_filter = NULL,
+                                     default_generator = ms_object,
+                                     ...)
+        {
+            lst <- lapply(lst, function(obj)
+            {
+                class_gen <-
+                    find_class_generator(obj, type_filter, default_generator)
+                if (is.null(class_gen))
+                    NULL
+                else
+                    class_gen$new(self$token, self$tenant, obj, ...)
+            })
+            lst[!sapply(lst, is.null)]
         }
-        if(n < NROW(res))
-        {
-            if(inherits(res, "data.frame"))
-                res[seq_len(n), ]
-            else res[seq_len(n)]
-        }
-        else res
-    },
-
-    init_list_objects=function(lst, type_filter=NULL, default_generator=ms_object, ...)
-    {
-        lst <- lapply(lst, function(obj)
-        {
-            class_gen <- find_class_generator(obj, type_filter, default_generator)
-            if(is.null(class_gen))
-                NULL
-            else class_gen$new(self$token, self$tenant, obj, ...)
-        })
-        lst[!sapply(lst, is.null)]
-    }
-))
-
+    )
+)
