@@ -7,7 +7,6 @@
 #' @param url A complete URL to send to the host.
 #' @param http_verb The HTTP verb as a string, one of `GET`, `PUT`, `POST`, `DELETE`, `HEAD` or `PATCH`.
 #' @param http_status_handler How to handle in R the HTTP status code of a response. `"stop"`, `"warn"` or `"message"` will call the appropriate handlers in httr, while `"pass"` ignores the status code.
-#' @param simplify Whether to turn arrays of objects in the JSON response into data frames. Set this to `TRUE` if you are expecting the endpoint to return tabular data and you want a tabular result, as opposed to a list of objects.
 #' @param auto_refresh Whether to refresh/renew the OAuth token if it is no longer valid.
 #' @param body The body of the request, for `PUT`/`POST`/`PATCH`.
 #' @param encode The encoding (really content-type) for the request body. The default value "json" means to serialize a list body into a JSON object. If you pass an already-serialized JSON object as the body, set `encode` to "raw".
@@ -15,8 +14,6 @@
 #'
 #' @details
 #' These functions form the low-level interface between R and Microsoft Graph. `call_graph_endpoint` forms a URL from its arguments and passes it to `call_graph_url`.
-#'
-#' If `simplify` is `TRUE`, `call_graph_url` will exploit the ability of `jsonlite::fromJSON` to convert arrays of objects into R data frames. This can be useful for REST calls that return tabular data. However, it can also cause problems for _paged_ lists, where each page will be turned into a separate data frame; as the individual objects may not have the same fields, the resulting data frames will also have differing columns. This will cause base R's `rbind` to fail when binding the pages together. When processing paged lists, AzureGraph will use `vctrs::vec_rbind` instead of `rbind` when the vctrs package is available; `vec_rbind` does not have this problem. For safety, you should only set `simplify=TRUE` when vctrs is installed.
 #'
 #' @return
 #' If `http_status_handler` is one of `"stop"`, `"warn"` or `"message"`, the status code of the response is checked. If an error is not thrown, the parsed content of the response is returned with the status code attached as the "status" attribute.
@@ -42,7 +39,7 @@ call_graph_endpoint <- function(token, operation, ..., options=list(),
 call_graph_url <- function(token, url, ..., body=NULL, encode="json",
                            http_verb=c("GET", "DELETE", "PUT", "POST", "HEAD", "PATCH"),
                            http_status_handler=c("stop", "warn", "message", "pass"),
-                           simplify=FALSE, auto_refresh=TRUE)
+                           auto_refresh=TRUE)
 {
     # if content-type is json, serialize it manually to ensure proper handling of nulls
     if(encode == "json" && !is_empty(body))
@@ -65,7 +62,7 @@ call_graph_url <- function(token, url, ..., body=NULL, encode="json",
         else break
     }
 
-    process_response(res, match.arg(http_status_handler), simplify)
+    process_response(res, match.arg(http_status_handler))
 }
 
 
@@ -90,11 +87,11 @@ process_headers <- function(token, host, auto_refresh)
 }
 
 
-process_response <- function(response, handler, simplify)
+process_response <- function(response, handler)
 {
     if(handler != "pass")
     {
-        cont <- httr::content(response, simplifyVector=simplify)
+        cont <- httr::content(response)
         handler <- get(paste0(handler, "_for_status"), getNamespace("httr"))
         handler(response, paste0("complete operation. Message:\n",
                                  sub("\\.$", "", error_message(cont))))
