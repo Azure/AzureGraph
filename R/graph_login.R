@@ -205,11 +205,7 @@ list_graph_logins <- function()
     graph_logins <- load_graph_logins()
     logins <- sapply(graph_logins, function(tenant)
     {
-        sapply(tenant, function(hash)
-        {
-            file <- file.path(AzureR_dir(), hash)
-            ms_graph$new(token=readRDS(file))
-        }, simplify=FALSE)
+        sapply(tenant, function(hash) ms_graph$new(token=load_azure_token(hash)), simplify=FALSE)
     }, simplify=FALSE)
 
     logins
