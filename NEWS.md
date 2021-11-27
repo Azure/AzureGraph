@@ -1,4 +1,4 @@
-# AzureGraph 1.3.1.9000
+# AzureGraph 1.3.2
 
 - Minor backend fixes.
 
