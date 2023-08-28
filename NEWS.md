@@ -1,3 +1,7 @@
+# AzureGraph 1.3.3
+
+- Paths containing a hash (#) are encoded in `call_graph_endpoint()` and no longer fail with 404
+
 # AzureGraph 1.3.2
 
 - Minor backend fixes.
