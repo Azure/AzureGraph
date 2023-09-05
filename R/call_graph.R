@@ -32,6 +32,7 @@ call_graph_endpoint <- function(token, operation, ..., options=list(),
 {
     url <- find_resource_host(token)
     url$path <- construct_path(api_version, operation)
+    url$path <- encode_hash(url$path)
     url$query <- options
 
     call_graph_url(token, url, ...)
@@ -138,6 +139,11 @@ construct_path <- function(...)
     sub("/$", "", file.path(..., fsep="/"))
 }
 
+# paths containing hash need to be encoded
+encode_hash <- function(x)
+{
+    gsub("#", "%23", x, fixed = TRUE)
+}
 
 # display confirmation prompt, return TRUE/FALSE (no NA)
 get_confirmation <- function(msg, default=TRUE)
