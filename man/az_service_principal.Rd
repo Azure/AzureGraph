@@ -39,6 +39,6 @@ Creating new objects of this class should be done via the \code{create_service_p
 \seealso{
 \link{ms_graph}, \link{az_app}, \link{az_object}
 
-\href{https://docs.microsoft.com/en-us/graph/overview}{Azure Microsoft Graph overview},
-\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0}{REST API reference}
+\href{https://learn.microsoft.com/en-us/graph/overview}{Azure Microsoft Graph overview},
+\href{https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0}{REST API reference}
 }

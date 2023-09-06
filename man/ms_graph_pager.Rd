@@ -90,6 +90,6 @@ while(pager$has_data())
 \seealso{
 \link{ms_object}, \link{extract_list_values}
 
-\href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
-\href{https://docs.microsoft.com/en-us/graph/paging}{Paging documentation}
+\href{https://learn.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
+\href{https://learn.microsoft.com/en-us/graph/paging}{Paging documentation}
 }

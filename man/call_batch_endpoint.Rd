@@ -67,8 +67,8 @@ call_batch_endpoint(token, list(req_get, req_create, req_get), depends_on=c("2"=
 \seealso{
 \link{graph_request}, \link{call_graph_endpoint}
 
-\href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
-\href{https://docs.microsoft.com/en-us/graph/json-batching}{Batch endpoint documentation}
+\href{https://learn.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
+\href{https://learn.microsoft.com/en-us/graph/json-batching}{Batch endpoint documentation}
 
 \href{https://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#sec_BatchRequestsandResponses}{OData documentation on batch requests}
 }

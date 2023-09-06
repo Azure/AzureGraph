@@ -40,8 +40,8 @@
 #'
 #' [AzureAuth vignette on authentication scenarios](https://cran.r-project.org/package=AzureAuth/vignettes/scenarios.html)
 #'
-#' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
-#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0)
+#' [Microsoft Graph overview](https://learn.microsoft.com/en-us/graph/overview),
+#' [REST API reference](https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0)
 #'
 #' @examples
 #' \dontrun{

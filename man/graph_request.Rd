@@ -52,6 +52,6 @@ graph_request$new("me/messages",
 \seealso{
 \link{call_batch_endpoint}
 
-\href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
-\href{https://docs.microsoft.com/en-us/graph/json-batching}{Batch endpoint documentation}
+\href{https://learn.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
+\href{https://learn.microsoft.com/en-us/graph/json-batching}{Batch endpoint documentation}
 }

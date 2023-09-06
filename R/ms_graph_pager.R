@@ -32,8 +32,8 @@
 #' @seealso
 #' [ms_object], [extract_list_values]
 #'
-#' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
-#' [Paging documentation](https://docs.microsoft.com/en-us/graph/paging)
+#' [Microsoft Graph overview](https://learn.microsoft.com/en-us/graph/overview),
+#' [Paging documentation](https://learn.microsoft.com/en-us/graph/paging)
 #'
 #' @examples
 #' \dontrun{

@@ -85,13 +85,13 @@ You can create a new app registration using any of the usual methods. For exampl
 
 Once the app registration has been created, note the app ID and, if applicable, the client secret. The latter can't be viewed after app creation, so make sure you note its value now.
 
-It's also possible to authenticate with a **client certificate (public key)**, but this is more complex and we won't go into it here. For more details, see the [Azure Active Directory documentation](https://docs.microsoft.com/en-au/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) and the [AzureAuth intro vignette](https://cran.r-project.org/package=AzureAuth/vignettes/token.html).
+It's also possible to authenticate with a **client certificate (public key)**, but this is more complex and we won't go into it here. For more details, see the [Azure Active Directory documentation](https://learn.microsoft.com/en-au/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) and the [AzureAuth intro vignette](https://cran.r-project.org/package=AzureAuth/vignettes/token.html).
 
 ### Set the app permissions
 
 For your app to be useful, you must give it the appropriate permisssions for the Microsoft Graph API. You can set this by going to the "API permissions" pane for your app registration, then clicking on "Add a permission". Choose the Microsoft Graph API, and then enable the permissions that you need.
 
-- For interactive use, make sure that you enable the _delegated_ permissions. These apply when a logged-in user is present. [See the documentation](https://docs.microsoft.com/en-us/graph/auth/auth-concepts#microsoft-graph-permissions) for how permissions and user roles interact; essentially, if a user wants to use AzureGraph to do an action, they must have the correct role _and_ the app registration must have the correct permission.
+- For interactive use, make sure that you enable the _delegated_ permissions. These apply when a logged-in user is present. [See the documentation](https://learn.microsoft.com/en-us/graph/auth/auth-concepts#microsoft-graph-permissions) for how permissions and user roles interact; essentially, if a user wants to use AzureGraph to do an action, they must have the correct role _and_ the app registration must have the correct permission.
   - It's highly recommended to enable the "offline_access" permission for an interactive app, as this is necessary to obtain refresh tokens. Without these, a user must reauthenticate each time their access token expires, which by default is after one hour.
 - For non-interactive use, enable the _application_ permissions. These are more powerful since there is no user role that can moderate what AzureGraph can do, so assign application permissions with caution.
 

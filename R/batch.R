@@ -19,8 +19,8 @@
 #' @seealso
 #' [call_batch_endpoint]
 #'
-#' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
-#' [Batch endpoint documentation](https://docs.microsoft.com/en-us/graph/json-batching)
+#' [Microsoft Graph overview](https://learn.microsoft.com/en-us/graph/overview),
+#' [Batch endpoint documentation](https://learn.microsoft.com/en-us/graph/json-batching)
 #'
 #' @examples
 #' graph_request$new("me")
@@ -122,8 +122,8 @@ public=list(
 #' @seealso
 #' [graph_request], [call_graph_endpoint]
 #'
-#' [Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
-#' [Batch endpoint documentation](https://docs.microsoft.com/en-us/graph/json-batching)
+#' [Microsoft Graph overview](https://learn.microsoft.com/en-us/graph/overview),
+#' [Batch endpoint documentation](https://learn.microsoft.com/en-us/graph/json-batching)
 #'
 #' [OData documentation on batch requests](https://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#sec_BatchRequestsandResponses)
 #'

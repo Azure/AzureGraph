@@ -73,7 +73,7 @@ Having defined your new class, call `register_graph_class` so that AzureGraph be
 
 `register_graph_class` takes 3 arguments:
 
-- The name of the object class, as it appears in the [Microsoft Graph online documentation](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0).
+- The name of the object class, as it appears in the [Microsoft Graph online documentation](https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0).
 - The R6 class generator object, as defined in the previous section.
 - A check function which takes a list of properties (as returned by the Graph API) and returns TRUE/FALSE based on whether the properties are for an object of your class. This is necessary as some Graph calls that return lists of objects do not always include explicit metadata indicating the type of each object, hence the type must be inferred from the properties.
 

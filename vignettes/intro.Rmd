@@ -8,7 +8,7 @@ vignette: >
   %\VignetteEncoding{utf8}
 ---
 
-[Microsoft Graph](https://docs.microsoft.com/en-us/graph/overview) is a comprehensive framework for accessing data in various online Microsoft services, including Azure Active Directory (AAD), Office 365, OneDrive, Teams, and more. AzureGraph is a simple R6-based interface to the Graph REST API, and is the companion package to [AzureRMR](https://github.com/Azure/AzureRMR) and [AzureAuth](https://github.com/Azure/AzureAuth).
+[Microsoft Graph](https://learn.microsoft.com/en-us/graph/overview) is a comprehensive framework for accessing data in various online Microsoft services, including Azure Active Directory (AAD), Office 365, OneDrive, Teams, and more. AzureGraph is a simple R6-based interface to the Graph REST API, and is the companion package to [AzureRMR](https://github.com/Azure/AzureRMR) and [AzureAuth](https://github.com/Azure/AzureAuth).
 
 Currently, AzureGraph aims to provide an R interface only to the AAD part, with a view to supporting R interoperability with Azure: registered apps and service principals, users and groups. However, it can be extended to support other services; for more information, see the "Extending AzureGraph" vignette.
 
@@ -83,7 +83,7 @@ names(grp$properties)
 #> ...
 ```
 
-You can apply a filter to the `list_users` and `list_groups` methods, to cut down on the number of results. The filter should be a supported [OData expression](https://docs.microsoft.com/en-us/graph/query-parameters#filter-parameter). For example, this will filter the list of users down to your own account:
+You can apply a filter to the `list_users` and `list_groups` methods, to cut down on the number of results. The filter should be a supported [OData expression](https://learn.microsoft.com/en-us/graph/query-parameters#filter-parameter). For example, this will filter the list of users down to your own account:
 
 ```r
 # get my own name
@@ -216,5 +216,5 @@ me$do_operation("drive/root/children")
 
 See the following links on Microsoft Docs for more information.
 
-- [Microsoft Graph](https://docs.microsoft.com/en-us/graph/overview)
-- [Graph REST API (beta)](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)
+- [Microsoft Graph](https://learn.microsoft.com/en-us/graph/overview)
+- [Graph REST API (beta)](https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-beta)

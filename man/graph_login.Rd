@@ -105,6 +105,6 @@ create_graph_login("consumers")  # requires AzureAuth 1.3.0
 
 \href{https://cran.r-project.org/package=AzureAuth/vignettes/scenarios.html}{AzureAuth vignette on authentication scenarios}
 
-\href{https://docs.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
-\href{https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0}{REST API reference}
+\href{https://learn.microsoft.com/en-us/graph/overview}{Microsoft Graph overview},
+\href{https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0}{REST API reference}
 }

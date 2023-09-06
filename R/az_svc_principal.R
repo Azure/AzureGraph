@@ -21,8 +21,8 @@
 #' @seealso
 #' [ms_graph], [az_app], [az_object]
 #'
-#' [Azure Microsoft Graph overview](https://docs.microsoft.com/en-us/graph/overview),
-#' [REST API reference](https://docs.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0)
+#' [Azure Microsoft Graph overview](https://learn.microsoft.com/en-us/graph/overview),
+#' [REST API reference](https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0)
 #'
 #' @format An R6 object of class `az_service_principal`, inheriting from `az_object`.
 #' @export
