@@ -1,6 +1,6 @@
 #' Call the Microsoft Graph REST API
 #'
-#' @param token An Azure OAuth token, of class [AzureToken].
+#' @param token An Azure OAuth token, of class [AzureAuth::AzureToken].
 #' @param operation The operation to perform, which will form part of the URL path.
 #' @param options A named list giving the URL query parameters.
 #' @param api_version The API version to use, which will form part of the URL sent to the host.

@@ -62,7 +62,7 @@ If the AzureR data directory for saving credentials does not exist, \code{get_gr
 Login to Azure Active Directory Graph
 }
 \details{
-\code{create_graph_login} creates a login client to authenticate with Microsoft Graph, using the supplied arguments. The authentication token is obtained using \link{get_azure_token}, which automatically caches and reuses tokens for subsequent sessions.
+\code{create_graph_login} creates a login client to authenticate with Microsoft Graph, using the supplied arguments. The authentication token is obtained using \link[AzureAuth:get_azure_token]{AzureAuth::get_azure_token}, which automatically caches and reuses tokens for subsequent sessions.
 
 For interactive use, you would normally \emph{not} supply the \code{username} and \code{password} arguments. Omitting them will prompt \code{create_graph_login} to authenticate you with AAD using your browser, which is the recommended method. If you don't have a browser available to your R session, for example if you're using RStudio Server or Azure Databricks, you can specify \verb{auth_type="device_code}".
 

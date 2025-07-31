@@ -18,7 +18,7 @@
 #' @param ... Other arguments passed to `ms_graph$new()`.
 #'
 #' @details
-#' `create_graph_login` creates a login client to authenticate with Microsoft Graph, using the supplied arguments. The authentication token is obtained using [get_azure_token], which automatically caches and reuses tokens for subsequent sessions.
+#' `create_graph_login` creates a login client to authenticate with Microsoft Graph, using the supplied arguments. The authentication token is obtained using [AzureAuth::get_azure_token], which automatically caches and reuses tokens for subsequent sessions.
 #'
 #' For interactive use, you would normally _not_ supply the `username` and `password` arguments. Omitting them will prompt `create_graph_login` to authenticate you with AAD using your browser, which is the recommended method. If you don't have a browser available to your R session, for example if you're using RStudio Server or Azure Databricks, you can specify `auth_type="device_code`".
 #'

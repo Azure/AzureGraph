@@ -34,7 +34,7 @@
 #' - `password`: if `auth_type == "client_credentials"`, the app secret; if `auth_type == "resource_owner"`, your account password.
 #' - `username`: if `auth_type == "resource_owner"`, your username.
 #' - `certificate`: If `auth_type == "client_credentials", a certificate to authenticate with. This is a more secure alternative to using an app secret.
-#' - `auth_type`: The OAuth authentication method to use, one of "client_credentials", "authorization_code", "device_code" or "resource_owner". See [get_azure_token] for how the default method is chosen, along with some caveats.
+#' - `auth_type`: The OAuth authentication method to use, one of "client_credentials", "authorization_code", "device_code" or "resource_owner". See [AzureAuth::get_azure_token] for how the default method is chosen, along with some caveats.
 #' - `version`: The Azure Active Directory (AAD) version to use for authenticating.
 #' - `host`: your Microsoft Graph host. Defaults to `https://graph.microsoft.com/`.
 #' - `aad_host`: Azure Active Directory host for authentication. Defaults to `https://login.microsoftonline.com/`. Change this if you are using a government or private cloud.
