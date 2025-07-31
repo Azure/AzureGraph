@@ -1,3 +1,7 @@
+# AzureGraph 1.3.5
+
+- Update documentation links for CRAN
+
 # AzureGraph 1.3.4
 
 - Fix handling of OneDrive/SharePoint paths and other URLs that contain "#". Thanks to Jonathan Carroll (@jonocarroll).

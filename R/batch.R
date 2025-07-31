@@ -101,7 +101,7 @@ public=list(
 
 #' Call the Graph API batch endpoint
 #'
-#' @param token An Azure OAuth token, of class [AzureToken].
+#' @param token An Azure OAuth token, of class [AzureAuth::AzureToken].
 #' @param requests A list of [graph_request] objects, representing individual requests to the Graph API.
 #' @param depends_on An optional named vector, or TRUE. See below.
 #' @param api_version The API version to use, which will form part of the URL sent to the host.

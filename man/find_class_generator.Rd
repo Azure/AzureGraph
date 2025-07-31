@@ -4,7 +4,8 @@
 \alias{find_class_generator}
 \title{Find the R6 class for a Graph object}
 \usage{
-find_class_generator(props, type_filter = NULL, default_generator = ms_object)
+find_class_generator(props, type_filter = NULL,
+  default_generator = ms_object)
 }
 \arguments{
 \item{props}{A list of object properties, generally the result of a Graph API call.}

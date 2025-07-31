@@ -14,7 +14,7 @@ call_graph_url(token, url, ..., body = NULL, encode = "json",
   simplify = FALSE, auto_refresh = TRUE)
 }
 \arguments{
-\item{token}{An Azure OAuth token, of class \link{AzureToken}.}
+\item{token}{An Azure OAuth token, of class \link[AzureAuth:AzureToken]{AzureAuth::AzureToken}.}
 
 \item{operation}{The operation to perform, which will form part of the URL path.}
 

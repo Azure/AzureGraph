@@ -8,7 +8,7 @@ call_batch_endpoint(token, requests = list(), depends_on = NULL,
   api_version = getOption("azure_graph_api_version"))
 }
 \arguments{
-\item{token}{An Azure OAuth token, of class \link{AzureToken}.}
+\item{token}{An Azure OAuth token, of class \link[AzureAuth:AzureToken]{AzureAuth::AzureToken}.}
 
 \item{requests}{A list of \link{graph_request} objects, representing individual requests to the Graph API.}
 
