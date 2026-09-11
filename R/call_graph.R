@@ -48,15 +48,11 @@ call_graph_url <- function(token, url, ..., body=NULL, encode="json",
     # if content-type is json, serialize it manually to ensure proper handling of nulls
     if(encode == "json" && !is_empty(body))
     {
-        # fix for toJSON() leaving out the timezone when converting a POSIXlt/ct object: do it manually
-        if(is.list(body))
-            body <- rapply(body, function(x) strftime(x, "%Y-%m-%dT%H:%M:%SZ", tz="UTC"),
-                classes="POSIXt", how="replace")
-        else if(inherits(body, "POSIXt"))
-            body <- strftime(body, "%Y-%m-%dT%H:%M:%SZ", tz="UTC")
-
         null <- vapply(body, is.null, logical(1))
-        body <- jsonlite::toJSON(body[!null], auto_unbox=TRUE, digits=22, null="null")
+
+        # force toJSON to use UTC always and insert timezone in output
+        body <- jsonlite::toJSON(body[!null], auto_unbox=TRUE, digits=22, null="null",
+                                 UTC=TRUE, POSIXt="ISO8601")
         encode <- "raw"
     }
 
