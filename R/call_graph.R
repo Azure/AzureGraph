@@ -49,7 +49,10 @@ call_graph_url <- function(token, url, ..., body=NULL, encode="json",
     if(encode == "json" && !is_empty(body))
     {
         null <- vapply(body, is.null, logical(1))
-        body <- jsonlite::toJSON(body[!null], auto_unbox=TRUE, digits=22, null="null")
+
+        # force toJSON to use UTC always and insert timezone in output
+        body <- jsonlite::toJSON(body[!null], auto_unbox=TRUE, digits=22, null="null",
+                                 UTC=TRUE, POSIXt="ISO8601")
         encode <- "raw"
     }
 
