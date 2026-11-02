@@ -1,4 +1,4 @@
-# AzureGraph 1.3.5.999
+# AzureGraph 1.3.6
 
 - Ensure POSIXt objects are always converted to the UTC timezone when used in Graph API calls (fixes #40)
 
